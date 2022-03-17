@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package article.v1;
+
+import "google/api/annotations.proto";
+
+option go_package = "server/api/article/v1;v1";
+option java_multiple_files = true;
+option java_package = "dev.kratos.api.article.v1";
+option java_outer_classname = "ArticleProtoV1";
+
+// The greeting service definition.
+service Greeter {
+  // Sends a greeting
+  rpc GetArticle (GetArticleRequest) returns (GetArticleReply)  {
+        option (google.api.http) = {
+            get: "/article/{id}"
+        };
+    }
+}
+
+// The request message containing the user's name.
+message GetArticleRequest {
+  int64 id = 1;
+}
+
+// The response message containing the greetings
+message GetArticleReply {
+  string message = 1;
+}
