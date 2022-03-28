@@ -28,5 +28,5 @@ func (s *GreeterService) SayHello(ctx context.Context, in *v1.HelloRequest) (*v1
 	if in.GetName() == "error" {
 		return nil, v1.ErrorUserNotFound("user not found: %s", in.GetName())
 	}
-	return &v1.HelloReply{Message: "Hello " + in.GetName()}, nil
+	return &v1.HelloReply{Message: "FUCK " + in.GetName()}, nil
 }

@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: blog-user
+  labels:
+    app: blog-user
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: blog-user
+  template:
+    metadata:
+      labels:
+        app: blog-user
+    spec:
+      containers:
+        - name: blog-user
+          image: registry.cn-shenzhen.aliyuncs.com/wangzhe0568/blog-user:1.0.0
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+      imagePullSecrets:
+        - name: regsecret

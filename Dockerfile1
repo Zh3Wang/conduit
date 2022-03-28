@@ -22,3 +22,5 @@ EXPOSE 9000
 VOLUME /data/conf
 
 CMD ["./server", "-conf", "/data/conf"]
+
+# docker run --rm -p 8000:8000 -p 9000:9000 -v '/mnt/d/My Project/Go/src/blog/app/user/service/configs':/data/conf blog
