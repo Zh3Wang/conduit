@@ -49,3 +49,9 @@ docker build -t <your-docker-image-name> .
 docker run --rm -p 8000:8000 -p 9000:9000 -v </path/to/your/configs>:/data/conf <your-docker-image-name>
 ```
 
+## k8s
+```bash
+# 添加私仓key
+kubectl create secret docker-registry regsecret --docker-server=registry.cn-shenzhen.aliyuncs.com --docker-username=wl2545@163.com --docker-password='qwe254511'
+
+```

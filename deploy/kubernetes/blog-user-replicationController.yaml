@@ -1,13 +1,10 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: v1
+kind: ReplicationController
 metadata:
   name: blog-user
-  labels:
-    app: blog-user
 spec:
-  replicas: 3
+  replicas: 1
   selector:
-    matchLabels:
       app: blog-user
   template:
     metadata:
@@ -16,7 +13,7 @@ spec:
     spec:
       containers:
         - name: blog-user
-          image: registry.cn-shenzhen.aliyuncs.com/wangzhe0568/blog-user:1.0.0
+          image: registry.cn-shenzhen.aliyuncs.com/wangzhe0568/blog-user:1.0.1
           imagePullPolicy: Always
           ports:
             - containerPort: 8000
