@@ -6,19 +6,18 @@ info:
     title: ""
     version: 0.0.1
 paths:
-    /article/{id}:
-        get:
+    /article:
+        post:
             tags:
-                - Greeter
+                - Article
             description: Sends a greeting
-            operationId: Greeter_GetArticle
-            parameters:
-                - name: id
-                  in: path
-                  required: true
-                  schema:
-                    type: integer
-                    format: int64
+            operationId: Article_GetArticle
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/GetArticleRequest'
+                required: true
             responses:
                 "200":
                     description: OK
@@ -29,9 +28,9 @@ paths:
     /user/{name}:
         get:
             tags:
-                - Greeter
+                - User
             description: Sends a greeting
-            operationId: Greeter_SayHello
+            operationId: User_SayHello
             parameters:
                 - name: name
                   in: path
@@ -47,12 +46,47 @@ paths:
                                 $ref: '#/components/schemas/HelloReply'
 components:
     schemas:
+        ArticleData:
+            type: object
+            properties:
+                article_id:
+                    type: integer
+                    format: int32
+                title:
+                    type: string
+                user_id:
+                    type: integer
+                    format: int32
+                create_time:
+                    type: integer
+                    format: int64
+                update_time:
+                    type: integer
+                    format: int64
+                star_num:
+                    type: integer
+                    format: int32
+                read_num:
+                    type: integer
+                    format: int32
         GetArticleReply:
             type: object
             properties:
-                message:
+                code:
+                    type: integer
+                    format: int32
+                msg:
                     type: string
+                data:
+                    $ref: '#/components/schemas/ArticleData'
             description: The response message containing the greetings
+        GetArticleRequest:
+            type: object
+            properties:
+                articleId:
+                    type: integer
+                    format: int32
+            description: The request message containing the user's name.
         HelloReply:
             type: object
             properties:
@@ -60,7 +94,7 @@ components:
                     type: string
             description: The response message containing the greetings
 tags:
-    - name: Greeter
+    - name: Article
       description: The greeting service definition.
-    - name: Greeter
+    - name: User
       description: The greeting service definition.

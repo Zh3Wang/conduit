@@ -4,13 +4,10 @@ package user.v1;
 
 import "google/api/annotations.proto";
 
-option go_package = "server/api/user/v1;v1";
-option java_multiple_files = true;
-option java_package = "dev.kratos.api.user.v1";
-option java_outer_classname = "UserProtoV1";
+option go_package = "./userPb";
 
 // The greeting service definition.
-service Greeter {
+service User {
   // Sends a greeting
   rpc SayHello (HelloRequest) returns (HelloReply)  {
         option (google.api.http) = {

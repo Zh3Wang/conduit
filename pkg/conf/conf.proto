@@ -1,13 +1,18 @@
 syntax = "proto3";
-package kratos.api;
+package user.conf;
 
-option go_package = "server/internal/conf;conf";
+option go_package = "./conf";
 
 import "google/protobuf/duration.proto";
 
-message Bootstrap {
+message ServiceConfig {
   Server server = 1;
-  Data data = 2;
+}
+
+message Bootstrap {
+  Data data = 1;
+  ServiceConfig article_service = 2;
+  ServiceConfig user_service = 3;
 }
 
 message Server {
@@ -29,6 +34,9 @@ message Data {
   message Database {
     string driver = 1;
     string source = 2;
+    int64 max_idle_connections = 3;
+    int64 max_open_connections = 4;
+    int64 max_connection_life_time = 5;
   }
   message Redis {
     string network = 1;

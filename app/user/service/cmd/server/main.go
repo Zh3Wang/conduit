@@ -1,10 +1,10 @@
 package main
 
 import (
+	"blog/pkg/conf"
 	"flag"
 	"os"
 
-	"blog/app/user/service/internal/conf"
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/config"
 	"github.com/go-kratos/kratos/v2/config/file"
@@ -71,7 +71,7 @@ func main() {
 		panic(err)
 	}
 
-	app, cleanup, err := initApp(bc.Server, bc.Data, logger)
+	app, cleanup, err := initApp(bc.UserService.Server, bc.Data, logger)
 	if err != nil {
 		panic(err)
 	}

@@ -7,10 +7,10 @@ package main
 
 import (
 	"blog/app/user/service/internal/biz"
-	"blog/app/user/service/internal/conf"
 	"blog/app/user/service/internal/data"
 	"blog/app/user/service/internal/server"
 	"blog/app/user/service/internal/service"
+	"blog/pkg/conf"
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"

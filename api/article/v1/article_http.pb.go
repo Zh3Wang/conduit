@@ -2,7 +2,7 @@
 // versions:
 // protoc-gen-go-http v2.1.4
 
-package v1
+package articlePb
 
 import (
 	context "context"
@@ -17,25 +17,22 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
-type GreeterHTTPServer interface {
+type ArticleHTTPServer interface {
 	GetArticle(context.Context, *GetArticleRequest) (*GetArticleReply, error)
 }
 
-func RegisterGreeterHTTPServer(s *http.Server, srv GreeterHTTPServer) {
+func RegisterArticleHTTPServer(s *http.Server, srv ArticleHTTPServer) {
 	r := s.Route("/")
-	r.GET("/article/{id}", _Greeter_GetArticle0_HTTP_Handler(srv))
+	r.POST("/article", _Article_GetArticle0_HTTP_Handler(srv))
 }
 
-func _Greeter_GetArticle0_HTTP_Handler(srv GreeterHTTPServer) func(ctx http.Context) error {
+func _Article_GetArticle0_HTTP_Handler(srv ArticleHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in GetArticleRequest
-		if err := ctx.BindQuery(&in); err != nil {
+		if err := ctx.Bind(&in); err != nil {
 			return err
 		}
-		if err := ctx.BindVars(&in); err != nil {
-			return err
-		}
-		http.SetOperation(ctx, "/article.v1.Greeter/GetArticle")
+		http.SetOperation(ctx, "/article.v1.Article/GetArticle")
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
 			return srv.GetArticle(ctx, req.(*GetArticleRequest))
 		})
@@ -48,25 +45,25 @@ func _Greeter_GetArticle0_HTTP_Handler(srv GreeterHTTPServer) func(ctx http.Cont
 	}
 }
 
-type GreeterHTTPClient interface {
+type ArticleHTTPClient interface {
 	GetArticle(ctx context.Context, req *GetArticleRequest, opts ...http.CallOption) (rsp *GetArticleReply, err error)
 }
 
-type GreeterHTTPClientImpl struct {
+type ArticleHTTPClientImpl struct {
 	cc *http.Client
 }
 
-func NewGreeterHTTPClient(client *http.Client) GreeterHTTPClient {
-	return &GreeterHTTPClientImpl{client}
+func NewArticleHTTPClient(client *http.Client) ArticleHTTPClient {
+	return &ArticleHTTPClientImpl{client}
 }
 
-func (c *GreeterHTTPClientImpl) GetArticle(ctx context.Context, in *GetArticleRequest, opts ...http.CallOption) (*GetArticleReply, error) {
+func (c *ArticleHTTPClientImpl) GetArticle(ctx context.Context, in *GetArticleRequest, opts ...http.CallOption) (*GetArticleReply, error) {
 	var out GetArticleReply
-	pattern := "/article/{id}"
-	path := binding.EncodeURL(pattern, in, true)
-	opts = append(opts, http.Operation("/article.v1.Greeter/GetArticle"))
+	pattern := "/article"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation("/article.v1.Article/GetArticle"))
 	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

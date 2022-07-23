@@ -8,10 +8,10 @@ package main
 
 import (
 	"blog/app/article/service/internal/biz"
-	"blog/app/article/service/internal/conf"
 	"blog/app/article/service/internal/data"
 	"blog/app/article/service/internal/server"
 	"blog/app/article/service/internal/service"
+	"blog/pkg/conf"
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
 )
@@ -20,15 +20,16 @@ import (
 
 // initApp init kratos application.
 func initApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*kratos.App, func(), error) {
-	dataData, cleanup, err := data.NewData(confData, logger)
+	db := data.NewDB(confData, logger)
+	dataData, cleanup, err := data.NewData(db, logger)
 	if err != nil {
 		return nil, nil, err
 	}
-	greeterRepo := data.NewGreeterRepo(dataData, logger)
-	greeterUsecase := biz.NewGreeterUsecase(greeterRepo, logger)
-	greeterService := service.NewGreeterService(greeterUsecase, logger)
-	httpServer := server.NewHTTPServer(confServer, greeterService, logger)
-	grpcServer := server.NewGRPCServer(confServer, greeterService, logger)
+	articleRepo := data.NewArticleRepo(dataData, logger)
+	articleUsecase := biz.NewArticleUsecase(articleRepo, logger)
+	articleService := service.NewArticleService(articleUsecase, logger)
+	httpServer := server.NewHTTPServer(confServer, articleService, logger)
+	grpcServer := server.NewGRPCServer(confServer, articleService, logger)
 	app := newApp(logger, httpServer, grpcServer)
 	return app, func() {
 		cleanup()

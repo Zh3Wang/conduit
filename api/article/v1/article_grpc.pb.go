@@ -4,7 +4,7 @@
 // - protoc             v3.19.4
 // source: api/article/v1/article.proto
 
-package v1
+package articlePb
 
 import (
 	context "context"
@@ -18,88 +18,124 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// GreeterClient is the client API for Greeter service.
+// ArticleClient is the client API for Article service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type GreeterClient interface {
+type ArticleClient interface {
 	// Sends a greeting
 	GetArticle(ctx context.Context, in *GetArticleRequest, opts ...grpc.CallOption) (*GetArticleReply, error)
+	BatchGetArticles(ctx context.Context, in *BatchGetArticlesRequest, opts ...grpc.CallOption) (*BatchGetArticlesReply, error)
 }
 
-type greeterClient struct {
+type articleClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewGreeterClient(cc grpc.ClientConnInterface) GreeterClient {
-	return &greeterClient{cc}
+func NewArticleClient(cc grpc.ClientConnInterface) ArticleClient {
+	return &articleClient{cc}
 }
 
-func (c *greeterClient) GetArticle(ctx context.Context, in *GetArticleRequest, opts ...grpc.CallOption) (*GetArticleReply, error) {
+func (c *articleClient) GetArticle(ctx context.Context, in *GetArticleRequest, opts ...grpc.CallOption) (*GetArticleReply, error) {
 	out := new(GetArticleReply)
-	err := c.cc.Invoke(ctx, "/article.v1.Greeter/GetArticle", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/article.v1.Article/GetArticle", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// GreeterServer is the server API for Greeter service.
-// All implementations must embed UnimplementedGreeterServer
+func (c *articleClient) BatchGetArticles(ctx context.Context, in *BatchGetArticlesRequest, opts ...grpc.CallOption) (*BatchGetArticlesReply, error) {
+	out := new(BatchGetArticlesReply)
+	err := c.cc.Invoke(ctx, "/article.v1.Article/BatchGetArticles", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// ArticleServer is the server API for Article service.
+// All implementations must embed UnimplementedArticleServer
 // for forward compatibility
-type GreeterServer interface {
+type ArticleServer interface {
 	// Sends a greeting
 	GetArticle(context.Context, *GetArticleRequest) (*GetArticleReply, error)
-	mustEmbedUnimplementedGreeterServer()
+	BatchGetArticles(context.Context, *BatchGetArticlesRequest) (*BatchGetArticlesReply, error)
+	mustEmbedUnimplementedArticleServer()
 }
 
-// UnimplementedGreeterServer must be embedded to have forward compatible implementations.
-type UnimplementedGreeterServer struct {
+// UnimplementedArticleServer must be embedded to have forward compatible implementations.
+type UnimplementedArticleServer struct {
 }
 
-func (UnimplementedGreeterServer) GetArticle(context.Context, *GetArticleRequest) (*GetArticleReply, error) {
+func (UnimplementedArticleServer) GetArticle(context.Context, *GetArticleRequest) (*GetArticleReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetArticle not implemented")
 }
-func (UnimplementedGreeterServer) mustEmbedUnimplementedGreeterServer() {}
+func (UnimplementedArticleServer) BatchGetArticles(context.Context, *BatchGetArticlesRequest) (*BatchGetArticlesReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BatchGetArticles not implemented")
+}
+func (UnimplementedArticleServer) mustEmbedUnimplementedArticleServer() {}
 
-// UnsafeGreeterServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to GreeterServer will
+// UnsafeArticleServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to ArticleServer will
 // result in compilation errors.
-type UnsafeGreeterServer interface {
-	mustEmbedUnimplementedGreeterServer()
+type UnsafeArticleServer interface {
+	mustEmbedUnimplementedArticleServer()
 }
 
-func RegisterGreeterServer(s grpc.ServiceRegistrar, srv GreeterServer) {
-	s.RegisterService(&Greeter_ServiceDesc, srv)
+func RegisterArticleServer(s grpc.ServiceRegistrar, srv ArticleServer) {
+	s.RegisterService(&Article_ServiceDesc, srv)
 }
 
-func _Greeter_GetArticle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Article_GetArticle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetArticleRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GreeterServer).GetArticle(ctx, in)
+		return srv.(ArticleServer).GetArticle(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/article.v1.Greeter/GetArticle",
+		FullMethod: "/article.v1.Article/GetArticle",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GreeterServer).GetArticle(ctx, req.(*GetArticleRequest))
+		return srv.(ArticleServer).GetArticle(ctx, req.(*GetArticleRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// Greeter_ServiceDesc is the grpc.ServiceDesc for Greeter service.
+func _Article_BatchGetArticles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BatchGetArticlesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ArticleServer).BatchGetArticles(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/article.v1.Article/BatchGetArticles",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ArticleServer).BatchGetArticles(ctx, req.(*BatchGetArticlesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// Article_ServiceDesc is the grpc.ServiceDesc for Article service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var Greeter_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "article.v1.Greeter",
-	HandlerType: (*GreeterServer)(nil),
+var Article_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "article.v1.Article",
+	HandlerType: (*ArticleServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "GetArticle",
-			Handler:    _Greeter_GetArticle_Handler,
+			Handler:    _Article_GetArticle_Handler,
+		},
+		{
+			MethodName: "BatchGetArticles",
+			Handler:    _Article_BatchGetArticles_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

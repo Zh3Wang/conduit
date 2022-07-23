@@ -4,7 +4,7 @@ import (
 	"flag"
 	"os"
 
-	"blog/app/article/service/internal/conf"
+	"blog/pkg/conf"
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/config"
 	"github.com/go-kratos/kratos/v2/config/file"
@@ -71,7 +71,7 @@ func main() {
 		panic(err)
 	}
 
-	app, cleanup, err := initApp(bc.Server, bc.Data, logger)
+	app, cleanup, err := initApp(bc.ArticleService.Server, bc.Data, logger)
 	if err != nil {
 		panic(err)
 	}
