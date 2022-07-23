@@ -13,8 +13,8 @@ fi
 #fi
 
 docker build -t blog-$1 . --build-arg APP_RELATIVE_PATH=$1/service
-docker tag blog-$1 registry.cn-shenzhen.aliyuncs.com/wangzhe0568/blog-$1:1.0.0
-docker push registry.cn-shenzhen.aliyuncs.com/wangzhe0568/blog-$1:1.0.0
+docker tag blog-$1 registry.cn-shenzhen.aliyuncs.com/wangzhe0568/blog-$1:1.0.1
+docker push registry.cn-shenzhen.aliyuncs.com/wangzhe0568/blog-$1:1.0.1
 # 删除构建过程中生成的无用镜像
 docker system prune -f
 
