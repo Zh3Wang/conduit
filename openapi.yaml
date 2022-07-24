@@ -72,12 +72,7 @@ components:
         GetArticleReply:
             type: object
             properties:
-                code:
-                    type: integer
-                    format: int32
-                msg:
-                    type: string
-                data:
+                message:
                     $ref: '#/components/schemas/ArticleData'
             description: The response message containing the greetings
         GetArticleRequest:

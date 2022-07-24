@@ -29,9 +29,7 @@ message GetArticleRequest {
 
 // The response message containing the greetings
 message GetArticleReply {
-  int32 code = 1;
-  string msg = 2;
-  articleData data =3;
+  articleData message =3;
 }
 
 

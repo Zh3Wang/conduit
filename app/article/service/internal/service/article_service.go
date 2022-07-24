@@ -3,8 +3,6 @@ package service
 import (
 	articlePb "conduit/api/article/v1"
 	"conduit/app/article/service/internal/biz"
-	"conduit/pkg/code"
-	"conduit/pkg/msg"
 	"context"
 	"github.com/go-kratos/kratos/v2/log"
 )
@@ -34,9 +32,7 @@ func (s *ArticleService) GetArticle(ctx context.Context, in *articlePb.GetArticl
 		return nil, err
 	}
 	data := &articlePb.GetArticleReply{
-		Code: code.SUCCESS,
-		Msg:  msg.SUCEESS,
-		Data: &articlePb.ArticleData{
+		Message: &articlePb.ArticleData{
 			ArticleId:  result.ArticleId,
 			Title:      result.ArticleTitle,
 			UserId:     result.UserId,

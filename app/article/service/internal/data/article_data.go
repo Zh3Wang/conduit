@@ -3,7 +3,9 @@ package data
 import (
 	"conduit/app/article/service/internal/biz"
 	"context"
+	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
+	"gorm.io/gorm"
 )
 
 type articleRepo struct {
@@ -29,6 +31,12 @@ func (r *articleRepo) UpdateArticle(ctx context.Context, g *biz.Article) error {
 
 func (r *articleRepo) GetArticle(ctx context.Context, articleId int32) (*biz.Article, error) {
 	var d = biz.Article{}
-	result := r.data.db.WithContext(ctx).Where("article_id = ?", articleId).Take(&d)
-	return &d, result.Error
+	result := r.data.db.WithContext(ctx).Where("article_id = ?", articleId).First(&d)
+	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		return nil, result.Error
+	}
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &d, nil
 }
