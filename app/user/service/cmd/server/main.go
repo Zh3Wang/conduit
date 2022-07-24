@@ -1,7 +1,7 @@
 package main
 
 import (
-	"blog/pkg/conf"
+	"conduit/pkg/conf"
 	"flag"
 	"os"
 

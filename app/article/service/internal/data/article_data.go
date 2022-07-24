@@ -1,7 +1,7 @@
 package data
 
 import (
-	"blog/app/article/service/internal/biz"
+	"conduit/app/article/service/internal/biz"
 	"context"
 	"github.com/go-kratos/kratos/v2/log"
 )

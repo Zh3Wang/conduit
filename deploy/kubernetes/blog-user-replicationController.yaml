@@ -1,19 +1,19 @@
 apiVersion: v1
 kind: ReplicationController
 metadata:
-  name: blog-user
+  name: conduit-user
 spec:
   replicas: 1
   selector:
-      app: blog-user
+      app: conduit-user
   template:
     metadata:
       labels:
-        app: blog-user
+        app: conduit-user
     spec:
       containers:
-        - name: blog-user
-          image: registry.cn-shenzhen.aliyuncs.com/wangzhe0568/blog-user:1.0.1
+        - name: conduit-user
+          image: registry.cn-shenzhen.aliyuncs.com/wangzhe0568/conduit-user:1.0.1
           imagePullPolicy: Always
           ports:
             - containerPort: 8000

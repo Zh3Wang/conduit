@@ -16,7 +16,7 @@ type Article struct {
 }
 
 func (a *Article) TableName() string {
-	return "blog.blog_article_info"
+	return "conduit.conduit_article_info"
 }
 
 type ArticleRepo interface {

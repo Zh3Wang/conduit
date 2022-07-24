@@ -6,11 +6,11 @@
 package main
 
 import (
-	"blog/app/article/service/internal/biz"
-	"blog/app/article/service/internal/data"
-	"blog/app/article/service/internal/server"
-	"blog/app/article/service/internal/service"
-	"blog/pkg/conf"
+	"conduit/app/article/service/internal/biz"
+	"conduit/app/article/service/internal/data"
+	"conduit/app/article/service/internal/server"
+	"conduit/app/article/service/internal/service"
+	"conduit/pkg/conf"
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"

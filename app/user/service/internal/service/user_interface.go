@@ -3,8 +3,8 @@ package service
 import (
 	"context"
 
-	v1 "blog/api/user/v1"
-	"blog/app/user/service/internal/biz"
+	v1 "conduit/api/user/v1"
+	"conduit/app/user/service/internal/biz"
 	"github.com/go-kratos/kratos/v2/log"
 )
 
@@ -25,7 +25,7 @@ func NewUserService(uc *biz.UserUsecase, logger log.Logger) *UserService {
 func (s *UserService) SayHello(ctx context.Context, in *v1.HelloRequest) (*v1.HelloReply, error) {
 	s.log.WithContext(ctx).Infof("SayHello Received: %v", in.GetName())
 
-	if in.GetName() == "blogError" {
+	if in.GetName() == "conduitError" {
 		return nil, v1.ErrorUserNotFound("user not found: %s", in.GetName())
 	}
 	return &v1.HelloReply{Message: "FUCK User " + in.GetName()}, nil

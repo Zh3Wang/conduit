@@ -2,5 +2,5 @@ package msg
 
 var (
 	SUCEESS = "success"
-	ERROR   = "blogError"
+	ERROR   = "conduitError"
 )

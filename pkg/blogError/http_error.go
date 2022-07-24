@@ -1,4 +1,4 @@
-package blogError
+package conduitError
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 	stdhttp "net/http"
 )
 
-// HTTPError is an HTTP blogError.
+// HTTPError is an HTTP conduitError.
 type HTTPError struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`

@@ -1,9 +1,9 @@
 package server
 
 import (
-	v1 "blog/api/article/v1"
-	"blog/app/article/service/internal/service"
-	"blog/pkg/conf"
+	v1 "conduit/api/article/v1"
+	"conduit/app/article/service/internal/service"
+	"conduit/pkg/conf"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
 	"github.com/go-kratos/kratos/v2/transport/grpc"

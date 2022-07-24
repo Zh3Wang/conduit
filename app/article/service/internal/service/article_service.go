@@ -1,10 +1,10 @@
 package service
 
 import (
-	"blog/api/article/v1"
-	"blog/app/article/service/internal/biz"
-	"blog/pkg/code"
-	"blog/pkg/msg"
+	articlePb "conduit/api/article/v1"
+	"conduit/app/article/service/internal/biz"
+	"conduit/pkg/code"
+	"conduit/pkg/msg"
 	"context"
 	"github.com/go-kratos/kratos/v2/log"
 )
@@ -27,7 +27,7 @@ func (s *ArticleService) GetArticle(ctx context.Context, in *articlePb.GetArticl
 	s.log.WithContext(ctx).Infof("GetArticle Received: %v", in.GetArticleId())
 
 	if in.GetArticleId() == 0 {
-		return nil, articlePb.ErrorUserNotFound("article id is empty")
+		return nil, articlePb.ErrorParamIllegal("article id is empty")
 	}
 	result, err := s.uc.GetArticle(ctx, in.GetArticleId())
 	if err != nil {
