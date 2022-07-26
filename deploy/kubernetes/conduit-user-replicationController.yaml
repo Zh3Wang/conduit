@@ -1,18 +1,17 @@
 apiVersion: v1
 kind: ReplicationController
 metadata:
-  name: conduit-user
+  name: conduit-user-rc
 spec:
-  replicas: 1
-  selector:
-      app: conduit-user
+  replicas: 5
   template:
     metadata:
       labels:
         app: conduit-user
+        create_method: rc
     spec:
       containers:
-        - name: conduit-user
+        - name: conduit-user-containers
           image: registry.cn-shenzhen.aliyuncs.com/wangzhe0568/conduit-user:1.0.1
           imagePullPolicy: Always
           ports:
