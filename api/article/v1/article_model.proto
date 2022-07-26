@@ -5,9 +5,9 @@ option go_package = "./articlePb";
 message articleData {
   int32 article_id = 1 [json_name="article_id"];
   string title = 2;
-  int32 user_id = 3 [json_name="user_id"];;
+  int32 user_id = 3 [json_name="user_id"];
   int64 create_time = 4 [json_name="create_time"];
-  int64 update_time = 5 [json_name="update_time"];;
-  int32 star_num = 6 [json_name="star_num"];;
-  int32 read_num = 7 [json_name="read_num"];;
+  int64 update_time = 5 [json_name="update_time"];
+  int32 star_num = 6 [json_name="star_num"];
+  int32 read_num = 7 [json_name="read_num"];
 }
