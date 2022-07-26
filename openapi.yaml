@@ -49,36 +49,50 @@ components:
         ArticleData:
             type: object
             properties:
-                article_id:
-                    type: integer
-                    format: int32
+                slug:
+                    type: string
                 title:
                     type: string
-                user_id:
+                description:
+                    type: string
+                body:
+                    type: string
+                tagList:
+                    type: array
+                    items:
+                        type: string
+                createdAt:
+                    type: string
+                updatedAt:
+                    type: string
+                favorited:
+                    type: boolean
+                favoritesCount:
                     type: integer
                     format: int32
-                create_time:
-                    type: integer
-                    format: int64
-                update_time:
-                    type: integer
-                    format: int64
-                star_num:
-                    type: integer
-                    format: int32
-                read_num:
-                    type: integer
-                    format: int32
+                author:
+                    $ref: '#/components/schemas/ArticleData_authorInfo'
+        ArticleData_authorInfo:
+            type: object
+            properties:
+                username:
+                    type: string
+                bio:
+                    type: string
+                images:
+                    type: string
+                following:
+                    type: boolean
         GetArticleReply:
             type: object
             properties:
-                message:
+                article:
                     $ref: '#/components/schemas/ArticleData'
             description: The response message containing the greetings
         GetArticleRequest:
             type: object
             properties:
-                articleId:
+                article_id:
                     type: integer
                     format: int32
             description: The request message containing the user's name.

@@ -1,9 +1,11 @@
 package service
 
 import (
+	"context"
+
 	articlePb "conduit/api/article/v1"
 	"conduit/app/article/service/internal/biz"
-	"context"
+
 	"github.com/go-kratos/kratos/v2/log"
 )
 
@@ -32,16 +34,15 @@ func (s *ArticleService) GetArticle(ctx context.Context, in *articlePb.GetArticl
 		return nil, err
 	}
 	data := &articlePb.GetArticleReply{
-		Message: &articlePb.ArticleData{
-			ArticleId:  result.ArticleId,
-			Title:      result.ArticleTitle,
-			UserId:     result.UserId,
-			CreateTime: result.CreateTime,
-			UpdateTime: result.UpdateTime,
-			StarNum:    result.StarNum,
-			ReadNum:    result.ReadNum,
+		Article: &articlePb.ArticleData{
+			Slug:           result.Slug,
+			Title:          result.Title,
+			Description:    result.Description,
+			Body:           result.Body,
+			CreatedAt:      result.CreatedAt.String(),
+			UpdatedAt:      result.UpdatedAt.String(),
+			FavoritesCount: int32(result.FavoritesCount),
 		},
 	}
-
 	return data, nil
 }
