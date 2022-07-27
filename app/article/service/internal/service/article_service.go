@@ -24,25 +24,17 @@ func NewArticleService(uc *biz.ArticleUsecase, logger log.Logger) *ArticleServic
 
 // GetArticle returns an article
 func (s *ArticleService) GetArticle(ctx context.Context, in *articlePb.GetArticleRequest) (*articlePb.GetArticleReply, error) {
-	s.log.WithContext(ctx).Infof("GetArticle Received: %v", in.GetArticleId())
+	s.log.WithContext(ctx).Infof("GetArticle Received: %v", in.GetSlug())
 
-	if in.GetArticleId() == 0 {
-		return nil, articlePb.ErrorParamIllegal("article id is empty")
+	if in.GetSlug() == "" {
+		return nil, articlePb.ErrorParamIllegal("slug is empty")
 	}
-	result, err := s.uc.GetArticle(ctx, in.GetArticleId())
+	result, err := s.uc.GetArticle(ctx, in.GetSlug())
 	if err != nil {
 		return nil, err
 	}
 	data := &articlePb.GetArticleReply{
-		Article: &articlePb.ArticleData{
-			Slug:           result.Slug,
-			Title:          result.Title,
-			Description:    result.Description,
-			Body:           result.Body,
-			CreatedAt:      result.CreatedAt.String(),
-			UpdatedAt:      result.UpdatedAt.String(),
-			FavoritesCount: int32(result.FavoritesCount),
-		},
+		Article: result,
 	}
 	return data, nil
 }

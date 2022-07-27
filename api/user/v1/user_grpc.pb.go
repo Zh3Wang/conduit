@@ -22,8 +22,8 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserClient interface {
-	// Sends a greeting
-	SayHello(ctx context.Context, in *HelloRequest, opts ...grpc.CallOption) (*HelloReply, error)
+	GetProfileByUserName(ctx context.Context, in *GetProfileByUserNameRequest, opts ...grpc.CallOption) (*GetProfileReply, error)
+	GetProfileById(ctx context.Context, in *GetProfileByIdRequest, opts ...grpc.CallOption) (*GetProfileReply, error)
 }
 
 type userClient struct {
@@ -34,9 +34,18 @@ func NewUserClient(cc grpc.ClientConnInterface) UserClient {
 	return &userClient{cc}
 }
 
-func (c *userClient) SayHello(ctx context.Context, in *HelloRequest, opts ...grpc.CallOption) (*HelloReply, error) {
-	out := new(HelloReply)
-	err := c.cc.Invoke(ctx, "/user.v1.User/SayHello", in, out, opts...)
+func (c *userClient) GetProfileByUserName(ctx context.Context, in *GetProfileByUserNameRequest, opts ...grpc.CallOption) (*GetProfileReply, error) {
+	out := new(GetProfileReply)
+	err := c.cc.Invoke(ctx, "/user.v1.User/GetProfileByUserName", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userClient) GetProfileById(ctx context.Context, in *GetProfileByIdRequest, opts ...grpc.CallOption) (*GetProfileReply, error) {
+	out := new(GetProfileReply)
+	err := c.cc.Invoke(ctx, "/user.v1.User/GetProfileById", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -47,8 +56,8 @@ func (c *userClient) SayHello(ctx context.Context, in *HelloRequest, opts ...grp
 // All implementations must embed UnimplementedUserServer
 // for forward compatibility
 type UserServer interface {
-	// Sends a greeting
-	SayHello(context.Context, *HelloRequest) (*HelloReply, error)
+	GetProfileByUserName(context.Context, *GetProfileByUserNameRequest) (*GetProfileReply, error)
+	GetProfileById(context.Context, *GetProfileByIdRequest) (*GetProfileReply, error)
 	mustEmbedUnimplementedUserServer()
 }
 
@@ -56,8 +65,11 @@ type UserServer interface {
 type UnimplementedUserServer struct {
 }
 
-func (UnimplementedUserServer) SayHello(context.Context, *HelloRequest) (*HelloReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SayHello not implemented")
+func (UnimplementedUserServer) GetProfileByUserName(context.Context, *GetProfileByUserNameRequest) (*GetProfileReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetProfileByUserName not implemented")
+}
+func (UnimplementedUserServer) GetProfileById(context.Context, *GetProfileByIdRequest) (*GetProfileReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetProfileById not implemented")
 }
 func (UnimplementedUserServer) mustEmbedUnimplementedUserServer() {}
 
@@ -72,20 +84,38 @@ func RegisterUserServer(s grpc.ServiceRegistrar, srv UserServer) {
 	s.RegisterService(&User_ServiceDesc, srv)
 }
 
-func _User_SayHello_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(HelloRequest)
+func _User_GetProfileByUserName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetProfileByUserNameRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServer).SayHello(ctx, in)
+		return srv.(UserServer).GetProfileByUserName(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/user.v1.User/SayHello",
+		FullMethod: "/user.v1.User/GetProfileByUserName",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServer).SayHello(ctx, req.(*HelloRequest))
+		return srv.(UserServer).GetProfileByUserName(ctx, req.(*GetProfileByUserNameRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _User_GetProfileById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetProfileByIdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).GetProfileById(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.v1.User/GetProfileById",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).GetProfileById(ctx, req.(*GetProfileByIdRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -98,8 +128,12 @@ var User_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*UserServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "SayHello",
-			Handler:    _User_SayHello_Handler,
+			MethodName: "GetProfileByUserName",
+			Handler:    _User_GetProfileByUserName_Handler,
+		},
+		{
+			MethodName: "GetProfileById",
+			Handler:    _User_GetProfileById_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

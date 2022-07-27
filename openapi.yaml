@@ -3,7 +3,8 @@
 
 openapi: 3.0.3
 info:
-    title: ""
+    title: Article API
+    description: The greeting service definition.
     version: 0.0.1
 paths:
     /article:
@@ -25,25 +26,6 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/GetArticleReply'
-    /user/{name}:
-        get:
-            tags:
-                - User
-            description: Sends a greeting
-            operationId: User_SayHello
-            parameters:
-                - name: name
-                  in: path
-                  required: true
-                  schema:
-                    type: string
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/HelloReply'
 components:
     schemas:
         ArticleData:
@@ -92,18 +74,8 @@ components:
         GetArticleRequest:
             type: object
             properties:
-                article_id:
-                    type: integer
-                    format: int32
-            description: The request message containing the user's name.
-        HelloReply:
-            type: object
-            properties:
-                message:
+                slug:
                     type: string
-            description: The response message containing the greetings
+            description: The request message containing the user's name.
 tags:
     - name: Article
-      description: The greeting service definition.
-    - name: User
-      description: The greeting service definition.

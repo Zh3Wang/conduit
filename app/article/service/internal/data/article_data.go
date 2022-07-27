@@ -32,9 +32,9 @@ func (r *articleRepo) UpdateArticle(ctx context.Context, g *articlesModel.Articl
 	return nil
 }
 
-func (r *articleRepo) GetArticle(ctx context.Context, articleId int32) (*articlesModel.Articles, error) {
+func (r *articleRepo) GetArticle(ctx context.Context, slug string) (*articlesModel.Articles, error) {
 	var d = articlesModel.Articles{}
-	result := r.data.db.WithContext(ctx).Where("id = ?", articleId).First(&d)
+	result := r.data.db.WithContext(ctx).Where("slug = ?", slug).First(&d)
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		return nil, result.Error
 	}

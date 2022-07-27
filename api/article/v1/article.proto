@@ -24,7 +24,7 @@ service Article {
 
 // The request message containing the user's name.
 message GetArticleRequest {
-  int32 article_id = 1 [json_name = "article_id"];
+  string slug = 1 [json_name = "slug"];
 }
 
 // The response message containing the greetings
