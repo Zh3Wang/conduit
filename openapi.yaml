@@ -7,17 +7,17 @@ info:
     description: The greeting service definition.
     version: 0.0.1
 paths:
-    api/article:
-        post:
+    api/articles/{slug}:
+        get:
             tags:
                 - ConduitInterface
             operationId: ConduitInterface_GetArticle
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/GetArticleRequest'
-                required: true
+            parameters:
+                - name: slug
+                  in: path
+                  required: true
+                  schema:
+                    type: string
             responses:
                 "200":
                     description: OK
@@ -33,11 +33,6 @@ components:
                 article:
                     $ref: '#/components/schemas/SingleArticle'
             description: The response message containing the greetings
-        GetArticleRequest:
-            type: object
-            properties:
-                slug:
-                    type: string
         SingleArticle:
             type: object
             properties:

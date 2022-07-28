@@ -27,13 +27,16 @@ type ConduitInterfaceHTTPServer interface {
 
 func RegisterConduitInterfaceHTTPServer(s *http.Server, srv ConduitInterfaceHTTPServer) {
 	r := s.Route("/")
-	r.POST("api/article", _ConduitInterface_GetArticle0_HTTP_Handler(srv))
+	r.GET("api/articles/{slug}", _ConduitInterface_GetArticle0_HTTP_Handler(srv))
 }
 
 func _ConduitInterface_GetArticle0_HTTP_Handler(srv ConduitInterfaceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in GetArticleRequest
-		if err := ctx.Bind(&in); err != nil {
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
 			return err
 		}
 		http.SetOperation(ctx, OperationConduitInterfaceGetArticle)
@@ -63,11 +66,11 @@ func NewConduitInterfaceHTTPClient(client *http.Client) ConduitInterfaceHTTPClie
 
 func (c *ConduitInterfaceHTTPClientImpl) GetArticle(ctx context.Context, in *GetArticleRequest, opts ...http.CallOption) (*GetArticleReply, error) {
 	var out GetArticleReply
-	pattern := "api/article"
-	path := binding.EncodeURL(pattern, in, false)
+	pattern := "api/articles/{slug}"
+	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationConduitInterfaceGetArticle))
 	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

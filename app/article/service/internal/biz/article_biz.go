@@ -37,6 +37,7 @@ func (uc *ArticleUsecase) GetArticle(ctx context.Context, slug string) (*article
 		CreatedAt:      articles.CreatedAt.String(),
 		UpdatedAt:      articles.UpdatedAt.String(),
 		FavoritesCount: int32(articles.FavoritesCount),
+		AuthorId:       int32(articles.AuthorID),
 	}, nil
 }
 

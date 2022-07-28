@@ -1,8 +1,6 @@
 package articlesModel
 
-import (
-	"time"
-)
+import "time"
 
 type Articles struct {
 	ID             int64     `gorm:"column:id;primary_key" json:"id"`               //

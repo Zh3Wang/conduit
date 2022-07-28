@@ -16,11 +16,11 @@ func IsUserNotFound(err error) bool {
 		return false
 	}
 	e := errors.FromError(err)
-	return e.Reason == ErrorReason_USER_NOT_FOUND.String() && e.Code == 404
+	return e.Reason == ErrorReason_USER_NOT_FOUND.String() && e.Code == 422
 }
 
 func ErrorUserNotFound(format string, args ...interface{}) *errors.Error {
-	return errors.New(404, ErrorReason_USER_NOT_FOUND.String(), fmt.Sprintf(format, args...))
+	return errors.New(422, ErrorReason_USER_NOT_FOUND.String(), fmt.Sprintf(format, args...))
 }
 
 func IsContentMissing(err error) bool {
@@ -28,9 +28,21 @@ func IsContentMissing(err error) bool {
 		return false
 	}
 	e := errors.FromError(err)
-	return e.Reason == ErrorReason_CONTENT_MISSING.String() && e.Code == 400
+	return e.Reason == ErrorReason_CONTENT_MISSING.String() && e.Code == 422
 }
 
 func ErrorContentMissing(format string, args ...interface{}) *errors.Error {
-	return errors.New(400, ErrorReason_CONTENT_MISSING.String(), fmt.Sprintf(format, args...))
+	return errors.New(422, ErrorReason_CONTENT_MISSING.String(), fmt.Sprintf(format, args...))
+}
+
+func IsParamIllegal(err error) bool {
+	if err == nil {
+		return false
+	}
+	e := errors.FromError(err)
+	return e.Reason == ErrorReason_PARAM_ILLEGAL.String() && e.Code == 422
+}
+
+func ErrorParamIllegal(format string, args ...interface{}) *errors.Error {
+	return errors.New(422, ErrorReason_PARAM_ILLEGAL.String(), fmt.Sprintf(format, args...))
 }

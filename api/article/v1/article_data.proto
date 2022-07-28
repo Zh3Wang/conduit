@@ -10,4 +10,5 @@ message articleData {
   string createdAt = 6;
   string updatedAt = 7;
   int32 favoritesCount = 9;
+  int32 author_id = 10;
 }

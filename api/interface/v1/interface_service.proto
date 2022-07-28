@@ -11,8 +11,7 @@ option go_package = "./interfacePb";
 service ConduitInterface {
   rpc GetArticle (GetArticleRequest) returns (GetArticleReply)  {
     option (google.api.http) = {
-      post: "api/article"
-      body: "*"
+      get: "api/articles/{slug}"
     };
   }
 }

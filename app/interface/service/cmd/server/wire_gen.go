@@ -30,7 +30,7 @@ func initApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*
 	userRepo := data.NewUserRepo(dataData, logger)
 	userUsecase := biz.NewUserUsecase(userRepo, logger)
 	articleRepo := data.NewArticleRepo(dataData, logger)
-	articleUsecase := biz.NewArticleUsecase(articleRepo, logger)
+	articleUsecase := biz.NewArticleUsecase(articleRepo, userRepo, logger)
 	conduitInterface := service.NewConduitInterface(userUsecase, articleUsecase, logger)
 	httpServer := server.NewHTTPServer(confServer, conduitInterface, logger)
 	registrar := data.NewRegistrar(confData, logger)
