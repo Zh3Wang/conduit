@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"conduit/pkg/conf"
+	"conduit/pkg/service"
 
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/config"
@@ -19,7 +20,7 @@ import (
 // go build -ldflags "-X main.Version=x.y.z"
 var (
 	// Name is the name of the compiled software.
-	Name = "conduit.article.service"
+	Name = service.ArticleService
 	// Version is the version of the compiled software.
 	Version string
 	// flagconf is the config flag.

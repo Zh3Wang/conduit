@@ -7,6 +7,7 @@ import (
 	v1 "conduit/api/user/v1"
 	"conduit/app/user/service/internal/biz"
 
+	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
 )
 
@@ -24,14 +25,16 @@ func NewUserService(uc *biz.UserUsecase, logger log.Logger) *UserService {
 }
 
 // GetProfileById 获取作者信息 by id
-func (u *UserService) GetProfileById(context.Context, *userPb.GetProfileByIdRequest) (*userPb.GetProfileReply, error) {
-
+func (u *UserService) GetProfileById(ctx context.Context, req *userPb.GetProfileByIdRequest) (*userPb.GetProfileReply, error) {
+	u.log.WithContext(ctx).Infof("GetProfileById Received ---- {%+v}", req)
+	if req.GetId() <= 0 {
+		return nil, errors.New(422, "PARAM_ILLEGAL", "非法参数")
+	}
+	r, err := u.uc.GetProfileById(ctx, req.GetId())
+	if err != nil {
+		return nil, err
+	}
 	return &userPb.GetProfileReply{
-		Profile: &userPb.Profile{
-			UserName:  "",
-			Bio:       "",
-			Image:     "",
-			Following: false,
-		},
+		Profile: r,
 	}, nil
 }

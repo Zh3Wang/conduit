@@ -3,6 +3,8 @@ package data
 import (
 	"time"
 
+	userPb "conduit/api/user/v1"
+	"conduit/pkg/client"
 	"conduit/pkg/conf"
 	"conduit/pkg/mysql"
 
@@ -10,29 +12,69 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/google/wire"
-	etcdClient "go.etcd.io/etcd/client/v3"
+	clientV3 "go.etcd.io/etcd/client/v3"
 	"gorm.io/gorm"
 )
 
 // ProviderSet is data providers.
-var ProviderSet = wire.NewSet(NewData, NewDB, NewArticleRepo, NewEtcdRegistrar)
+var ProviderSet = wire.NewSet(
+	NewData,
+	NewDB,
+	NewArticleRepo,
+	NewDiscovery,
+	NewRegistrar,
+	client.NewUserServiceClient,
+)
 
 // Data .
 type Data struct {
-	db  *gorm.DB
-	log *log.Helper
+	userService userPb.UserClient
+	db          *gorm.DB
+	log         *log.Helper
 }
 
-// 初始化 etcd
-func NewEtcdRegistrar(c *conf.Data, logger log.Logger) registry.Registrar {
-	l := log.NewHelper(log.With(logger, "module", "article-service/data/etcd"))
-	client, err := etcdClient.New(etcdClient.Config{
+// NewData .
+func NewData(
+	logger log.Logger,
+	db *gorm.DB,
+	us userPb.UserClient,
+) (*Data, func(), error) {
+	cleanup := func() {
+		log.NewHelper(logger).Info("closing the data resources")
+	}
+	l := log.NewHelper(log.With(logger, "module", "article-service/data"))
+
+	data := Data{
+		userService: us,
+		db:          db,
+		log:         l,
+	}
+	return &data, cleanup, nil
+}
+
+// NewRegistrar 注册服务 etcd
+func NewRegistrar(c *conf.Data, logger log.Logger) registry.Registrar {
+	l := log.NewHelper(log.With(logger, "module", "article-service/data/registrar"))
+	cc, err := clientV3.New(clientV3.Config{
 		Endpoints: c.Etcd.Addr,
 	})
 	if err != nil {
 		l.Fatalf("failed connecting etcd: %s", err.Error())
 	}
-	r := etcd.New(client, etcd.Namespace("conduit"))
+	r := etcd.New(cc, etcd.Namespace("conduit"))
+	return r
+}
+
+// NewDiscovery 服务发现
+func NewDiscovery(c *conf.Data, logger log.Logger) registry.Discovery {
+	l := log.NewHelper(log.With(logger, "module", "article-service/data/discovery"))
+	cc, err := clientV3.New(clientV3.Config{
+		Endpoints: c.Etcd.Addr,
+	})
+	if err != nil {
+		l.Fatalf("failed connecting etcd: %s", err.Error())
+	}
+	r := etcd.New(cc, etcd.Namespace("conduit"))
 	return r
 }
 
@@ -53,18 +95,4 @@ func NewDB(c *conf.Data, logger log.Logger) *gorm.DB {
 	}
 
 	return db
-}
-
-// NewData .
-func NewData(db *gorm.DB, logger log.Logger) (*Data, func(), error) {
-	cleanup := func() {
-		log.NewHelper(logger).Info("closing the data resources")
-	}
-	l := log.NewHelper(log.With(logger, "module", "article-service/data"))
-
-	data := Data{
-		db:  db,
-		log: l,
-	}
-	return &data, cleanup, nil
 }

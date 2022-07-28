@@ -3,6 +3,8 @@ package data
 import (
 	"context"
 
+	articlePb "conduit/api/article/v1"
+	userPb "conduit/api/user/v1"
 	"conduit/app/article/service/internal/biz"
 	"conduit/model/articles_model"
 
@@ -42,4 +44,19 @@ func (r *articleRepo) GetArticle(ctx context.Context, slug string) (*articlesMod
 		return nil, result.Error
 	}
 	return &d, nil
+}
+
+func (r *articleRepo) GetProfileById(ctx context.Context, id int32) (*articlePb.ArticleDataAuthorInfo, error) {
+	resp, err := r.data.userService.GetProfileById(ctx, &userPb.GetProfileByIdRequest{
+		Id: id,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &articlePb.ArticleDataAuthorInfo{
+		Username:  resp.Profile.UserName,
+		Bio:       resp.Profile.Bio,
+		Images:    resp.Profile.Image,
+		Following: false,
+	}, nil
 }

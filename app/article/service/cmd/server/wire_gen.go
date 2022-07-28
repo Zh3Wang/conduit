@@ -10,6 +10,7 @@ import (
 	"conduit/app/article/service/internal/data"
 	"conduit/app/article/service/internal/server"
 	"conduit/app/article/service/internal/service"
+	"conduit/pkg/client"
 	"conduit/pkg/conf"
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
@@ -20,7 +21,9 @@ import (
 // initApp init kratos application.
 func initApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*kratos.App, func(), error) {
 	db := data.NewDB(confData, logger)
-	dataData, cleanup, err := data.NewData(db, logger)
+	discovery := data.NewDiscovery(confData, logger)
+	userClient := client.NewUserServiceClient(discovery)
+	dataData, cleanup, err := data.NewData(logger, db, userClient)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -29,7 +32,7 @@ func initApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*
 	articleService := service.NewArticleService(articleUsecase, logger)
 	httpServer := server.NewHTTPServer(confServer, articleService, logger)
 	grpcServer := server.NewGRPCServer(confServer, articleService, logger)
-	registrar := data.NewEtcdRegistrar(confData, logger)
+	registrar := data.NewRegistrar(confData, logger)
 	app := newApp(logger, httpServer, grpcServer, registrar)
 	return app, func() {
 		cleanup()
