@@ -6,14 +6,14 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 )
 
-type userRepo struct {
+type ArticleRepo struct {
 	data *Data
 	log  *log.Helper
 }
 
-// NewUserRepo .
-func NewUserRepo(data *Data, logger log.Logger) biz.UserRepo {
-	return &userRepo{
+// NewArticleRepo .
+func NewArticleRepo(data *Data, logger log.Logger) biz.ArticleRepo {
+	return &ArticleRepo{
 		data: data,
 		log:  log.NewHelper(logger),
 	}

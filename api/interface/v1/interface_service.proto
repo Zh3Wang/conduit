@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package interface.v1;
+
+import "google/api/annotations.proto";
+import "api/interface/v1/interface_data.proto";
+
+option go_package = "./interfacePb";
+
+// The greeting service definition.
+service ConduitInterface {
+  rpc GetArticle (GetArticleRequest) returns (GetArticleReply)  {
+    option (google.api.http) = {
+      post: "api/article"
+      body: "*"
+    };
+  }
+}
+
+message GetArticleRequest {
+  string slug = 1 [json_name = "slug"];
+}
+
+// The response message containing the greetings
+message GetArticleReply {
+  SingleArticle article = 3;
+}

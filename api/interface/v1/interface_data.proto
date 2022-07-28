@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+option go_package = "./interfacePb";
+
+message SingleArticle {
+  string slug = 1 [json_name = "slug"];
+  string title = 2;
+  string description = 3;
+  string body = 4;
+  repeated string tagList = 5;
+  string createdAt = 6;
+  string updatedAt = 7;
+  bool favorited = 8;
+  int32 favoritesCount = 9;
+  message authorInfo {
+    string username = 1;
+    string bio = 2;
+    string images = 3;
+    bool following = 4;
+  }
+  authorInfo author = 10;
+}

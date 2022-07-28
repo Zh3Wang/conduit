@@ -1,7 +1,7 @@
 package server
 
 import (
-	v1 "conduit/api/user/v1"
+	v1 "conduit/api/interface/v1"
 	"conduit/app/interface/service/internal/service"
 	"conduit/pkg/conf"
 	"conduit/pkg/server"
@@ -11,8 +11,8 @@ import (
 )
 
 // NewHTTPServer new a HTTP server.
-func NewHTTPServer(c *conf.Server, greeter *service.UserService, logger log.Logger) *http.Server {
+func NewHTTPServer(c *conf.Server, svc *service.ConduitInterface, logger log.Logger) *http.Server {
 	srv := server.NewHttpServer(c)
-	v1.RegisterUserHTTPServer(srv, greeter)
+	v1.RegisterConduitInterfaceHTTPServer(srv, svc)
 	return srv
 }

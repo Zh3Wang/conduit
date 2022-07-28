@@ -3,16 +3,15 @@
 
 openapi: 3.0.3
 info:
-    title: Article API
+    title: ConduitInterface API
     description: The greeting service definition.
     version: 0.0.1
 paths:
-    /article:
+    api/article:
         post:
             tags:
-                - Article
-            description: Sends a greeting
-            operationId: Article_GetArticle
+                - ConduitInterface
+            operationId: ConduitInterface_GetArticle
             requestBody:
                 content:
                     application/json:
@@ -28,7 +27,18 @@ paths:
                                 $ref: '#/components/schemas/GetArticleReply'
 components:
     schemas:
-        ArticleData:
+        GetArticleReply:
+            type: object
+            properties:
+                article:
+                    $ref: '#/components/schemas/SingleArticle'
+            description: The response message containing the greetings
+        GetArticleRequest:
+            type: object
+            properties:
+                slug:
+                    type: string
+        SingleArticle:
             type: object
             properties:
                 slug:
@@ -53,8 +63,8 @@ components:
                     type: integer
                     format: int32
                 author:
-                    $ref: '#/components/schemas/ArticleData_authorInfo'
-        ArticleData_authorInfo:
+                    $ref: '#/components/schemas/SingleArticle_authorInfo'
+        SingleArticle_authorInfo:
             type: object
             properties:
                 username:
@@ -65,17 +75,5 @@ components:
                     type: string
                 following:
                     type: boolean
-        GetArticleReply:
-            type: object
-            properties:
-                article:
-                    $ref: '#/components/schemas/ArticleData'
-            description: The response message containing the greetings
-        GetArticleRequest:
-            type: object
-            properties:
-                slug:
-                    type: string
-            description: The request message containing the user's name.
 tags:
-    - name: Article
+    - name: ConduitInterface

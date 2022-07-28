@@ -2,33 +2,24 @@ syntax = "proto3";
 
 package article.v1;
 
-import "google/api/annotations.proto";
 import "api/article/v1/article_data.proto";
 
 option go_package = "./articlePb";
-option java_multiple_files = true;
-option java_package = "dev.kratos.api.article.v1";
-option java_outer_classname = "ArticleProtoV1";
 
 // The greeting service definition.
 service Article {
   // Sends a greeting
-  rpc GetArticle (GetArticleRequest) returns (GetArticleReply)  {
-    option (google.api.http) = {
-      post: "/article"
-      body: "*"
-    };
-  }
+  rpc GetArticleBySlug (GetArticleBySlugRequest) returns (GetArticleBySlugReply)  {}
   rpc BatchGetArticles (BatchGetArticlesRequest) returns (BatchGetArticlesReply) {}
 }
 
 // The request message containing the user's name.
-message GetArticleRequest {
+message GetArticleBySlugRequest {
   string slug = 1 [json_name = "slug"];
 }
 
 // The response message containing the greetings
-message GetArticleReply {
+message GetArticleBySlugReply {
   articleData article = 3;
 }
 

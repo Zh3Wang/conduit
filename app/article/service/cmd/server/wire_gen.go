@@ -30,10 +30,9 @@ func initApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*
 	articleRepo := data.NewArticleRepo(dataData, logger)
 	articleUsecase := biz.NewArticleUsecase(articleRepo, logger)
 	articleService := service.NewArticleService(articleUsecase, logger)
-	httpServer := server.NewHTTPServer(confServer, articleService, logger)
 	grpcServer := server.NewGRPCServer(confServer, articleService, logger)
 	registrar := data.NewRegistrar(confData, logger)
-	app := newApp(logger, httpServer, grpcServer, registrar)
+	app := newApp(logger, grpcServer, registrar)
 	return app, func() {
 		cleanup()
 	}, nil

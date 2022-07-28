@@ -13,6 +13,7 @@ message Bootstrap {
   Data data = 1;
   ServiceConfig article_service = 2;
   ServiceConfig user_service = 3;
+  ServiceConfig conduit_interface = 4;
 }
 
 message Server {

@@ -6,10 +6,10 @@
 package main
 
 import (
-	"conduit/app/user/service/internal/biz"
-	"conduit/app/user/service/internal/data"
-	"conduit/app/user/service/internal/server"
-	"conduit/app/user/service/internal/service"
+	"conduit/app/interface/service/internal/biz"
+	"conduit/app/interface/service/internal/data"
+	"conduit/app/interface/service/internal/server"
+	"conduit/app/interface/service/internal/service"
 	"conduit/pkg/conf"
 
 	"github.com/go-kratos/kratos/v2"

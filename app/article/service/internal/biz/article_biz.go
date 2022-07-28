@@ -13,7 +13,6 @@ type ArticleRepo interface {
 	GetArticle(ctx context.Context, slug string) (*articlesModel.Articles, error)
 	CreateArticle(context.Context, *articlesModel.Articles) error
 	UpdateArticle(context.Context, *articlesModel.Articles) error
-	GetProfileById(ctx context.Context, id int32) (*articlePb.ArticleDataAuthorInfo, error)
 }
 
 type ArticleUsecase struct {
@@ -30,24 +29,14 @@ func (uc *ArticleUsecase) GetArticle(ctx context.Context, slug string) (*article
 	if err != nil {
 		return nil, err
 	}
-	// RPC获取作者信息
-	authorProfile, err := uc.repo.GetProfileById(ctx, int32(articles.AuthorID))
-	if err != nil {
-		return nil, err
-	}
-	// todo 获取标签信息
-
 	return &articlePb.ArticleData{
 		Slug:           articles.Slug,
 		Title:          articles.Title,
 		Description:    articles.Description,
 		Body:           articles.Body,
-		TagList:        nil,
 		CreatedAt:      articles.CreatedAt.String(),
 		UpdatedAt:      articles.UpdatedAt.String(),
-		Favorited:      false,
 		FavoritesCount: int32(articles.FavoritesCount),
-		Author:         authorProfile,
 	}, nil
 }
 
