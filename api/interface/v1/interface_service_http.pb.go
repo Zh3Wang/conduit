@@ -20,14 +20,36 @@ var _ = binding.EncodeURL
 const _ = http.SupportPackageIsVersion1
 
 const OperationConduitInterfaceGetArticle = "/interface.v1.ConduitInterface/GetArticle"
+const OperationConduitInterfaceRegister = "/interface.v1.ConduitInterface/Register"
 
 type ConduitInterfaceHTTPServer interface {
 	GetArticle(context.Context, *GetArticleRequest) (*GetArticleReply, error)
+	Register(context.Context, *RegisterRequest) (*UserReply, error)
 }
 
 func RegisterConduitInterfaceHTTPServer(s *http.Server, srv ConduitInterfaceHTTPServer) {
 	r := s.Route("/")
+	r.POST("api/users", _ConduitInterface_Register0_HTTP_Handler(srv))
 	r.GET("api/articles/{slug}", _ConduitInterface_GetArticle0_HTTP_Handler(srv))
+}
+
+func _ConduitInterface_Register0_HTTP_Handler(srv ConduitInterfaceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in RegisterRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationConduitInterfaceRegister)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.Register(ctx, req.(*RegisterRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*UserReply)
+		return ctx.Result(200, reply)
+	}
 }
 
 func _ConduitInterface_GetArticle0_HTTP_Handler(srv ConduitInterfaceHTTPServer) func(ctx http.Context) error {
@@ -54,6 +76,7 @@ func _ConduitInterface_GetArticle0_HTTP_Handler(srv ConduitInterfaceHTTPServer) 
 
 type ConduitInterfaceHTTPClient interface {
 	GetArticle(ctx context.Context, req *GetArticleRequest, opts ...http.CallOption) (rsp *GetArticleReply, err error)
+	Register(ctx context.Context, req *RegisterRequest, opts ...http.CallOption) (rsp *UserReply, err error)
 }
 
 type ConduitInterfaceHTTPClientImpl struct {
@@ -71,6 +94,19 @@ func (c *ConduitInterfaceHTTPClientImpl) GetArticle(ctx context.Context, in *Get
 	opts = append(opts, http.Operation(OperationConduitInterfaceGetArticle))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *ConduitInterfaceHTTPClientImpl) Register(ctx context.Context, in *RegisterRequest, opts ...http.CallOption) (*UserReply, error) {
+	var out UserReply
+	pattern := "api/users"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationConduitInterfaceRegister))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

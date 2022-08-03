@@ -25,6 +25,24 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/GetArticleReply'
+    api/users:
+        post:
+            tags:
+                - ConduitInterface
+            operationId: ConduitInterface_Register
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/RegisterRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UserReply'
 components:
     schemas:
         GetArticleReply:
@@ -33,6 +51,31 @@ components:
                 article:
                     $ref: '#/components/schemas/SingleArticle'
             description: The response message containing the greetings
+        Profile:
+            type: object
+            properties:
+                username:
+                    type: string
+                bio:
+                    type: string
+                image:
+                    type: string
+                following:
+                    type: boolean
+        RegisterRequest:
+            type: object
+            properties:
+                user:
+                    $ref: '#/components/schemas/RegisterRequest_User'
+        RegisterRequest_User:
+            type: object
+            properties:
+                username:
+                    type: string
+                email:
+                    type: string
+                password:
+                    type: string
         SingleArticle:
             type: object
             properties:
@@ -58,17 +101,24 @@ components:
                     type: integer
                     format: int32
                 author:
-                    $ref: '#/components/schemas/SingleArticle_authorInfo'
-        SingleArticle_authorInfo:
+                    $ref: '#/components/schemas/Profile'
+        User:
             type: object
             properties:
+                email:
+                    type: string
+                token:
+                    type: string
                 username:
                     type: string
                 bio:
                     type: string
-                images:
+                image:
                     type: string
-                following:
-                    type: boolean
+        UserReply:
+            type: object
+            properties:
+                user:
+                    $ref: '#/components/schemas/User'
 tags:
     - name: ConduitInterface

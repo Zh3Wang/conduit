@@ -12,11 +12,20 @@ message SingleArticle {
   string updatedAt = 7;
   bool favorited = 8;
   int32 favoritesCount = 9;
-  message authorInfo {
-    string username = 1;
-    string bio = 2;
-    string images = 3;
-    bool following = 4;
-  }
-  authorInfo author = 10;
+  Profile author = 10;
+}
+
+message User {
+  string email = 1;
+  string token = 2;
+  string username = 3;
+  string bio = 4;
+  string image = 5;
+}
+
+message Profile {
+  string username = 1;
+  string bio = 2;
+  string image = 3;
+  bool following = 4;
 }

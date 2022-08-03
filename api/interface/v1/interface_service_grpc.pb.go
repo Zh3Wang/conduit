@@ -22,6 +22,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ConduitInterfaceClient interface {
+	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*UserReply, error)
 	GetArticle(ctx context.Context, in *GetArticleRequest, opts ...grpc.CallOption) (*GetArticleReply, error)
 }
 
@@ -31,6 +32,15 @@ type conduitInterfaceClient struct {
 
 func NewConduitInterfaceClient(cc grpc.ClientConnInterface) ConduitInterfaceClient {
 	return &conduitInterfaceClient{cc}
+}
+
+func (c *conduitInterfaceClient) Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*UserReply, error) {
+	out := new(UserReply)
+	err := c.cc.Invoke(ctx, "/interface.v1.ConduitInterface/Register", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *conduitInterfaceClient) GetArticle(ctx context.Context, in *GetArticleRequest, opts ...grpc.CallOption) (*GetArticleReply, error) {
@@ -46,6 +56,7 @@ func (c *conduitInterfaceClient) GetArticle(ctx context.Context, in *GetArticleR
 // All implementations must embed UnimplementedConduitInterfaceServer
 // for forward compatibility
 type ConduitInterfaceServer interface {
+	Register(context.Context, *RegisterRequest) (*UserReply, error)
 	GetArticle(context.Context, *GetArticleRequest) (*GetArticleReply, error)
 	mustEmbedUnimplementedConduitInterfaceServer()
 }
@@ -54,6 +65,9 @@ type ConduitInterfaceServer interface {
 type UnimplementedConduitInterfaceServer struct {
 }
 
+func (UnimplementedConduitInterfaceServer) Register(context.Context, *RegisterRequest) (*UserReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
+}
 func (UnimplementedConduitInterfaceServer) GetArticle(context.Context, *GetArticleRequest) (*GetArticleReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetArticle not implemented")
 }
@@ -68,6 +82,24 @@ type UnsafeConduitInterfaceServer interface {
 
 func RegisterConduitInterfaceServer(s grpc.ServiceRegistrar, srv ConduitInterfaceServer) {
 	s.RegisterService(&ConduitInterface_ServiceDesc, srv)
+}
+
+func _ConduitInterface_Register_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RegisterRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ConduitInterfaceServer).Register(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/interface.v1.ConduitInterface/Register",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ConduitInterfaceServer).Register(ctx, req.(*RegisterRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _ConduitInterface_GetArticle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -95,6 +127,10 @@ var ConduitInterface_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "interface.v1.ConduitInterface",
 	HandlerType: (*ConduitInterfaceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Register",
+			Handler:    _ConduitInterface_Register_Handler,
+		},
 		{
 			MethodName: "GetArticle",
 			Handler:    _ConduitInterface_GetArticle_Handler,

@@ -9,9 +9,15 @@ option go_package = "./interfacePb";
 
 // The greeting service definition.
 service ConduitInterface {
+  rpc Register (RegisterRequest) returns (UserReply) {
+    option (google.api.http) = {
+      post: "api/users",
+      body: "*",
+    };
+  };
   rpc GetArticle (GetArticleRequest) returns (GetArticleReply)  {
     option (google.api.http) = {
-      get: "api/articles/{slug}"
+      get: "api/articles/{slug}",
     };
   }
 }
@@ -23,4 +29,18 @@ message GetArticleRequest {
 // The response message containing the greetings
 message GetArticleReply {
   SingleArticle article = 3;
+}
+
+
+message RegisterRequest {
+  message User {
+    string username = 1;
+    string email = 2;
+    string password = 3;
+  }
+  User user = 1;
+}
+
+message UserReply {
+  User user = 1;
 }

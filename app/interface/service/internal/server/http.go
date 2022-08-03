@@ -10,7 +10,7 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/http"
 )
 
-// NewHTTPServer new a HTTP server.
+// NewHTTPServer new an HTTP server.
 func NewHTTPServer(c *conf.Server, svc *service.ConduitInterface, logger log.Logger) *http.Server {
 	srv := server.NewHttpServer(c)
 	v1.RegisterConduitInterfaceHTTPServer(srv, svc)

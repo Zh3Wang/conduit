@@ -28,12 +28,12 @@ func NewUserUsecase(repo UserRepo, logger log.Logger) *UserUsecase {
 	return &UserUsecase{repo: repo, log: log.NewHelper(logger)}
 }
 
-func (uc *UserUsecase) GetProfileById(ctx context.Context, id int32) (*userPb.Profile, error) {
+func (uc *UserUsecase) GetProfileById(ctx context.Context, id int32) (*userPb.UserProfile, error) {
 	r, err := uc.repo.GetProfile(ctx, id)
 	if err != nil {
 		return nil, err
 	}
-	return &userPb.Profile{
+	return &userPb.UserProfile{
 		UserName: r.Username,
 		Bio:      r.Bio,
 		Image:    r.Image,

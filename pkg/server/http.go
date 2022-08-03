@@ -2,6 +2,8 @@ package server
 
 import (
 	"conduit/pkg/conf"
+	"conduit/pkg/middleware/auth"
+
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
 	"github.com/go-kratos/kratos/v2/transport/http"
 )
@@ -11,6 +13,7 @@ func NewHttpServer(c *conf.Server) *http.Server {
 		http.ErrorEncoder(errorEncoder),
 		http.Middleware(
 			recovery.Recovery(),
+			auth.JWTAuthorization(),
 		),
 	}
 	if c.Http.Network != "" {
