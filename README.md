@@ -9,6 +9,8 @@ go install github.com/go-kratos/kratos/cmd/kratos/v2@latest
 # Create a template project
 kratos new server
 
+test
+
 cd server
 # Add a proto template
 kratos proto add api/server/server.proto
