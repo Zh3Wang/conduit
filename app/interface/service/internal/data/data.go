@@ -20,12 +20,12 @@ var ProviderSet = wire.NewSet(NewData, NewRegistrar, NewDiscovery,
 // Data .
 type Data struct {
 	log *log.Helper
-	uc  userPb.UserClient
+	uc  userPb.UsersClient
 	ac  articlePb.ArticleClient
 }
 
 // NewData .
-func NewData(logger log.Logger, uc userPb.UserClient, ac articlePb.ArticleClient) (*Data, func(), error) {
+func NewData(logger log.Logger, uc userPb.UsersClient, ac articlePb.ArticleClient) (*Data, func(), error) {
 	cleanup := func() {
 		log.NewHelper(logger).Info("closing the data resources")
 	}

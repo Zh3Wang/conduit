@@ -7,9 +7,20 @@ import "api/user/v1/user_data.proto";
 option go_package = "./userPb";
 
 // The greeting service definition.
-service User {
+service Users {
+  rpc Login(LoginRequest) returns (LoginReply);
   rpc GetProfileByUserName(GetProfileByUserNameRequest) returns (GetProfileReply);
   rpc GetProfileById(GetProfileByIdRequest) returns (GetProfileReply);
+}
+
+message LoginRequest {
+  string email = 1;
+  string password = 2;
+
+}
+
+message LoginReply {
+  User user = 1;
 }
 
 message GetProfileByUserNameRequest {
@@ -21,5 +32,5 @@ message GetProfileByIdRequest {
 }
 
 message GetProfileReply {
-  UserProfile profile = 1;
+  Profile profile = 1;
 }

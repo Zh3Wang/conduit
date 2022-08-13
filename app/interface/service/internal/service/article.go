@@ -7,7 +7,6 @@ import (
 )
 
 func (c *ConduitInterface) GetArticle(ctx context.Context, req *interfacePb.GetArticleRequest) (*interfacePb.GetArticleReply, error) {
-	c.log.WithContext(ctx).Infof("GetArticle received: {%+v}", req)
 	if req.GetSlug() == "" {
 		return nil, interfacePb.ErrorParamIllegal("slug is empty")
 	}

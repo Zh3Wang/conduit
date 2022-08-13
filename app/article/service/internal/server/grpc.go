@@ -11,7 +11,7 @@ import (
 
 // NewGRPCServer new a gRPC server.
 func NewGRPCServer(c *conf.Server, article *service.ArticleService, logger log.Logger) *grpc.Server {
-	srv := server.NewGrpcServer(c)
+	srv := server.NewGrpcServer(c, logger)
 	v1.RegisterArticleServer(srv, article)
 	return srv
 }

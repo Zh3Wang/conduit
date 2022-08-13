@@ -28,7 +28,7 @@ var ProviderSet = wire.NewSet(
 
 // Data .
 type Data struct {
-	userService userPb.UserClient
+	userService userPb.UsersClient
 	db          *gorm.DB
 	log         *log.Helper
 }
@@ -37,7 +37,7 @@ type Data struct {
 func NewData(
 	logger log.Logger,
 	db *gorm.DB,
-	us userPb.UserClient,
+	us userPb.UsersClient,
 ) (*Data, func(), error) {
 	cleanup := func() {
 		log.NewHelper(logger).Info("closing the data resources")

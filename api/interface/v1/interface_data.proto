@@ -1,4 +1,5 @@
 syntax = "proto3";
+package interface.v1;
 
 option go_package = "./interfacePb";
 

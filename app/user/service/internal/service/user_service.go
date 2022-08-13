@@ -13,7 +13,7 @@ import (
 
 // UserService is a greeter service.
 type UserService struct {
-	v1.UnimplementedUserServer
+	v1.UnimplementedUsersServer
 
 	uc  *biz.UserUsecase
 	log *log.Helper

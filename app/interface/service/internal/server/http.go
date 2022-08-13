@@ -12,7 +12,7 @@ import (
 
 // NewHTTPServer new an HTTP server.
 func NewHTTPServer(c *conf.Server, svc *service.ConduitInterface, logger log.Logger) *http.Server {
-	srv := server.NewHttpServer(c)
+	srv := server.NewHttpServer(c, logger)
 	v1.RegisterConduitInterfaceHTTPServer(srv, svc)
 	return srv
 }

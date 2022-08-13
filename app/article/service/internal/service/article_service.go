@@ -8,8 +8,6 @@ import (
 
 // GetArticleBySlug returns an article
 func (s *ArticleService) GetArticleBySlug(ctx context.Context, in *articlePb.GetArticleBySlugRequest) (*articlePb.GetArticleBySlugReply, error) {
-	s.log.WithContext(ctx).Infof("GetArticle Received: %v", in.GetSlug())
-
 	if in.GetSlug() == "" {
 		return nil, articlePb.ErrorParamIllegal("slug is empty")
 	}

@@ -18,122 +18,158 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// UserClient is the client API for User service.
+// UsersClient is the client API for Users service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type UserClient interface {
+type UsersClient interface {
+	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginReply, error)
 	GetProfileByUserName(ctx context.Context, in *GetProfileByUserNameRequest, opts ...grpc.CallOption) (*GetProfileReply, error)
 	GetProfileById(ctx context.Context, in *GetProfileByIdRequest, opts ...grpc.CallOption) (*GetProfileReply, error)
 }
 
-type userClient struct {
+type usersClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewUserClient(cc grpc.ClientConnInterface) UserClient {
-	return &userClient{cc}
+func NewUsersClient(cc grpc.ClientConnInterface) UsersClient {
+	return &usersClient{cc}
 }
 
-func (c *userClient) GetProfileByUserName(ctx context.Context, in *GetProfileByUserNameRequest, opts ...grpc.CallOption) (*GetProfileReply, error) {
-	out := new(GetProfileReply)
-	err := c.cc.Invoke(ctx, "/user.v1.User/GetProfileByUserName", in, out, opts...)
+func (c *usersClient) Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginReply, error) {
+	out := new(LoginReply)
+	err := c.cc.Invoke(ctx, "/user.v1.Users/Login", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userClient) GetProfileById(ctx context.Context, in *GetProfileByIdRequest, opts ...grpc.CallOption) (*GetProfileReply, error) {
+func (c *usersClient) GetProfileByUserName(ctx context.Context, in *GetProfileByUserNameRequest, opts ...grpc.CallOption) (*GetProfileReply, error) {
 	out := new(GetProfileReply)
-	err := c.cc.Invoke(ctx, "/user.v1.User/GetProfileById", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/user.v1.Users/GetProfileByUserName", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// UserServer is the server API for User service.
-// All implementations must embed UnimplementedUserServer
+func (c *usersClient) GetProfileById(ctx context.Context, in *GetProfileByIdRequest, opts ...grpc.CallOption) (*GetProfileReply, error) {
+	out := new(GetProfileReply)
+	err := c.cc.Invoke(ctx, "/user.v1.Users/GetProfileById", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// UsersServer is the server API for Users service.
+// All implementations must embed UnimplementedUsersServer
 // for forward compatibility
-type UserServer interface {
+type UsersServer interface {
+	Login(context.Context, *LoginRequest) (*LoginReply, error)
 	GetProfileByUserName(context.Context, *GetProfileByUserNameRequest) (*GetProfileReply, error)
 	GetProfileById(context.Context, *GetProfileByIdRequest) (*GetProfileReply, error)
-	mustEmbedUnimplementedUserServer()
+	mustEmbedUnimplementedUsersServer()
 }
 
-// UnimplementedUserServer must be embedded to have forward compatible implementations.
-type UnimplementedUserServer struct {
+// UnimplementedUsersServer must be embedded to have forward compatible implementations.
+type UnimplementedUsersServer struct {
 }
 
-func (UnimplementedUserServer) GetProfileByUserName(context.Context, *GetProfileByUserNameRequest) (*GetProfileReply, error) {
+func (UnimplementedUsersServer) Login(context.Context, *LoginRequest) (*LoginReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
+}
+func (UnimplementedUsersServer) GetProfileByUserName(context.Context, *GetProfileByUserNameRequest) (*GetProfileReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetProfileByUserName not implemented")
 }
-func (UnimplementedUserServer) GetProfileById(context.Context, *GetProfileByIdRequest) (*GetProfileReply, error) {
+func (UnimplementedUsersServer) GetProfileById(context.Context, *GetProfileByIdRequest) (*GetProfileReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetProfileById not implemented")
 }
-func (UnimplementedUserServer) mustEmbedUnimplementedUserServer() {}
+func (UnimplementedUsersServer) mustEmbedUnimplementedUsersServer() {}
 
-// UnsafeUserServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to UserServer will
+// UnsafeUsersServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to UsersServer will
 // result in compilation errors.
-type UnsafeUserServer interface {
-	mustEmbedUnimplementedUserServer()
+type UnsafeUsersServer interface {
+	mustEmbedUnimplementedUsersServer()
 }
 
-func RegisterUserServer(s grpc.ServiceRegistrar, srv UserServer) {
-	s.RegisterService(&User_ServiceDesc, srv)
+func RegisterUsersServer(s grpc.ServiceRegistrar, srv UsersServer) {
+	s.RegisterService(&Users_ServiceDesc, srv)
 }
 
-func _User_GetProfileByUserName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Users_Login_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoginRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UsersServer).Login(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.v1.Users/Login",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UsersServer).Login(ctx, req.(*LoginRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Users_GetProfileByUserName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetProfileByUserNameRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServer).GetProfileByUserName(ctx, in)
+		return srv.(UsersServer).GetProfileByUserName(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/user.v1.User/GetProfileByUserName",
+		FullMethod: "/user.v1.Users/GetProfileByUserName",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServer).GetProfileByUserName(ctx, req.(*GetProfileByUserNameRequest))
+		return srv.(UsersServer).GetProfileByUserName(ctx, req.(*GetProfileByUserNameRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _User_GetProfileById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Users_GetProfileById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetProfileByIdRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServer).GetProfileById(ctx, in)
+		return srv.(UsersServer).GetProfileById(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/user.v1.User/GetProfileById",
+		FullMethod: "/user.v1.Users/GetProfileById",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServer).GetProfileById(ctx, req.(*GetProfileByIdRequest))
+		return srv.(UsersServer).GetProfileById(ctx, req.(*GetProfileByIdRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// User_ServiceDesc is the grpc.ServiceDesc for User service.
+// Users_ServiceDesc is the grpc.ServiceDesc for Users service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var User_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "user.v1.User",
-	HandlerType: (*UserServer)(nil),
+var Users_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "user.v1.Users",
+	HandlerType: (*UsersServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
+			MethodName: "Login",
+			Handler:    _Users_Login_Handler,
+		},
+		{
 			MethodName: "GetProfileByUserName",
-			Handler:    _User_GetProfileByUserName_Handler,
+			Handler:    _Users_GetProfileByUserName_Handler,
 		},
 		{
 			MethodName: "GetProfileById",
-			Handler:    _User_GetProfileById_Handler,
+			Handler:    _Users_GetProfileById_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

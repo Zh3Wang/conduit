@@ -24,7 +24,7 @@ func NewArticleServiceClient(dis registry.Discovery) articlePb.ArticleClient {
 	return articlePb.NewArticleClient(conn)
 }
 
-func NewUserServiceClient(dis registry.Discovery) userPb.UserClient {
+func NewUserServiceClient(dis registry.Discovery) userPb.UsersClient {
 	conn, err := grpc.DialInsecure(
 		context.Background(),
 		grpc.WithEndpoint("discovery://conduit/"+service.UserService),
@@ -34,5 +34,5 @@ func NewUserServiceClient(dis registry.Discovery) userPb.UserClient {
 		panic(err)
 	}
 
-	return userPb.NewUserClient(conn)
+	return userPb.NewUsersClient(conn)
 }

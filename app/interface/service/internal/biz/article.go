@@ -50,10 +50,10 @@ func (a *ArticleUsecase) GetArticleInfoBySlug(ctx context.Context, slug string) 
 		UpdatedAt:      articles.UpdatedAt,
 		Favorited:      false,
 		FavoritesCount: articles.FavoritesCount,
-		Author: &interfacePb.SingleArticleAuthorInfo{
+		Author: &interfacePb.Profile{
 			Username:  authorInfo.UserName,
 			Bio:       authorInfo.Bio,
-			Images:    authorInfo.Image,
+			Image:     authorInfo.Image,
 			Following: authorInfo.Following,
 		},
 	}, nil
