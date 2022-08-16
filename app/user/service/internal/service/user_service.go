@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"time"
 
 	"conduit/api/user/v1"
 	v1 "conduit/api/user/v1"
@@ -36,5 +37,22 @@ func (u *UserService) GetProfileById(ctx context.Context, req *userPb.GetProfile
 	}
 	return &userPb.GetProfileReply{
 		Profile: r,
+	}, nil
+}
+
+func (u *UserService) Register(ctx context.Context, req *userPb.RegisterRequest) (*userPb.UserReply, error) {
+	res, err := u.uc.Register(ctx, req.User)
+	if err != nil {
+		return nil, err
+	}
+	return &userPb.UserReply{
+		User: &userPb.User{
+			UserName:    res.Username,
+			Bio:         res.Bio,
+			Image:       res.Image,
+			Email:       res.Email,
+			CreatedTime: time.Unix(res.CreatedAt, 0).Format("2006/01/02 15:04:05"),
+			UpdatedTime: time.Unix(res.UpdatedAt, 0).Format("2006/01/02 15:04:05"),
+		},
 	}, nil
 }

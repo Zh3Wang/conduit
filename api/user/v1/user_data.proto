@@ -8,7 +8,8 @@ message Profile {
   string bio = 2;
   string image = 3;
   bool following = 4;
-
+  string created_time = 6;
+  string updated_time = 7;
 }
 
 message User {
@@ -16,5 +17,14 @@ message User {
   string bio = 2;
   string image = 3;
   string email = 4;
-  string token = 5;
+  string created_time = 6;
+  string updated_time = 7;
+}
+
+message RegisterModel {
+  string user_name = 1 [json_name = "username"];
+  string email = 2;
+  string bio = 3;
+  string image = 4;
+  string password = 5;
 }

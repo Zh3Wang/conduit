@@ -21,6 +21,7 @@ elif [ "$1" == "api" ]; then
    	       --go_out=paths=source_relative:. \
    	       --go-http_out=paths=source_relative:. \
    	       --go-grpc_out=paths=source_relative:. \
+           --validate_out=paths=source_relative,lang=go:. \
    	       --openapi_out==paths=source_relative:. \
    	       --go-errors_out=paths=source_relative:. \
   	       $API_PROTO_FILES

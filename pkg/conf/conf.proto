@@ -14,6 +14,7 @@ message Bootstrap {
   ServiceConfig article_service = 2;
   ServiceConfig user_service = 3;
   ServiceConfig conduit_interface = 4;
+  Biz biz = 5;
 }
 
 message Server {
@@ -51,4 +52,10 @@ message Data {
   Database database = 1;
   Redis redis = 2;
   Etcd etcd = 3;
+
+}
+
+
+message Biz {
+  string jwt_secret = 1;
 }

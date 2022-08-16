@@ -26,3 +26,5 @@ data:
     write_timeout: 0.2s
   etcd:
     addr: ['127.0.0.1:2379']
+biz:
+  jwt_secret: secret

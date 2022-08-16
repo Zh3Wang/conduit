@@ -3,6 +3,7 @@ syntax = "proto3";
 package interface.v1;
 
 import "google/api/annotations.proto";
+import "validate/validate.proto";
 import "api/interface/v1/interface_data.proto";
 
 option go_package = "./interfacePb";
@@ -15,6 +16,12 @@ service ConduitInterface {
       body: "*",
     };
   };
+  rpc Login (LoginRequest) returns (UserReply) {
+    option (google.api.http) = {
+      post:"api/users/login",
+      body: "*",
+    };
+  }
   rpc GetArticle (GetArticleRequest) returns (GetArticleReply)  {
     option (google.api.http) = {
       get: "api/articles/{slug}",
@@ -31,16 +38,25 @@ message GetArticleReply {
   SingleArticle article = 3;
 }
 
+message RegisterUserModel {
+  string username = 1 [(validate.rules).string.min_len = 3];
+  string email = 2 [(validate.rules).string.email = true];
+  string password = 3 [(validate.rules).string.min_len = 6];
+}
 
 message RegisterRequest {
-  message User {
-    string username = 1;
-    string email = 2;
-    string password = 3;
-  }
-  User user = 1;
+  RegisterUserModel user = 1;
 }
 
 message UserReply {
   User user = 1;
 }
+
+message LoginRequest {
+  message param {
+    string email = 1 [(validate.rules).string.email = true, json_name = "email"];
+    string password = 2 [(validate.rules).string.min_len = 6];
+  }
+  param user = 1;
+}
+

@@ -22,7 +22,8 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UsersClient interface {
-	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginReply, error)
+	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*UserReply, error)
+	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*UserReply, error)
 	GetProfileByUserName(ctx context.Context, in *GetProfileByUserNameRequest, opts ...grpc.CallOption) (*GetProfileReply, error)
 	GetProfileById(ctx context.Context, in *GetProfileByIdRequest, opts ...grpc.CallOption) (*GetProfileReply, error)
 }
@@ -35,8 +36,17 @@ func NewUsersClient(cc grpc.ClientConnInterface) UsersClient {
 	return &usersClient{cc}
 }
 
-func (c *usersClient) Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginReply, error) {
-	out := new(LoginReply)
+func (c *usersClient) Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*UserReply, error) {
+	out := new(UserReply)
+	err := c.cc.Invoke(ctx, "/user.v1.Users/Register", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *usersClient) Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*UserReply, error) {
+	out := new(UserReply)
 	err := c.cc.Invoke(ctx, "/user.v1.Users/Login", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -66,7 +76,8 @@ func (c *usersClient) GetProfileById(ctx context.Context, in *GetProfileByIdRequ
 // All implementations must embed UnimplementedUsersServer
 // for forward compatibility
 type UsersServer interface {
-	Login(context.Context, *LoginRequest) (*LoginReply, error)
+	Register(context.Context, *RegisterRequest) (*UserReply, error)
+	Login(context.Context, *LoginRequest) (*UserReply, error)
 	GetProfileByUserName(context.Context, *GetProfileByUserNameRequest) (*GetProfileReply, error)
 	GetProfileById(context.Context, *GetProfileByIdRequest) (*GetProfileReply, error)
 	mustEmbedUnimplementedUsersServer()
@@ -76,7 +87,10 @@ type UsersServer interface {
 type UnimplementedUsersServer struct {
 }
 
-func (UnimplementedUsersServer) Login(context.Context, *LoginRequest) (*LoginReply, error) {
+func (UnimplementedUsersServer) Register(context.Context, *RegisterRequest) (*UserReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
+}
+func (UnimplementedUsersServer) Login(context.Context, *LoginRequest) (*UserReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
 }
 func (UnimplementedUsersServer) GetProfileByUserName(context.Context, *GetProfileByUserNameRequest) (*GetProfileReply, error) {
@@ -96,6 +110,24 @@ type UnsafeUsersServer interface {
 
 func RegisterUsersServer(s grpc.ServiceRegistrar, srv UsersServer) {
 	s.RegisterService(&Users_ServiceDesc, srv)
+}
+
+func _Users_Register_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RegisterRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UsersServer).Register(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.v1.Users/Register",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UsersServer).Register(ctx, req.(*RegisterRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _Users_Login_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -159,6 +191,10 @@ var Users_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "user.v1.Users",
 	HandlerType: (*UsersServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Register",
+			Handler:    _Users_Register_Handler,
+		},
 		{
 			MethodName: "Login",
 			Handler:    _Users_Login_Handler,

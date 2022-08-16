@@ -43,6 +43,24 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/UserReply'
+    api/users/login:
+        post:
+            tags:
+                - ConduitInterface
+            operationId: ConduitInterface_Login
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/LoginRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UserReply'
 components:
     schemas:
         GetArticleReply:
@@ -51,6 +69,18 @@ components:
                 article:
                     $ref: '#/components/schemas/SingleArticle'
             description: The response message containing the greetings
+        LoginRequest:
+            type: object
+            properties:
+                user:
+                    $ref: '#/components/schemas/LoginRequest_param'
+        LoginRequest_param:
+            type: object
+            properties:
+                email:
+                    type: string
+                password:
+                    type: string
         Profile:
             type: object
             properties:
@@ -66,8 +96,8 @@ components:
             type: object
             properties:
                 user:
-                    $ref: '#/components/schemas/RegisterRequest_User'
-        RegisterRequest_User:
+                    $ref: '#/components/schemas/RegisterUserModel'
+        RegisterUserModel:
             type: object
             properties:
                 username:

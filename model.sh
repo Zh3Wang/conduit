@@ -3,6 +3,11 @@ if [ ! "$1" ]; then
   printf "缺少表名参数, 例如 ./model.sh user \n"
   exit 0
 fi
+
+if [ ! "$2" ]; then
+  printf "缺少struct参数, 例如 ./model.sh User \n"
+  exit 0
+fi
 cd ./model
 if [ ! -d $1_model ]; then
     mkdir $1_model
@@ -13,7 +18,7 @@ db2struct \
 --database conduit \
 --table $1 \
 --package $1Model \
---struct ${1^} \
+--struct $2 \
 --password qwe254511 \
 --user wangzhe \
 --gorm \

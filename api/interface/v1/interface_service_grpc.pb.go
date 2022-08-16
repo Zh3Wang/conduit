@@ -23,6 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ConduitInterfaceClient interface {
 	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*UserReply, error)
+	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*UserReply, error)
 	GetArticle(ctx context.Context, in *GetArticleRequest, opts ...grpc.CallOption) (*GetArticleReply, error)
 }
 
@@ -43,6 +44,15 @@ func (c *conduitInterfaceClient) Register(ctx context.Context, in *RegisterReque
 	return out, nil
 }
 
+func (c *conduitInterfaceClient) Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*UserReply, error) {
+	out := new(UserReply)
+	err := c.cc.Invoke(ctx, "/interface.v1.ConduitInterface/Login", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *conduitInterfaceClient) GetArticle(ctx context.Context, in *GetArticleRequest, opts ...grpc.CallOption) (*GetArticleReply, error) {
 	out := new(GetArticleReply)
 	err := c.cc.Invoke(ctx, "/interface.v1.ConduitInterface/GetArticle", in, out, opts...)
@@ -57,6 +67,7 @@ func (c *conduitInterfaceClient) GetArticle(ctx context.Context, in *GetArticleR
 // for forward compatibility
 type ConduitInterfaceServer interface {
 	Register(context.Context, *RegisterRequest) (*UserReply, error)
+	Login(context.Context, *LoginRequest) (*UserReply, error)
 	GetArticle(context.Context, *GetArticleRequest) (*GetArticleReply, error)
 	mustEmbedUnimplementedConduitInterfaceServer()
 }
@@ -67,6 +78,9 @@ type UnimplementedConduitInterfaceServer struct {
 
 func (UnimplementedConduitInterfaceServer) Register(context.Context, *RegisterRequest) (*UserReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
+}
+func (UnimplementedConduitInterfaceServer) Login(context.Context, *LoginRequest) (*UserReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
 }
 func (UnimplementedConduitInterfaceServer) GetArticle(context.Context, *GetArticleRequest) (*GetArticleReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetArticle not implemented")
@@ -102,6 +116,24 @@ func _ConduitInterface_Register_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ConduitInterface_Login_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoginRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ConduitInterfaceServer).Login(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/interface.v1.ConduitInterface/Login",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ConduitInterfaceServer).Login(ctx, req.(*LoginRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _ConduitInterface_GetArticle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetArticleRequest)
 	if err := dec(in); err != nil {
@@ -130,6 +162,10 @@ var ConduitInterface_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Register",
 			Handler:    _ConduitInterface_Register_Handler,
+		},
+		{
+			MethodName: "Login",
+			Handler:    _ConduitInterface_Login_Handler,
 		},
 		{
 			MethodName: "GetArticle",

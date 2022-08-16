@@ -8,7 +8,8 @@ option go_package = "./userPb";
 
 // The greeting service definition.
 service Users {
-  rpc Login(LoginRequest) returns (LoginReply);
+  rpc Register(RegisterRequest) returns (UserReply);
+  rpc Login(LoginRequest) returns (UserReply);
   rpc GetProfileByUserName(GetProfileByUserNameRequest) returns (GetProfileReply);
   rpc GetProfileById(GetProfileByIdRequest) returns (GetProfileReply);
 }
@@ -16,11 +17,14 @@ service Users {
 message LoginRequest {
   string email = 1;
   string password = 2;
-
 }
 
-message LoginReply {
+message UserReply {
   User user = 1;
+}
+
+message RegisterRequest {
+  RegisterModel user = 1;
 }
 
 message GetProfileByUserNameRequest {

@@ -31,10 +31,10 @@ func (r *userRepo) GetProfile(ctx context.Context, id int32) (*usersModel.Users,
 	return d, nil
 }
 
-func (r *userRepo) CreateUser(ctx context.Context, g *biz.User) error {
-	return nil
+func (r *userRepo) CreateUser(ctx context.Context, u *usersModel.Users) error {
+	return r.data.db.WithContext(ctx).Create(u).Error
 }
 
-func (r *userRepo) UpdateUser(ctx context.Context, g *biz.User) error {
+func (r *userRepo) UpdateUser(ctx context.Context, g *usersModel.Users) error {
 	return nil
 }
