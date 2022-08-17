@@ -3,6 +3,7 @@ package biz
 import (
 	"conduit/pkg/encrypt"
 	"context"
+	"github.com/pkg/errors"
 	"time"
 
 	userPb "conduit/api/user/v1"
@@ -58,7 +59,7 @@ func (uc *UserUsecase) Register(ctx context.Context, user *userPb.RegisterModel)
 	}
 	err := uc.repo.CreateUser(ctx, userInfo)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrapf(err, "create user repo")
 	}
 
 	return userInfo, nil

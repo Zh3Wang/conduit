@@ -13,6 +13,7 @@ import (
 
 type UserRepo interface {
 	GetAuthorProfileById(ctx context.Context, authorId int32) (*userPb.Profile, error)
+	CreateUser(ctx context.Context, info *interfacePb.RegisterUserModel) (*interfacePb.User, error)
 }
 
 type UserUsecase struct {
@@ -31,13 +32,12 @@ func (u *UserUsecase) Register(ctx context.Context, info *interfacePb.RegisterUs
 	if err != nil {
 		return nil, errors.WithMessagef(err, "generate token err")
 	}
-	return &interfacePb.User{
-		Email:    info.Email,
-		Token:    token,
-		Username: info.Username,
-		Bio:      "bio",
-		Image:    "image",
-	}, nil
+	res, err := u.repo.CreateUser(ctx, info)
+	if err != nil {
+		return nil, errors.WithMessagef(err, "CreateUser repo err")
+	}
+	res.Token = token
+	return res, nil
 }
 
 func (u *UserUsecase) generateToken(username, email string) (string, error) {
