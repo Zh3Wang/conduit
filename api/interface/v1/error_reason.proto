@@ -8,7 +8,12 @@ option go_package = "./interfacePb";
 enum ErrorReason {
   option (errors.default_code) = 500;
 
+
   USER_NOT_FOUND = 0 [(errors.code) = 422];
   CONTENT_MISSING = 1 [(errors.code) = 422];
   PARAM_ILLEGAL = 2 [(errors.code) = 422];
+
+
+  // Authorization
+  TOKEN_INVALID = 3 [(errors.code) = 401];
 }

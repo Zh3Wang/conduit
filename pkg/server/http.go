@@ -2,7 +2,6 @@ package server
 
 import (
 	"conduit/pkg/conf"
-	"conduit/pkg/middleware/auth"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/logging"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
@@ -10,12 +9,12 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/http"
 )
 
-func NewHttpServer(c *conf.Server, logger log.Logger) *http.Server {
+func NewHttpServer(c *conf.Server, cb *conf.Biz, logger log.Logger) *http.Server {
 	var opts = []http.ServerOption{
 		http.ErrorEncoder(errorEncoder),
 		http.Middleware(
 			recovery.Recovery(),
-			auth.JWTAuthorization(),
+			//auth.JWTAuthorization(cb.JwtSecret),
 			logging.Server(logger),
 			validate.Validator(),
 		),

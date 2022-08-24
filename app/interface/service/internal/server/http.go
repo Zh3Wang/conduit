@@ -11,8 +11,8 @@ import (
 )
 
 // NewHTTPServer new an HTTP server.
-func NewHTTPServer(c *conf.Server, svc *service.ConduitInterface, logger log.Logger) *http.Server {
-	srv := server.NewHttpServer(c, logger)
+func NewHTTPServer(c *conf.Server, cb *conf.Biz, svc *service.ConduitInterface, logger log.Logger) *http.Server {
+	srv := server.NewHttpServer(c, cb, logger)
 	v1.RegisterConduitInterfaceHTTPServer(srv, svc)
 	return srv
 }

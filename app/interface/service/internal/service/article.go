@@ -12,7 +12,6 @@ func (c *ConduitInterface) GetArticle(ctx context.Context, req *interfacePb.GetA
 	}
 	result, err := c.ac.GetArticleInfoBySlug(ctx, req.GetSlug())
 	if err != nil {
-		c.log.Errorf("GetArticle err: %s", err.Error())
 		return nil, err
 	}
 	return &interfacePb.GetArticleReply{Article: result}, nil

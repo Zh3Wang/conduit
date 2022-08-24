@@ -178,6 +178,8 @@ func (m *User) validate(all bool) error {
 
 	// no validation rules for UpdatedTime
 
+	// no validation rules for UserId
+
 	if len(errors) > 0 {
 		return UserMultiError(errors)
 	}

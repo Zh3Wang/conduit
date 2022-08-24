@@ -14,3 +14,17 @@ func (c *ConduitInterface) Register(ctx context.Context, req *interfacePb.Regist
 		User: user,
 	}, nil
 }
+
+func (c *ConduitInterface) Login(ctx context.Context, req *interfacePb.LoginRequest) (*interfacePb.UserReply, error) {
+	res, err := c.uc.Login(ctx, req.User.Email, req.User.Password)
+	if err != nil {
+		return nil, err
+	}
+	return &interfacePb.UserReply{User: &interfacePb.User{
+		Email:    res.Email,
+		Token:    res.Token,
+		Username: res.Username,
+		Bio:      res.Bio,
+		Image:    res.Image,
+	}}, nil
+}

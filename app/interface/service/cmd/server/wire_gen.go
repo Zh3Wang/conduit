@@ -33,7 +33,7 @@ func initApp(confServer *conf.Server, confData *conf.Data, confBiz *conf.Biz, lo
 	articleRepo := data.NewArticleRepo(dataData, logger)
 	articleUsecase := biz.NewArticleUsecase(articleRepo, userRepo, logger)
 	conduitInterface := service.NewConduitInterface(userUsecase, articleUsecase, logger)
-	httpServer := server.NewHTTPServer(confServer, conduitInterface, logger)
+	httpServer := server.NewHTTPServer(confServer, confBiz, conduitInterface, logger)
 	registrar := data.NewRegistrar(confData, logger)
 	app := newApp(logger, httpServer, registrar)
 	return app, func() {

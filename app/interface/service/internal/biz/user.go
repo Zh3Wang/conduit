@@ -3,6 +3,7 @@ package biz
 import (
 	interfacePb "conduit/api/interface/v1"
 	userPb "conduit/api/user/v1"
+	usersModel "conduit/model/users_model"
 	"conduit/pkg/conf"
 	"conduit/pkg/middleware/auth"
 	"context"
@@ -13,7 +14,8 @@ import (
 
 type UserRepo interface {
 	GetAuthorProfileById(ctx context.Context, authorId int32) (*userPb.Profile, error)
-	CreateUser(ctx context.Context, info *interfacePb.RegisterUserModel) (*interfacePb.User, error)
+	CreateUser(ctx context.Context, info *interfacePb.RegisterUserModel) (*usersModel.Users, error)
+	Login(ctx context.Context, email, password string) (*usersModel.Users, error)
 }
 
 type UserUsecase struct {
@@ -27,19 +29,43 @@ func NewUserUsecase(conf *conf.Biz, repo UserRepo, logger log.Logger) *UserUseca
 }
 
 func (u *UserUsecase) Register(ctx context.Context, info *interfacePb.RegisterUserModel) (*interfacePb.User, error) {
-	// 生成jwt token
-	token, err := u.generateToken(info.Username, info.Email)
-	if err != nil {
-		return nil, errors.WithMessagef(err, "generate token err")
-	}
 	res, err := u.repo.CreateUser(ctx, info)
 	if err != nil {
 		return nil, errors.WithMessagef(err, "CreateUser repo err")
 	}
-	res.Token = token
-	return res, nil
+	// 生成jwt token
+	token, err := u.generateToken(res.Username, res.ID)
+	if err != nil {
+		return nil, errors.WithMessagef(err, "generate token err")
+	}
+	return &interfacePb.User{
+		Email:    res.Email,
+		Token:    token,
+		Username: res.Username,
+		Bio:      res.Bio,
+		Image:    res.Image,
+	}, nil
 }
 
-func (u *UserUsecase) generateToken(username, email string) (string, error) {
-	return auth.GenerateJwtToken(u.secret, username, email)
+func (u *UserUsecase) generateToken(username string, id int64) (string, error) {
+	return auth.GenerateJwtToken(u.secret, username, id)
+}
+
+func (u *UserUsecase) Login(ctx context.Context, email, password string) (*interfacePb.User, error) {
+	res, err := u.repo.Login(ctx, email, password)
+	if err != nil {
+		return nil, err
+	}
+	// 生成jwt token
+	token, err := u.generateToken(res.Username, res.ID)
+	if err != nil {
+		return nil, errors.WithMessagef(err, "generate token err")
+	}
+	return &interfacePb.User{
+		Email:    res.Email,
+		Token:    token,
+		Username: res.Username,
+		Bio:      res.Bio,
+		Image:    res.Image,
+	}, nil
 }

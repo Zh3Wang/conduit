@@ -20,6 +20,7 @@ type UserRepo interface {
 	GetProfile(context.Context, int32) (*usersModel.Users, error)
 	CreateUser(context.Context, *usersModel.Users) error
 	UpdateUser(context.Context, *usersModel.Users) error
+	GetUserByEmail(ctx context.Context, email string) (*usersModel.Users, error)
 }
 
 type UserUsecase struct {
@@ -59,8 +60,21 @@ func (uc *UserUsecase) Register(ctx context.Context, user *userPb.RegisterModel)
 	}
 	err := uc.repo.CreateUser(ctx, userInfo)
 	if err != nil {
-		return nil, errors.Wrapf(err, "create user repo")
+		return nil, errors.WithMessagef(err, "create user repo")
 	}
 
 	return userInfo, nil
+}
+
+func (uc *UserUsecase) Login(ctx context.Context, user *userPb.LoginRequest) (*usersModel.Users, error) {
+	d, err := uc.repo.GetUserByEmail(ctx, user.GetEmail())
+	if err != nil {
+		return nil, err
+	}
+
+	pass := encrypt.Verify(d.PasswordHash, user.Password)
+	if pass != nil {
+		return nil, userPb.ErrorUserNotFound("password invalid")
+	}
+	return d, nil
 }

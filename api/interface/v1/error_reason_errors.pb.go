@@ -46,3 +46,17 @@ func IsParamIllegal(err error) bool {
 func ErrorParamIllegal(format string, args ...interface{}) *errors.Error {
 	return errors.New(422, ErrorReason_PARAM_ILLEGAL.String(), fmt.Sprintf(format, args...))
 }
+
+// Authorization
+func IsTokenInvalid(err error) bool {
+	if err == nil {
+		return false
+	}
+	e := errors.FromError(err)
+	return e.Reason == ErrorReason_TOKEN_INVALID.String() && e.Code == 401
+}
+
+// Authorization
+func ErrorTokenInvalid(format string, args ...interface{}) *errors.Error {
+	return errors.New(401, ErrorReason_TOKEN_INVALID.String(), fmt.Sprintf(format, args...))
+}

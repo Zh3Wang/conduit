@@ -46,6 +46,25 @@ func (u *UserService) Register(ctx context.Context, req *userPb.RegisterRequest)
 	}
 	return &userPb.UserReply{
 		User: &userPb.User{
+			UserId:      res.ID,
+			UserName:    res.Username,
+			Bio:         res.Bio,
+			Image:       res.Image,
+			Email:       res.Email,
+			CreatedTime: time.Unix(res.CreatedAt, 0).Format("2006/01/02 15:04:05"),
+			UpdatedTime: time.Unix(res.UpdatedAt, 0).Format("2006/01/02 15:04:05"),
+		},
+	}, nil
+}
+
+func (u *UserService) Login(ctx context.Context, req *userPb.LoginRequest) (*userPb.UserReply, error) {
+	res, err := u.uc.Login(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	return &userPb.UserReply{
+		User: &userPb.User{
+			UserId:      res.ID,
 			UserName:    res.Username,
 			Bio:         res.Bio,
 			Image:       res.Image,
