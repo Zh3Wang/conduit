@@ -25,6 +25,8 @@ type ConduitInterfaceClient interface {
 	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*UserReply, error)
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*UserReply, error)
 	GetArticle(ctx context.Context, in *GetArticleRequest, opts ...grpc.CallOption) (*GetArticleReply, error)
+	GetCurrentUser(ctx context.Context, in *GetCurrentUserRequest, opts ...grpc.CallOption) (*UserReply, error)
+	UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UserReply, error)
 }
 
 type conduitInterfaceClient struct {
@@ -62,6 +64,24 @@ func (c *conduitInterfaceClient) GetArticle(ctx context.Context, in *GetArticleR
 	return out, nil
 }
 
+func (c *conduitInterfaceClient) GetCurrentUser(ctx context.Context, in *GetCurrentUserRequest, opts ...grpc.CallOption) (*UserReply, error) {
+	out := new(UserReply)
+	err := c.cc.Invoke(ctx, "/interface.v1.ConduitInterface/GetCurrentUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *conduitInterfaceClient) UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UserReply, error) {
+	out := new(UserReply)
+	err := c.cc.Invoke(ctx, "/interface.v1.ConduitInterface/UpdateUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ConduitInterfaceServer is the server API for ConduitInterface service.
 // All implementations must embed UnimplementedConduitInterfaceServer
 // for forward compatibility
@@ -69,6 +89,8 @@ type ConduitInterfaceServer interface {
 	Register(context.Context, *RegisterRequest) (*UserReply, error)
 	Login(context.Context, *LoginRequest) (*UserReply, error)
 	GetArticle(context.Context, *GetArticleRequest) (*GetArticleReply, error)
+	GetCurrentUser(context.Context, *GetCurrentUserRequest) (*UserReply, error)
+	UpdateUser(context.Context, *UpdateUserRequest) (*UserReply, error)
 	mustEmbedUnimplementedConduitInterfaceServer()
 }
 
@@ -84,6 +106,12 @@ func (UnimplementedConduitInterfaceServer) Login(context.Context, *LoginRequest)
 }
 func (UnimplementedConduitInterfaceServer) GetArticle(context.Context, *GetArticleRequest) (*GetArticleReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetArticle not implemented")
+}
+func (UnimplementedConduitInterfaceServer) GetCurrentUser(context.Context, *GetCurrentUserRequest) (*UserReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCurrentUser not implemented")
+}
+func (UnimplementedConduitInterfaceServer) UpdateUser(context.Context, *UpdateUserRequest) (*UserReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateUser not implemented")
 }
 func (UnimplementedConduitInterfaceServer) mustEmbedUnimplementedConduitInterfaceServer() {}
 
@@ -152,6 +180,42 @@ func _ConduitInterface_GetArticle_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ConduitInterface_GetCurrentUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCurrentUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ConduitInterfaceServer).GetCurrentUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/interface.v1.ConduitInterface/GetCurrentUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ConduitInterfaceServer).GetCurrentUser(ctx, req.(*GetCurrentUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ConduitInterface_UpdateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ConduitInterfaceServer).UpdateUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/interface.v1.ConduitInterface/UpdateUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ConduitInterfaceServer).UpdateUser(ctx, req.(*UpdateUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ConduitInterface_ServiceDesc is the grpc.ServiceDesc for ConduitInterface service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -170,6 +234,14 @@ var ConduitInterface_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetArticle",
 			Handler:    _ConduitInterface_GetArticle_Handler,
+		},
+		{
+			MethodName: "GetCurrentUser",
+			Handler:    _ConduitInterface_GetCurrentUser_Handler,
+		},
+		{
+			MethodName: "UpdateUser",
+			Handler:    _ConduitInterface_UpdateUser_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

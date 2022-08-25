@@ -5,7 +5,7 @@ go 1.16
 require (
 	github.com/envoyproxy/protoc-gen-validate v0.6.7
 	github.com/go-kratos/kratos/contrib/registry/etcd/v2 v2.0.0-20220727050715-86eba9464615
-	github.com/go-kratos/kratos/v2 v2.4.0
+	github.com/go-kratos/kratos/v2 v2.5.0
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/golang/protobuf v1.5.2
 	github.com/google/wire v0.5.0

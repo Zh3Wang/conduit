@@ -1,8 +1,9 @@
 syntax = "proto3";
 
 package user.v1;
-
+import "validate/validate.proto";
 import "api/user/v1/user_data.proto";
+
 
 option go_package = "./userPb";
 
@@ -12,6 +13,7 @@ service Users {
   rpc Login(LoginRequest) returns (UserReply);
   rpc GetProfileByUserName(GetProfileByUserNameRequest) returns (GetProfileReply);
   rpc GetProfileById(GetProfileByIdRequest) returns (GetProfileReply);
+  rpc GetUser(GetUserRequest) returns (UserReply);
 }
 
 message LoginRequest {
@@ -28,13 +30,19 @@ message RegisterRequest {
 }
 
 message GetProfileByUserNameRequest {
-  string username = 1;
+  string username = 1 [(validate.rules).string.min_len = 1];
 }
 
 message GetProfileByIdRequest {
-  int32 id = 1;
+  int32 id = 1 [(validate.rules).int32 = {gt: 0}];
 }
 
 message GetProfileReply {
   Profile profile = 1;
+}
+
+message GetUserRequest {
+//  string  type = 1;
+  string  type = 1 [(validate.rules).string = {in: ["username", "id"]}];
+  string  keyword = 2;
 }

@@ -18,6 +18,7 @@ type User struct {
 
 type UserRepo interface {
 	GetProfile(context.Context, int32) (*usersModel.Users, error)
+	GetUser(ctx context.Context, keyword, stype string) (*usersModel.Users, error)
 	CreateUser(context.Context, *usersModel.Users) error
 	UpdateUser(context.Context, *usersModel.Users) error
 	GetUserByEmail(ctx context.Context, email string) (*usersModel.Users, error)
@@ -75,6 +76,14 @@ func (uc *UserUsecase) Login(ctx context.Context, user *userPb.LoginRequest) (*u
 	pass := encrypt.Verify(d.PasswordHash, user.Password)
 	if pass != nil {
 		return nil, userPb.ErrorUserNotFound("password invalid")
+	}
+	return d, nil
+}
+
+func (uc *UserUsecase) GetUser(ctx context.Context, keyword, stype string) (*usersModel.Users, error) {
+	d, err := uc.repo.GetUser(ctx, keyword, stype)
+	if err != nil {
+		return nil, err
 	}
 	return d, nil
 }

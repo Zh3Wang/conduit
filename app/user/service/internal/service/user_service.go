@@ -51,8 +51,8 @@ func (u *UserService) Register(ctx context.Context, req *userPb.RegisterRequest)
 			Bio:         res.Bio,
 			Image:       res.Image,
 			Email:       res.Email,
-			CreatedTime: time.Unix(res.CreatedAt, 0).Format("2006/01/02 15:04:05"),
-			UpdatedTime: time.Unix(res.UpdatedAt, 0).Format("2006/01/02 15:04:05"),
+			CreatedTime: convertTime(res.CreatedAt),
+			UpdatedTime: convertTime(res.UpdatedAt),
 		},
 	}, nil
 }
@@ -69,8 +69,30 @@ func (u *UserService) Login(ctx context.Context, req *userPb.LoginRequest) (*use
 			Bio:         res.Bio,
 			Image:       res.Image,
 			Email:       res.Email,
-			CreatedTime: time.Unix(res.CreatedAt, 0).Format("2006/01/02 15:04:05"),
-			UpdatedTime: time.Unix(res.UpdatedAt, 0).Format("2006/01/02 15:04:05"),
+			CreatedTime: convertTime(res.CreatedAt),
+			UpdatedTime: convertTime(res.UpdatedAt),
 		},
 	}, nil
+}
+
+func (u *UserService) GetUser(ctx context.Context, req *userPb.GetUserRequest) (*userPb.UserReply, error) {
+	res, err := u.uc.GetUser(ctx, req.GetKeyword(), req.GetType())
+	if err != nil {
+		return nil, err
+	}
+	return &userPb.UserReply{
+		User: &userPb.User{
+			UserId:      res.ID,
+			UserName:    res.Username,
+			Bio:         res.Bio,
+			Image:       res.Image,
+			Email:       res.Email,
+			CreatedTime: convertTime(res.CreatedAt),
+			UpdatedTime: convertTime(res.UpdatedAt),
+		},
+	}, nil
+}
+
+func convertTime(t int64) string {
+	return time.Unix(t, 0).Format("2006/01/02 15:04:05")
 }

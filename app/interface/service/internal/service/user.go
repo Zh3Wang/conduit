@@ -28,3 +28,18 @@ func (c *ConduitInterface) Login(ctx context.Context, req *interfacePb.LoginRequ
 		Image:    res.Image,
 	}}, nil
 }
+
+func (c *ConduitInterface) GetCurrentUser(ctx context.Context, req *interfacePb.GetCurrentUserRequest) (*interfacePb.UserReply, error) {
+	res, err := c.uc.GetCurrentUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return &interfacePb.UserReply{User: &interfacePb.User{
+		Email:    res.Email,
+		Token:    res.Token,
+		Username: res.Username,
+		Bio:      res.Bio,
+		Image:    res.Image,
+	}}, nil
+
+}

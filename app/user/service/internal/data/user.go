@@ -4,7 +4,7 @@ import (
 	"conduit/app/user/service/internal/biz"
 	usersModel "conduit/model/users_model"
 	"context"
-
+	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
 )
 
@@ -27,6 +27,20 @@ func (r *userRepo) GetProfile(ctx context.Context, id int32) (*usersModel.Users,
 	if err != nil {
 		return nil, err
 	}
+	return d, nil
+}
+
+func (r *userRepo) GetUser(ctx context.Context, keyword, stype string) (*usersModel.Users, error) {
+	var (
+		d   = &usersModel.Users{}
+		err error
+	)
+	cond := fmt.Sprintf("%s = ?", stype)
+	err = r.data.db.WithContext(ctx).Where(cond, keyword).First(d).Error
+	if err != nil {
+		return nil, err
+	}
+
 	return d, nil
 }
 

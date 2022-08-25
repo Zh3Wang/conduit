@@ -25,6 +25,35 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/GetArticleReply'
+    api/user:
+        get:
+            tags:
+                - ConduitInterface
+            operationId: ConduitInterface_GetCurrentUser
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UserReply'
+        put:
+            tags:
+                - ConduitInterface
+            operationId: ConduitInterface_UpdateUser
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/UpdateUserRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UserReply'
     api/users:
         post:
             tags:
@@ -132,6 +161,24 @@ components:
                     format: int32
                 author:
                     $ref: '#/components/schemas/Profile'
+        UpdateUserRequest:
+            type: object
+            properties:
+                user:
+                    $ref: '#/components/schemas/UpdateUserRequest_User'
+        UpdateUserRequest_User:
+            type: object
+            properties:
+                email:
+                    type: string
+                password:
+                    type: string
+                username:
+                    type: string
+                bio:
+                    type: string
+                image:
+                    type: string
         User:
             type: object
             properties:

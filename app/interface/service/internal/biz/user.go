@@ -13,6 +13,7 @@ import (
 )
 
 type UserRepo interface {
+	GetUserById(ctx context.Context, id int64) (*usersModel.Users, error)
 	GetAuthorProfileById(ctx context.Context, authorId int32) (*userPb.Profile, error)
 	CreateUser(ctx context.Context, info *interfacePb.RegisterUserModel) (*usersModel.Users, error)
 	Login(ctx context.Context, email, password string) (*usersModel.Users, error)
@@ -64,6 +65,23 @@ func (u *UserUsecase) Login(ctx context.Context, email, password string) (*inter
 	return &interfacePb.User{
 		Email:    res.Email,
 		Token:    token,
+		Username: res.Username,
+		Bio:      res.Bio,
+		Image:    res.Image,
+	}, nil
+}
+
+func (u *UserUsecase) GetCurrentUser(ctx context.Context) (*interfacePb.User, error) {
+	uInfo := auth.FromContext(ctx)
+	if uInfo == nil {
+		return nil, interfacePb.ErrorUserNotFound("GetCurrentUser FromContext failed")
+	}
+	res, err := u.repo.GetUserById(ctx, uInfo.UserId)
+	if err != nil {
+		return nil, err
+	}
+	return &interfacePb.User{
+		Email:    res.Email,
 		Username: res.Username,
 		Bio:      res.Bio,
 		Image:    res.Image,

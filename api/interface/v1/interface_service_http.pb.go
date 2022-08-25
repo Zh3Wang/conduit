@@ -20,13 +20,17 @@ var _ = binding.EncodeURL
 const _ = http.SupportPackageIsVersion1
 
 const OperationConduitInterfaceGetArticle = "/interface.v1.ConduitInterface/GetArticle"
+const OperationConduitInterfaceGetCurrentUser = "/interface.v1.ConduitInterface/GetCurrentUser"
 const OperationConduitInterfaceLogin = "/interface.v1.ConduitInterface/Login"
 const OperationConduitInterfaceRegister = "/interface.v1.ConduitInterface/Register"
+const OperationConduitInterfaceUpdateUser = "/interface.v1.ConduitInterface/UpdateUser"
 
 type ConduitInterfaceHTTPServer interface {
 	GetArticle(context.Context, *GetArticleRequest) (*GetArticleReply, error)
+	GetCurrentUser(context.Context, *GetCurrentUserRequest) (*UserReply, error)
 	Login(context.Context, *LoginRequest) (*UserReply, error)
 	Register(context.Context, *RegisterRequest) (*UserReply, error)
+	UpdateUser(context.Context, *UpdateUserRequest) (*UserReply, error)
 }
 
 func RegisterConduitInterfaceHTTPServer(s *http.Server, srv ConduitInterfaceHTTPServer) {
@@ -34,6 +38,8 @@ func RegisterConduitInterfaceHTTPServer(s *http.Server, srv ConduitInterfaceHTTP
 	r.POST("api/users", _ConduitInterface_Register0_HTTP_Handler(srv))
 	r.POST("api/users/login", _ConduitInterface_Login0_HTTP_Handler(srv))
 	r.GET("api/articles/{slug}", _ConduitInterface_GetArticle0_HTTP_Handler(srv))
+	r.GET("api/user", _ConduitInterface_GetCurrentUser0_HTTP_Handler(srv))
+	r.PUT("api/user", _ConduitInterface_UpdateUser0_HTTP_Handler(srv))
 }
 
 func _ConduitInterface_Register0_HTTP_Handler(srv ConduitInterfaceHTTPServer) func(ctx http.Context) error {
@@ -96,10 +102,50 @@ func _ConduitInterface_GetArticle0_HTTP_Handler(srv ConduitInterfaceHTTPServer) 
 	}
 }
 
+func _ConduitInterface_GetCurrentUser0_HTTP_Handler(srv ConduitInterfaceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in GetCurrentUserRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationConduitInterfaceGetCurrentUser)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetCurrentUser(ctx, req.(*GetCurrentUserRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*UserReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _ConduitInterface_UpdateUser0_HTTP_Handler(srv ConduitInterfaceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in UpdateUserRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationConduitInterfaceUpdateUser)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.UpdateUser(ctx, req.(*UpdateUserRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*UserReply)
+		return ctx.Result(200, reply)
+	}
+}
+
 type ConduitInterfaceHTTPClient interface {
 	GetArticle(ctx context.Context, req *GetArticleRequest, opts ...http.CallOption) (rsp *GetArticleReply, err error)
+	GetCurrentUser(ctx context.Context, req *GetCurrentUserRequest, opts ...http.CallOption) (rsp *UserReply, err error)
 	Login(ctx context.Context, req *LoginRequest, opts ...http.CallOption) (rsp *UserReply, err error)
 	Register(ctx context.Context, req *RegisterRequest, opts ...http.CallOption) (rsp *UserReply, err error)
+	UpdateUser(ctx context.Context, req *UpdateUserRequest, opts ...http.CallOption) (rsp *UserReply, err error)
 }
 
 type ConduitInterfaceHTTPClientImpl struct {
@@ -115,6 +161,19 @@ func (c *ConduitInterfaceHTTPClientImpl) GetArticle(ctx context.Context, in *Get
 	pattern := "api/articles/{slug}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationConduitInterfaceGetArticle))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *ConduitInterfaceHTTPClientImpl) GetCurrentUser(ctx context.Context, in *GetCurrentUserRequest, opts ...http.CallOption) (*UserReply, error) {
+	var out UserReply
+	pattern := "api/user"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationConduitInterfaceGetCurrentUser))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
@@ -143,6 +202,19 @@ func (c *ConduitInterfaceHTTPClientImpl) Register(ctx context.Context, in *Regis
 	opts = append(opts, http.Operation(OperationConduitInterfaceRegister))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *ConduitInterfaceHTTPClientImpl) UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...http.CallOption) (*UserReply, error) {
+	var out UserReply
+	pattern := "api/user"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationConduitInterfaceUpdateUser))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

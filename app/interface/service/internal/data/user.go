@@ -6,6 +6,7 @@ import (
 	"conduit/app/interface/service/internal/biz"
 	usersModel "conduit/model/users_model"
 	"context"
+	"strconv"
 
 	"github.com/go-kratos/kratos/v2/log"
 )
@@ -73,6 +74,26 @@ func (u *userRepo) CreateUser(ctx context.Context, info *interfacePb.RegisterUse
 	}
 	if reply == nil || reply.User == nil {
 		return nil, interfacePb.ErrorContentMissing("RPC Register failed")
+	}
+	return &usersModel.Users{
+		Email:    reply.User.Email,
+		Username: reply.User.UserName,
+		Bio:      reply.User.Bio,
+		Image:    reply.User.Image,
+		ID:       reply.User.UserId,
+	}, nil
+}
+
+func (u *userRepo) GetUserById(ctx context.Context, id int64) (*usersModel.Users, error) {
+	reply, err := u.data.uc.GetUser(ctx, &userPb.GetUserRequest{
+		Type:    "id",
+		Keyword: strconv.Itoa(int(id)),
+	})
+	if err != nil {
+		return nil, err
+	}
+	if reply == nil || reply.User == nil {
+		return nil, interfacePb.ErrorContentMissing("RPC GetUserById failed")
 	}
 	return &usersModel.Users{
 		Email:    reply.User.Email,

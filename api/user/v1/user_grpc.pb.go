@@ -26,6 +26,7 @@ type UsersClient interface {
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*UserReply, error)
 	GetProfileByUserName(ctx context.Context, in *GetProfileByUserNameRequest, opts ...grpc.CallOption) (*GetProfileReply, error)
 	GetProfileById(ctx context.Context, in *GetProfileByIdRequest, opts ...grpc.CallOption) (*GetProfileReply, error)
+	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*UserReply, error)
 }
 
 type usersClient struct {
@@ -72,6 +73,15 @@ func (c *usersClient) GetProfileById(ctx context.Context, in *GetProfileByIdRequ
 	return out, nil
 }
 
+func (c *usersClient) GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*UserReply, error) {
+	out := new(UserReply)
+	err := c.cc.Invoke(ctx, "/user.v1.Users/GetUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UsersServer is the server API for Users service.
 // All implementations must embed UnimplementedUsersServer
 // for forward compatibility
@@ -80,6 +90,7 @@ type UsersServer interface {
 	Login(context.Context, *LoginRequest) (*UserReply, error)
 	GetProfileByUserName(context.Context, *GetProfileByUserNameRequest) (*GetProfileReply, error)
 	GetProfileById(context.Context, *GetProfileByIdRequest) (*GetProfileReply, error)
+	GetUser(context.Context, *GetUserRequest) (*UserReply, error)
 	mustEmbedUnimplementedUsersServer()
 }
 
@@ -98,6 +109,9 @@ func (UnimplementedUsersServer) GetProfileByUserName(context.Context, *GetProfil
 }
 func (UnimplementedUsersServer) GetProfileById(context.Context, *GetProfileByIdRequest) (*GetProfileReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetProfileById not implemented")
+}
+func (UnimplementedUsersServer) GetUser(context.Context, *GetUserRequest) (*UserReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUser not implemented")
 }
 func (UnimplementedUsersServer) mustEmbedUnimplementedUsersServer() {}
 
@@ -184,6 +198,24 @@ func _Users_GetProfileById_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Users_GetUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UsersServer).GetUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.v1.Users/GetUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UsersServer).GetUser(ctx, req.(*GetUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Users_ServiceDesc is the grpc.ServiceDesc for Users service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -206,6 +238,10 @@ var Users_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetProfileById",
 			Handler:    _Users_GetProfileById_Handler,
+		},
+		{
+			MethodName: "GetUser",
+			Handler:    _Users_GetUser_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
