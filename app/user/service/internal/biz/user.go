@@ -4,6 +4,7 @@ import (
 	"conduit/pkg/encrypt"
 	"context"
 	"github.com/pkg/errors"
+	"strconv"
 	"time"
 
 	userPb "conduit/api/user/v1"
@@ -86,4 +87,28 @@ func (uc *UserUsecase) GetUser(ctx context.Context, keyword, stype string) (*use
 		return nil, err
 	}
 	return d, nil
+}
+
+func (uc *UserUsecase) UpdateUser(ctx context.Context, user *userPb.UpdateUserRequest) (*usersModel.Users, error) {
+	var g = &usersModel.Users{
+		ID:       user.UserId,
+		Email:    user.Email,
+		Username: user.Username,
+		Bio:      user.Bio,
+		Image:    user.Image,
+	}
+	if len(user.Password) > 0 {
+		g.PasswordHash = encrypt.Hash(user.Password)
+	}
+	err := uc.repo.UpdateUser(ctx, g)
+	if err != nil {
+		return nil, err
+	}
+
+	//查询更新后的用户信息
+	gg, err := uc.repo.GetUser(ctx, strconv.Itoa(int(user.UserId)), "id")
+	if err != nil {
+		return nil, err
+	}
+	return gg, nil
 }

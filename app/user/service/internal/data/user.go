@@ -49,7 +49,7 @@ func (r *userRepo) CreateUser(ctx context.Context, u *usersModel.Users) error {
 }
 
 func (r *userRepo) UpdateUser(ctx context.Context, g *usersModel.Users) error {
-	return nil
+	return r.data.db.WithContext(ctx).Model(usersModel.Users{}).Where("id = ?", g.ID).Updates(g).Error
 }
 
 func (r *userRepo) GetUserByEmail(ctx context.Context, email string) (*usersModel.Users, error) {

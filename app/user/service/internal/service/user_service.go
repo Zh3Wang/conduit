@@ -93,6 +93,24 @@ func (u *UserService) GetUser(ctx context.Context, req *userPb.GetUserRequest) (
 	}, nil
 }
 
+func (u *UserService) UpdateUser(ctx context.Context, req *userPb.UpdateUserRequest) (*userPb.UserReply, error) {
+	res, err := u.uc.UpdateUser(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	return &userPb.UserReply{
+		User: &userPb.User{
+			UserName:    res.Username,
+			Bio:         res.Bio,
+			Image:       res.Image,
+			Email:       res.Email,
+			CreatedTime: convertTime(res.CreatedAt),
+			UpdatedTime: convertTime(res.UpdatedAt),
+			UserId:      res.ID,
+		},
+	}, nil
+}
+
 func convertTime(t int64) string {
 	return time.Unix(t, 0).Format("2006/01/02 15:04:05")
 }
