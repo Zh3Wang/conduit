@@ -17,6 +17,7 @@ type UserRepo interface {
 	GetAuthorProfileById(ctx context.Context, authorId int32) (*userPb.Profile, error)
 	CreateUser(ctx context.Context, info *interfacePb.RegisterUserModel) (*usersModel.Users, error)
 	Login(ctx context.Context, email, password string) (*usersModel.Users, error)
+	UpdateUserInfo(ctx context.Context, userId int64, updateInfo *UpdateUser) (*usersModel.Users, error)
 }
 
 type UserUsecase struct {
@@ -77,6 +78,23 @@ func (u *UserUsecase) GetCurrentUser(ctx context.Context) (*interfacePb.User, er
 		return nil, interfacePb.ErrorUserNotFound("GetCurrentUser FromContext failed")
 	}
 	res, err := u.repo.GetUserById(ctx, uInfo.UserId)
+	if err != nil {
+		return nil, err
+	}
+	return &interfacePb.User{
+		Email:    res.Email,
+		Username: res.Username,
+		Bio:      res.Bio,
+		Image:    res.Image,
+	}, nil
+}
+
+func (u *UserUsecase) UpdateUser(ctx context.Context, updateInfo *UpdateUser) (*interfacePb.User, error) {
+	uInfo := auth.FromContext(ctx)
+	if uInfo == nil {
+		return nil, interfacePb.ErrorUserNotFound("UpdateUser FromContext failed")
+	}
+	res, err := u.repo.UpdateUserInfo(ctx, uInfo.UserId, updateInfo)
 	if err != nil {
 		return nil, err
 	}

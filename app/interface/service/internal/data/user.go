@@ -103,3 +103,25 @@ func (u *userRepo) GetUserById(ctx context.Context, id int64) (*usersModel.Users
 		ID:       reply.User.UserId,
 	}, nil
 }
+
+func (u *userRepo) UpdateUserInfo(ctx context.Context, userId int64, updateInfo *biz.UpdateUser) (*usersModel.Users, error) {
+	reply, err := u.data.uc.UpdateUser(ctx, &userPb.UpdateUserRequest{
+		Email:    updateInfo.Email,
+		Username: updateInfo.UserName,
+		Password: updateInfo.Password,
+		Image:    updateInfo.Image,
+		Bio:      updateInfo.Bio,
+		UserId:   userId,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &usersModel.Users{
+		Email:    reply.User.Email,
+		Username: reply.User.UserName,
+		Bio:      reply.User.Bio,
+		Image:    reply.User.Image,
+		ID:       reply.User.UserId,
+	}, nil
+}

@@ -2,6 +2,7 @@ package service
 
 import (
 	interfacePb "conduit/api/interface/v1"
+	"conduit/app/interface/service/internal/biz"
 	"context"
 )
 
@@ -42,4 +43,24 @@ func (c *ConduitInterface) GetCurrentUser(ctx context.Context, req *interfacePb.
 		Image:    res.Image,
 	}}, nil
 
+}
+
+func (c *ConduitInterface) UpdateUser(ctx context.Context, req *interfacePb.UpdateUserRequest) (*interfacePb.UserReply, error) {
+	res, err := c.uc.UpdateUser(ctx, &biz.UpdateUser{
+		Email:    req.User.GetEmail(),
+		Password: req.User.GetPassword(),
+		UserName: req.User.GetUsername(),
+		Bio:      req.User.GetBio(),
+		Image:    req.User.GetImage(),
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &interfacePb.UserReply{User: &interfacePb.User{
+		Email:    res.Email,
+		Token:    res.Token,
+		Username: res.Username,
+		Bio:      res.Bio,
+		Image:    res.Image,
+	}}, nil
 }
