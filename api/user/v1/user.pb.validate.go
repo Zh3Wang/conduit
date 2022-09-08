@@ -1081,3 +1081,229 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = UpdateUserRequestValidationError{}
+
+// Validate checks the field values on FollowUserRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *FollowUserRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on FollowUserRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// FollowUserRequestMultiError, or nil if none found.
+func (m *FollowUserRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *FollowUserRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if utf8.RuneCountInString(m.GetUsername()) < 3 {
+		err := FollowUserRequestValidationError{
+			field:  "Username",
+			reason: "value length must be at least 3 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return FollowUserRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// FollowUserRequestMultiError is an error wrapping multiple validation errors
+// returned by FollowUserRequest.ValidateAll() if the designated constraints
+// aren't met.
+type FollowUserRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m FollowUserRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m FollowUserRequestMultiError) AllErrors() []error { return m }
+
+// FollowUserRequestValidationError is the validation error returned by
+// FollowUserRequest.Validate if the designated constraints aren't met.
+type FollowUserRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e FollowUserRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e FollowUserRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e FollowUserRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e FollowUserRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e FollowUserRequestValidationError) ErrorName() string {
+	return "FollowUserRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e FollowUserRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sFollowUserRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = FollowUserRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = FollowUserRequestValidationError{}
+
+// Validate checks the field values on UnfollowUserRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *UnfollowUserRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UnfollowUserRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UnfollowUserRequestMultiError, or nil if none found.
+func (m *UnfollowUserRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UnfollowUserRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if utf8.RuneCountInString(m.GetUsername()) < 3 {
+		err := UnfollowUserRequestValidationError{
+			field:  "Username",
+			reason: "value length must be at least 3 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return UnfollowUserRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// UnfollowUserRequestMultiError is an error wrapping multiple validation
+// errors returned by UnfollowUserRequest.ValidateAll() if the designated
+// constraints aren't met.
+type UnfollowUserRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UnfollowUserRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UnfollowUserRequestMultiError) AllErrors() []error { return m }
+
+// UnfollowUserRequestValidationError is the validation error returned by
+// UnfollowUserRequest.Validate if the designated constraints aren't met.
+type UnfollowUserRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UnfollowUserRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UnfollowUserRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UnfollowUserRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UnfollowUserRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UnfollowUserRequestValidationError) ErrorName() string {
+	return "UnfollowUserRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UnfollowUserRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUnfollowUserRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UnfollowUserRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UnfollowUserRequestValidationError{}

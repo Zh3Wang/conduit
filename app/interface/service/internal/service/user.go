@@ -64,3 +64,18 @@ func (c *ConduitInterface) UpdateUser(ctx context.Context, req *interfacePb.Upda
 		Image:    res.Image,
 	}}, nil
 }
+
+func (c *ConduitInterface) GetProfile(ctx context.Context, req *interfacePb.GetProfileRequest) (*interfacePb.ProfileReply, error) {
+	res, err := c.uc.GetProfile(ctx, req.GetUsername())
+	if err != nil {
+		return nil, err
+	}
+	return &interfacePb.ProfileReply{
+		Profile: &interfacePb.Profile{
+			Username:  res.UserName,
+			Bio:       res.Bio,
+			Image:     res.Image,
+			Following: res.Following,
+		},
+	}, nil
+}

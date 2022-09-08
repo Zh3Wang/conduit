@@ -15,6 +15,7 @@ import (
 type UserRepo interface {
 	GetUserById(ctx context.Context, id int64) (*usersModel.Users, error)
 	GetAuthorProfileById(ctx context.Context, authorId int32) (*userPb.Profile, error)
+	GetProfileByUserName(ctx context.Context, username string) (*userPb.Profile, error)
 	CreateUser(ctx context.Context, info *interfacePb.RegisterUserModel) (*usersModel.Users, error)
 	Login(ctx context.Context, email, password string) (*usersModel.Users, error)
 	UpdateUserInfo(ctx context.Context, userId int64, updateInfo *UpdateUser) (*usersModel.Users, error)
@@ -104,4 +105,12 @@ func (u *UserUsecase) UpdateUser(ctx context.Context, updateInfo *UpdateUser) (*
 		Bio:      res.Bio,
 		Image:    res.Image,
 	}, nil
+}
+
+func (u *UserUsecase) GetProfile(ctx context.Context, username string) (*userPb.Profile, error) {
+	res, err := u.repo.GetProfileByUserName(ctx, username)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
 }

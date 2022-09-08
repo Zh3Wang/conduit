@@ -58,7 +58,6 @@ func (uc *UserUsecase) Register(ctx context.Context, user *userPb.RegisterModel)
 		Bio:          user.Bio,
 		Image:        user.Image,
 		PasswordHash: encrypt.Hash(user.Password),
-		Following:    0,
 	}
 	err := uc.repo.CreateUser(ctx, userInfo)
 	if err != nil {

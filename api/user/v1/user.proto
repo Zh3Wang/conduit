@@ -15,6 +15,9 @@ service Users {
   rpc GetProfileById(GetProfileByIdRequest) returns (GetProfileReply);
   rpc GetUser(GetUserRequest) returns (UserReply);
   rpc UpdateUser(UpdateUserRequest) returns (UserReply);
+
+  rpc FollowUser(FollowUserRequest) returns (GetProfileReply);
+  rpc UnfollowUser(UnfollowUserRequest) returns (GetProfileReply);
 }
 
 message LoginRequest {
@@ -43,7 +46,7 @@ message GetProfileReply {
 }
 
 message GetUserRequest {
-//    string  type = 1;
+  //    string  type = 1;
   string  type = 1 [(validate.rules).string = {in: ["username", "id"]}];
   string  keyword = 2;
 }
@@ -56,4 +59,12 @@ message UpdateUserRequest {
   string image = 4;
   string bio = 5;
   int64 user_id = 6 [(validate.rules).int64 = {gt: 0}] ;
+}
+
+message FollowUserRequest {
+  string username = 1[(validate.rules).string = {min_len: 3}];
+}
+
+message UnfollowUserRequest {
+  string username = 1[(validate.rules).string = {min_len: 3}];
 }

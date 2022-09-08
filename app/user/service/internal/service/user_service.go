@@ -39,6 +39,23 @@ func (u *UserService) GetProfileById(ctx context.Context, req *userPb.GetProfile
 	}, nil
 }
 
+// GetProfileByUserName 获取作者信息 by username
+func (u *UserService) GetProfileByUserName(ctx context.Context, req *userPb.GetProfileByUserNameRequest) (*userPb.GetProfileReply, error) {
+	res, err := u.uc.GetUser(ctx, req.GetUsername(), "username")
+	if err != nil {
+		return nil, err
+	}
+	return &userPb.GetProfileReply{
+		Profile: &userPb.Profile{
+			UserName:    res.Username,
+			Bio:         res.Bio,
+			Image:       res.Image,
+			CreatedTime: time.Unix(res.CreatedAt, 0).Format("2006/01/02 15:04:05"),
+			UpdatedTime: time.Unix(res.UpdatedAt, 0).Format("2006/01/02 15:04:05"),
+		},
+	}, nil
+}
+
 func (u *UserService) Register(ctx context.Context, req *userPb.RegisterRequest) (*userPb.UserReply, error) {
 	res, err := u.uc.Register(ctx, req.User)
 	if err != nil {

@@ -16,6 +16,10 @@ message SingleArticle {
   Profile author = 10;
 }
 
+message MultipleArticles {
+  repeated SingleArticle articles = 1;
+}
+
 message User {
   string email = 1;
   string token = 2;

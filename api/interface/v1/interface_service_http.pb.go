@@ -19,17 +19,25 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
+const OperationConduitInterfaceFollowUser = "/interface.v1.ConduitInterface/FollowUser"
 const OperationConduitInterfaceGetArticle = "/interface.v1.ConduitInterface/GetArticle"
 const OperationConduitInterfaceGetCurrentUser = "/interface.v1.ConduitInterface/GetCurrentUser"
+const OperationConduitInterfaceGetProfile = "/interface.v1.ConduitInterface/GetProfile"
+const OperationConduitInterfaceListArticles = "/interface.v1.ConduitInterface/ListArticles"
 const OperationConduitInterfaceLogin = "/interface.v1.ConduitInterface/Login"
 const OperationConduitInterfaceRegister = "/interface.v1.ConduitInterface/Register"
+const OperationConduitInterfaceUnfollowUser = "/interface.v1.ConduitInterface/UnfollowUser"
 const OperationConduitInterfaceUpdateUser = "/interface.v1.ConduitInterface/UpdateUser"
 
 type ConduitInterfaceHTTPServer interface {
+	FollowUser(context.Context, *FollowUserRequest) (*ProfileReply, error)
 	GetArticle(context.Context, *GetArticleRequest) (*GetArticleReply, error)
 	GetCurrentUser(context.Context, *GetCurrentUserRequest) (*UserReply, error)
+	GetProfile(context.Context, *GetProfileRequest) (*ProfileReply, error)
+	ListArticles(context.Context, *ListArticlesRequest) (*MultipleArticles, error)
 	Login(context.Context, *LoginRequest) (*UserReply, error)
 	Register(context.Context, *RegisterRequest) (*UserReply, error)
+	UnfollowUser(context.Context, *UnfollowUserRequest) (*ProfileReply, error)
 	UpdateUser(context.Context, *UpdateUserRequest) (*UserReply, error)
 }
 
@@ -37,9 +45,13 @@ func RegisterConduitInterfaceHTTPServer(s *http.Server, srv ConduitInterfaceHTTP
 	r := s.Route("/")
 	r.POST("api/users", _ConduitInterface_Register0_HTTP_Handler(srv))
 	r.POST("api/users/login", _ConduitInterface_Login0_HTTP_Handler(srv))
-	r.GET("api/articles/{slug}", _ConduitInterface_GetArticle0_HTTP_Handler(srv))
 	r.GET("api/user", _ConduitInterface_GetCurrentUser0_HTTP_Handler(srv))
 	r.PUT("api/user", _ConduitInterface_UpdateUser0_HTTP_Handler(srv))
+	r.GET("api/profiles/{username}", _ConduitInterface_GetProfile0_HTTP_Handler(srv))
+	r.POST("api/profiles/{username}/follow", _ConduitInterface_FollowUser0_HTTP_Handler(srv))
+	r.DELETE("api/profiles/{username}/follow", _ConduitInterface_UnfollowUser0_HTTP_Handler(srv))
+	r.GET("api/articles", _ConduitInterface_ListArticles0_HTTP_Handler(srv))
+	r.GET("api/articles/{slug}", _ConduitInterface_GetArticle0_HTTP_Handler(srv))
 }
 
 func _ConduitInterface_Register0_HTTP_Handler(srv ConduitInterfaceHTTPServer) func(ctx http.Context) error {
@@ -76,28 +88,6 @@ func _ConduitInterface_Login0_HTTP_Handler(srv ConduitInterfaceHTTPServer) func(
 			return err
 		}
 		reply := out.(*UserReply)
-		return ctx.Result(200, reply)
-	}
-}
-
-func _ConduitInterface_GetArticle0_HTTP_Handler(srv ConduitInterfaceHTTPServer) func(ctx http.Context) error {
-	return func(ctx http.Context) error {
-		var in GetArticleRequest
-		if err := ctx.BindQuery(&in); err != nil {
-			return err
-		}
-		if err := ctx.BindVars(&in); err != nil {
-			return err
-		}
-		http.SetOperation(ctx, OperationConduitInterfaceGetArticle)
-		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.GetArticle(ctx, req.(*GetArticleRequest))
-		})
-		out, err := h(ctx, &in)
-		if err != nil {
-			return err
-		}
-		reply := out.(*GetArticleReply)
 		return ctx.Result(200, reply)
 	}
 }
@@ -140,11 +130,122 @@ func _ConduitInterface_UpdateUser0_HTTP_Handler(srv ConduitInterfaceHTTPServer) 
 	}
 }
 
+func _ConduitInterface_GetProfile0_HTTP_Handler(srv ConduitInterfaceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in GetProfileRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationConduitInterfaceGetProfile)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetProfile(ctx, req.(*GetProfileRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*ProfileReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _ConduitInterface_FollowUser0_HTTP_Handler(srv ConduitInterfaceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in FollowUserRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationConduitInterfaceFollowUser)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.FollowUser(ctx, req.(*FollowUserRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*ProfileReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _ConduitInterface_UnfollowUser0_HTTP_Handler(srv ConduitInterfaceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in UnfollowUserRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationConduitInterfaceUnfollowUser)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.UnfollowUser(ctx, req.(*UnfollowUserRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*ProfileReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _ConduitInterface_ListArticles0_HTTP_Handler(srv ConduitInterfaceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in ListArticlesRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationConduitInterfaceListArticles)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ListArticles(ctx, req.(*ListArticlesRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*MultipleArticles)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _ConduitInterface_GetArticle0_HTTP_Handler(srv ConduitInterfaceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in GetArticleRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationConduitInterfaceGetArticle)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetArticle(ctx, req.(*GetArticleRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*GetArticleReply)
+		return ctx.Result(200, reply)
+	}
+}
+
 type ConduitInterfaceHTTPClient interface {
+	FollowUser(ctx context.Context, req *FollowUserRequest, opts ...http.CallOption) (rsp *ProfileReply, err error)
 	GetArticle(ctx context.Context, req *GetArticleRequest, opts ...http.CallOption) (rsp *GetArticleReply, err error)
 	GetCurrentUser(ctx context.Context, req *GetCurrentUserRequest, opts ...http.CallOption) (rsp *UserReply, err error)
+	GetProfile(ctx context.Context, req *GetProfileRequest, opts ...http.CallOption) (rsp *ProfileReply, err error)
+	ListArticles(ctx context.Context, req *ListArticlesRequest, opts ...http.CallOption) (rsp *MultipleArticles, err error)
 	Login(ctx context.Context, req *LoginRequest, opts ...http.CallOption) (rsp *UserReply, err error)
 	Register(ctx context.Context, req *RegisterRequest, opts ...http.CallOption) (rsp *UserReply, err error)
+	UnfollowUser(ctx context.Context, req *UnfollowUserRequest, opts ...http.CallOption) (rsp *ProfileReply, err error)
 	UpdateUser(ctx context.Context, req *UpdateUserRequest, opts ...http.CallOption) (rsp *UserReply, err error)
 }
 
@@ -154,6 +255,19 @@ type ConduitInterfaceHTTPClientImpl struct {
 
 func NewConduitInterfaceHTTPClient(client *http.Client) ConduitInterfaceHTTPClient {
 	return &ConduitInterfaceHTTPClientImpl{client}
+}
+
+func (c *ConduitInterfaceHTTPClientImpl) FollowUser(ctx context.Context, in *FollowUserRequest, opts ...http.CallOption) (*ProfileReply, error) {
+	var out ProfileReply
+	pattern := "api/profiles/{username}/follow"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationConduitInterfaceFollowUser))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
 }
 
 func (c *ConduitInterfaceHTTPClientImpl) GetArticle(ctx context.Context, in *GetArticleRequest, opts ...http.CallOption) (*GetArticleReply, error) {
@@ -182,6 +296,32 @@ func (c *ConduitInterfaceHTTPClientImpl) GetCurrentUser(ctx context.Context, in 
 	return &out, err
 }
 
+func (c *ConduitInterfaceHTTPClientImpl) GetProfile(ctx context.Context, in *GetProfileRequest, opts ...http.CallOption) (*ProfileReply, error) {
+	var out ProfileReply
+	pattern := "api/profiles/{username}"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationConduitInterfaceGetProfile))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *ConduitInterfaceHTTPClientImpl) ListArticles(ctx context.Context, in *ListArticlesRequest, opts ...http.CallOption) (*MultipleArticles, error) {
+	var out MultipleArticles
+	pattern := "api/articles"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationConduitInterfaceListArticles))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
 func (c *ConduitInterfaceHTTPClientImpl) Login(ctx context.Context, in *LoginRequest, opts ...http.CallOption) (*UserReply, error) {
 	var out UserReply
 	pattern := "api/users/login"
@@ -202,6 +342,19 @@ func (c *ConduitInterfaceHTTPClientImpl) Register(ctx context.Context, in *Regis
 	opts = append(opts, http.Operation(OperationConduitInterfaceRegister))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *ConduitInterfaceHTTPClientImpl) UnfollowUser(ctx context.Context, in *UnfollowUserRequest, opts ...http.CallOption) (*ProfileReply, error) {
+	var out ProfileReply
+	pattern := "api/profiles/{username}/follow"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationConduitInterfaceUnfollowUser))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "DELETE", path, nil, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

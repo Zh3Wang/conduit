@@ -39,6 +39,19 @@ func (u *userRepo) GetAuthorProfileById(ctx context.Context, authorId int32) (*u
 	}, nil
 }
 
+func (u *userRepo) GetProfileByUserName(ctx context.Context, username string) (*userPb.Profile, error) {
+	reply, err := u.data.uc.GetProfileByUserName(ctx, &userPb.GetProfileByUserNameRequest{Username: username})
+	if err != nil {
+		return nil, err
+	}
+	return &userPb.Profile{
+		UserName:  reply.Profile.UserName,
+		Bio:       reply.Profile.Bio,
+		Image:     reply.Profile.Image,
+		Following: reply.Profile.Following,
+	}, nil
+}
+
 func (u *userRepo) Login(ctx context.Context, email, password string) (*usersModel.Users, error) {
 	d, err := u.data.uc.Login(ctx, &userPb.LoginRequest{
 		Email:    email,

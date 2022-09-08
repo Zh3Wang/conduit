@@ -10,7 +10,6 @@ type Users struct {
 	Bio          string `gorm:"column:bio" json:"bio"`                     //
 	Image        string `gorm:"column:image" json:"image"`                 //
 	PasswordHash string `gorm:"column:password_hash" json:"password_hash"` //
-	Following    int    `gorm:"column:following" json:"following"`         //
 }
 
 // TableName sets the insert table name for this struct type
