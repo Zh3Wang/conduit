@@ -1,11 +1,11 @@
 package client
 
 import (
-	"context"
-
 	articlePb "conduit/api/article/v1"
 	userPb "conduit/api/user/v1"
+	"conduit/pkg/middleware/errors"
 	"conduit/pkg/service"
+	"context"
 
 	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
@@ -14,8 +14,7 @@ import (
 func NewArticleServiceClient(dis registry.Discovery) articlePb.ArticleClient {
 	conn, err := grpc.DialInsecure(
 		context.Background(),
-		grpc.WithEndpoint("discovery://conduit/"+service.ArticleService),
-		grpc.WithDiscovery(dis),
+		NewClientOption(dis, service.ArticleService)...,
 	)
 	if err != nil {
 		panic(err)
@@ -27,12 +26,21 @@ func NewArticleServiceClient(dis registry.Discovery) articlePb.ArticleClient {
 func NewUserServiceClient(dis registry.Discovery) userPb.UsersClient {
 	conn, err := grpc.DialInsecure(
 		context.Background(),
-		grpc.WithEndpoint("discovery://conduit/"+service.UserService),
-		grpc.WithDiscovery(dis),
+		NewClientOption(dis, service.UserService)...,
 	)
 	if err != nil {
 		panic(err)
 	}
 
 	return userPb.NewUsersClient(conn)
+}
+
+func NewClientOption(dis registry.Discovery, serviceName string) []grpc.ClientOption {
+	return []grpc.ClientOption{
+		grpc.WithEndpoint("discovery://conduit/" + serviceName),
+		grpc.WithDiscovery(dis),
+		grpc.WithMiddleware(
+			errors.ClientConvertError(),
+		),
+	}
 }

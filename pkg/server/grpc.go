@@ -2,6 +2,7 @@ package server
 
 import (
 	"conduit/pkg/conf"
+	"conduit/pkg/middleware/errors"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/logging"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
@@ -12,6 +13,7 @@ import (
 func NewGrpcServer(c *conf.Server, logger log.Logger) *grpc.Server {
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(
+			errors.ServerConvertError(),
 			recovery.Recovery(),
 			logging.Server(logger),
 			validate.Validator(),

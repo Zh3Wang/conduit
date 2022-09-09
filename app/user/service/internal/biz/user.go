@@ -2,6 +2,7 @@ package biz
 
 import (
 	"conduit/pkg/encrypt"
+	"conduit/pkg/middleware/auth"
 	"context"
 	"github.com/pkg/errors"
 	"strconv"
@@ -23,6 +24,8 @@ type UserRepo interface {
 	CreateUser(context.Context, *usersModel.Users) error
 	UpdateUser(context.Context, *usersModel.Users) error
 	GetUserByEmail(ctx context.Context, email string) (*usersModel.Users, error)
+	CreateFollowing(ctx context.Context, userId, followId int64) error
+	DeleteFollowing(ctx context.Context, userId, followId int64) error
 }
 
 type UserUsecase struct {
@@ -50,6 +53,15 @@ func (uc *UserUsecase) GetProfileById(ctx context.Context, id int32) (*userPb.Pr
 }
 
 func (uc *UserUsecase) Register(ctx context.Context, user *userPb.RegisterModel) (*usersModel.Users, error) {
+	// 判断邮箱是否存在
+	u, err := uc.repo.GetUserByEmail(ctx, user.Email)
+	if err != nil {
+		return nil, err
+	}
+	if u != nil {
+		// 已存在
+		return nil, userPb.ErrorEmailAlreadyExist("邮箱已存在")
+	}
 	var userInfo = &usersModel.Users{
 		CreatedAt:    time.Now().Unix(),
 		UpdatedAt:    time.Now().Unix(),
@@ -59,7 +71,7 @@ func (uc *UserUsecase) Register(ctx context.Context, user *userPb.RegisterModel)
 		Image:        user.Image,
 		PasswordHash: encrypt.Hash(user.Password),
 	}
-	err := uc.repo.CreateUser(ctx, userInfo)
+	err = uc.repo.CreateUser(ctx, userInfo)
 	if err != nil {
 		return nil, errors.WithMessagef(err, "create user repo")
 	}
@@ -110,4 +122,52 @@ func (uc *UserUsecase) UpdateUser(ctx context.Context, user *userPb.UpdateUserRe
 		return nil, err
 	}
 	return gg, nil
+}
+
+func (uc *UserUsecase) FollowUser(ctx context.Context, followName string) (*usersModel.Users, error) {
+	// 被关注用户的ID
+	followUserInfo, err := uc.repo.GetUser(ctx, followName, "username")
+	if err != nil {
+		return nil, err
+	}
+	// 当前用户的ID
+	userInfo := auth.FromContext(ctx)
+	if userInfo == nil {
+		return nil, userPb.ErrorUserNotFound("can't find user from context")
+	}
+	// 建立follow关系
+	err = uc.repo.CreateFollowing(ctx, userInfo.UserId, followUserInfo.ID)
+	if err != nil {
+		return nil, err
+	}
+	// get profile
+	r, err := uc.repo.GetProfile(ctx, int32(followUserInfo.ID))
+	if err != nil {
+		return nil, err
+	}
+	return r, nil
+}
+
+func (uc *UserUsecase) UnFollowUser(ctx context.Context, followName string) (*usersModel.Users, error) {
+	// 被关注用户的ID
+	followUserInfo, err := uc.repo.GetUser(ctx, followName, "username")
+	if err != nil {
+		return nil, err
+	}
+	// 当前用户的ID
+	userInfo := auth.FromContext(ctx)
+	if userInfo == nil {
+		return nil, userPb.ErrorUserNotFound("can't find user from context")
+	}
+	// 删除follow关系
+	err = uc.repo.DeleteFollowing(ctx, userInfo.UserId, followUserInfo.ID)
+	if err != nil {
+		return nil, err
+	}
+	// get profile
+	r, err := uc.repo.GetProfile(ctx, int32(followUserInfo.ID))
+	if err != nil {
+		return nil, err
+	}
+	return r, nil
 }

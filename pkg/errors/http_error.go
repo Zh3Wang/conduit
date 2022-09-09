@@ -31,7 +31,7 @@ func FromError(err error) *HTTPError {
 		return nil
 	}
 	if se := new(errors.Error); errors.As(err, &se) {
-		return NewHTTPError(int(se.Code), se.Reason, se.Message)
+		return NewHTTPError(http.StatusUnprocessableEntity, se.Reason, se.Message)
 	}
 	return NewHTTPError(http.StatusUnprocessableEntity, "internal", "error")
 }

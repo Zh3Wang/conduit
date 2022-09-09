@@ -19,6 +19,8 @@ type UserRepo interface {
 	CreateUser(ctx context.Context, info *interfacePb.RegisterUserModel) (*usersModel.Users, error)
 	Login(ctx context.Context, email, password string) (*usersModel.Users, error)
 	UpdateUserInfo(ctx context.Context, userId int64, updateInfo *UpdateUser) (*usersModel.Users, error)
+	FollowUser(ctx context.Context, username string) (*userPb.Profile, error)
+	UnFollowUser(ctx context.Context, username string) (*userPb.Profile, error)
 }
 
 type UserUsecase struct {
@@ -31,6 +33,7 @@ func NewUserUsecase(conf *conf.Biz, repo UserRepo, logger log.Logger) *UserUseca
 	return &UserUsecase{repo: repo, log: log.NewHelper(logger), secret: conf.JwtSecret}
 }
 
+// Register 注册
 func (u *UserUsecase) Register(ctx context.Context, info *interfacePb.RegisterUserModel) (*interfacePb.User, error) {
 	res, err := u.repo.CreateUser(ctx, info)
 	if err != nil {
@@ -54,6 +57,7 @@ func (u *UserUsecase) generateToken(username string, id int64) (string, error) {
 	return auth.GenerateJwtToken(u.secret, username, id)
 }
 
+// Login 登陆
 func (u *UserUsecase) Login(ctx context.Context, email, password string) (*interfacePb.User, error) {
 	res, err := u.repo.Login(ctx, email, password)
 	if err != nil {
@@ -73,6 +77,7 @@ func (u *UserUsecase) Login(ctx context.Context, email, password string) (*inter
 	}, nil
 }
 
+// GetCurrentUser 获取当前token的用户
 func (u *UserUsecase) GetCurrentUser(ctx context.Context) (*interfacePb.User, error) {
 	uInfo := auth.FromContext(ctx)
 	if uInfo == nil {
@@ -90,6 +95,7 @@ func (u *UserUsecase) GetCurrentUser(ctx context.Context) (*interfacePb.User, er
 	}, nil
 }
 
+// UpdateUser 更新用户数据
 func (u *UserUsecase) UpdateUser(ctx context.Context, updateInfo *UpdateUser) (*interfacePb.User, error) {
 	uInfo := auth.FromContext(ctx)
 	if uInfo == nil {
@@ -107,8 +113,27 @@ func (u *UserUsecase) UpdateUser(ctx context.Context, updateInfo *UpdateUser) (*
 	}, nil
 }
 
+// GetProfile 获取用户信息
 func (u *UserUsecase) GetProfile(ctx context.Context, username string) (*userPb.Profile, error) {
 	res, err := u.repo.GetProfileByUserName(ctx, username)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
+}
+
+// FollowUser 关注用户
+func (u *UserUsecase) FollowUser(ctx context.Context, username string) (*userPb.Profile, error) {
+	res, err := u.repo.FollowUser(ctx, username)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
+}
+
+// UnFollowUser 取关
+func (u *UserUsecase) UnFollowUser(ctx context.Context, username string) (*userPb.Profile, error) {
+	res, err := u.repo.UnFollowUser(ctx, username)
 	if err != nil {
 		return nil, err
 	}

@@ -34,3 +34,15 @@ func IsContentMissing(err error) bool {
 func ErrorContentMissing(format string, args ...interface{}) *errors.Error {
 	return errors.New(400, ErrorReason_CONTENT_MISSING.String(), fmt.Sprintf(format, args...))
 }
+
+func IsEmailAlreadyExist(err error) bool {
+	if err == nil {
+		return false
+	}
+	e := errors.FromError(err)
+	return e.Reason == ErrorReason_EMAIL_ALREADY_EXIST.String() && e.Code == 400
+}
+
+func ErrorEmailAlreadyExist(format string, args ...interface{}) *errors.Error {
+	return errors.New(400, ErrorReason_EMAIL_ALREADY_EXIST.String(), fmt.Sprintf(format, args...))
+}

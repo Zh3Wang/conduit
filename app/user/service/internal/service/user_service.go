@@ -56,6 +56,7 @@ func (u *UserService) GetProfileByUserName(ctx context.Context, req *userPb.GetP
 	}, nil
 }
 
+// Register 注册
 func (u *UserService) Register(ctx context.Context, req *userPb.RegisterRequest) (*userPb.UserReply, error) {
 	res, err := u.uc.Register(ctx, req.User)
 	if err != nil {
@@ -74,6 +75,7 @@ func (u *UserService) Register(ctx context.Context, req *userPb.RegisterRequest)
 	}, nil
 }
 
+// Login 登陆
 func (u *UserService) Login(ctx context.Context, req *userPb.LoginRequest) (*userPb.UserReply, error) {
 	res, err := u.uc.Login(ctx, req)
 	if err != nil {
@@ -92,6 +94,7 @@ func (u *UserService) Login(ctx context.Context, req *userPb.LoginRequest) (*use
 	}, nil
 }
 
+// GetUser 获取用户信息
 func (u *UserService) GetUser(ctx context.Context, req *userPb.GetUserRequest) (*userPb.UserReply, error) {
 	res, err := u.uc.GetUser(ctx, req.GetKeyword(), req.GetType())
 	if err != nil {
@@ -110,6 +113,7 @@ func (u *UserService) GetUser(ctx context.Context, req *userPb.GetUserRequest) (
 	}, nil
 }
 
+// UpdateUser 更新用户信息
 func (u *UserService) UpdateUser(ctx context.Context, req *userPb.UpdateUserRequest) (*userPb.UserReply, error) {
 	res, err := u.uc.UpdateUser(ctx, req)
 	if err != nil {
@@ -124,6 +128,40 @@ func (u *UserService) UpdateUser(ctx context.Context, req *userPb.UpdateUserRequ
 			CreatedTime: convertTime(res.CreatedAt),
 			UpdatedTime: convertTime(res.UpdatedAt),
 			UserId:      res.ID,
+		},
+	}, nil
+}
+
+// FollowUser 关注用户
+func (u *UserService) FollowUser(ctx context.Context, req *userPb.FollowUserRequest) (*userPb.GetProfileReply, error) {
+	res, err := u.uc.FollowUser(ctx, req.GetUsername())
+	if err != nil {
+		return nil, err
+	}
+	return &userPb.GetProfileReply{
+		Profile: &userPb.Profile{
+			UserName:    res.Username,
+			Bio:         res.Bio,
+			Image:       res.Image,
+			CreatedTime: time.Unix(res.CreatedAt, 0).Format("2006/01/02 15:04:05"),
+			UpdatedTime: time.Unix(res.UpdatedAt, 0).Format("2006/01/02 15:04:05"),
+		},
+	}, nil
+}
+
+// UnFollowUser 取关
+func (u *UserService) UnFollowUser(ctx context.Context, req *userPb.UnfollowUserRequest) (*userPb.GetProfileReply, error) {
+	res, err := u.uc.UnFollowUser(ctx, req.GetUsername())
+	if err != nil {
+		return nil, err
+	}
+	return &userPb.GetProfileReply{
+		Profile: &userPb.Profile{
+			UserName:    res.Username,
+			Bio:         res.Bio,
+			Image:       res.Image,
+			CreatedTime: time.Unix(res.CreatedAt, 0).Format("2006/01/02 15:04:05"),
+			UpdatedTime: time.Unix(res.UpdatedAt, 0).Format("2006/01/02 15:04:05"),
 		},
 	}, nil
 }

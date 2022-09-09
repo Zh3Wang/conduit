@@ -138,3 +138,25 @@ func (u *userRepo) UpdateUserInfo(ctx context.Context, userId int64, updateInfo 
 		ID:       reply.User.UserId,
 	}, nil
 }
+
+func (u *userRepo) FollowUser(ctx context.Context, username string) (*userPb.Profile, error) {
+	// rpc 关注
+	reply, err := u.data.uc.FollowUser(ctx, &userPb.FollowUserRequest{
+		Username: username,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return reply.Profile, nil
+}
+
+func (u *userRepo) UnFollowUser(ctx context.Context, username string) (*userPb.Profile, error) {
+	// rpc 取关
+	reply, err := u.data.uc.UnfollowUser(ctx, &userPb.UnfollowUserRequest{
+		Username: username,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return reply.Profile, nil
+}
