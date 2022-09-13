@@ -3,25 +3,37 @@ syntax = "proto3";
 package article.v1;
 
 import "api/article/v1/article_data.proto";
+import "validate/validate.proto";
+import "google/protobuf/empty.proto";
 
 option go_package = "./articlePb";
 
 // The greeting service definition.
 service Article {
   // Sends a greeting
-  rpc GetArticleBySlug (GetArticleBySlugRequest) returns (GetArticleBySlugReply)  {}
+  rpc GetArticleBySlug (GetArticleBySlugRequest) returns (GetArticleReply)  {}
   rpc BatchGetArticles (BatchGetArticlesRequest) returns (BatchGetArticlesReply) {}
+
+  rpc ListArticles(ListArticlesRequest) returns (GetMultipleArticleReply) {}
+  rpc CreateArticle(CreateArticleRequest) returns (GetArticleReply) {}
+  rpc UpdateArticle(UpdateArticleRequest) returns (GetArticleReply) {}
+  rpc DeleteArticle(DeleteArticleRequest) returns (google.protobuf.Empty) {}
 }
 
 // The request message containing the user's name.
 message GetArticleBySlugRequest {
-  string slug = 1 [json_name = "slug"];
+  string slug = 1 [json_name = "slug", (validate.rules).string.min_len = 1];
 }
 
 // The response message containing the greetings
-message GetArticleBySlugReply {
-  articleData article = 3;
+message GetArticleReply {
+  articleData article = 1;
 }
+
+message GetMultipleArticleReply {
+  repeated articleData article = 1;
+}
+
 
 
 message BatchGetArticlesRequest {
@@ -30,4 +42,32 @@ message BatchGetArticlesRequest {
 
 message BatchGetArticlesReply {
   string message = 1;
+}
+
+message CreateArticleRequest {
+  string title = 1[(validate.rules).string.min_len = 1];
+  string description = 2[(validate.rules).string.min_len = 1];
+  string body = 3[(validate.rules).string.min_len = 1];
+  repeated string tagList = 4[(validate.rules).repeated.unique = true];
+  int64 author_id = 5;
+}
+
+message UpdateArticleRequest {
+  string title = 1[(validate.rules).string.min_len = 1];
+  string description = 2[(validate.rules).string = {ignore_empty: true, min_len:1}];
+  string body = 3[(validate.rules).string = {ignore_empty: true, min_len: 1}];
+  string slug = 4[(validate.rules).string = {min_len: 1}];
+
+}
+
+message DeleteArticleRequest {
+  string slug = 1 [json_name = "slug", (validate.rules).string.min_len = 1];
+}
+
+message ListArticlesRequest {
+  string tag = 1;
+  string author = 2;
+  string favorited = 3;
+  int64 limit = 4;
+  int64 offset = 5;
 }

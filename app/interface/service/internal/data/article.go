@@ -1,9 +1,12 @@
 package data
 
 import (
+	"conduit/pkg/format"
 	"context"
 
-	articlePb "conduit/api/article/v1"
+	"conduit/api/article/v1"
+	"conduit/api/interface/v1"
+	"conduit/api/user/v1"
 	"conduit/app/interface/service/internal/biz"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -22,19 +25,38 @@ func NewArticleRepo(data *Data, logger log.Logger) biz.ArticleRepo {
 	}
 }
 
-func (a *ArticleRepo) GetArticleBySlug(ctx context.Context, slug string) (*articlePb.ArticleData, error) {
+func (a *ArticleRepo) GetArticleBySlug(ctx context.Context, slug string) (*interfacePb.SingleArticle, error) {
 	reply, err := a.data.ac.GetArticleBySlug(ctx, &articlePb.GetArticleBySlugRequest{Slug: slug})
 	if err != nil {
 		return nil, err
 	}
-	return &articlePb.ArticleData{
+	// 作者信息
+	authorInfo, err := a.data.uc.GetProfileById(ctx, &userPb.GetProfileByIdRequest{
+		Id: int32(reply.Article.AuthorId),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	// todo 点赞数量
+
+	// todo 是否点赞
+
+	return &interfacePb.SingleArticle{
 		Slug:           reply.Article.Slug,
 		Title:          reply.Article.Title,
 		Description:    reply.Article.Description,
 		Body:           reply.Article.Body,
-		CreatedAt:      reply.Article.CreatedAt,
-		UpdatedAt:      reply.Article.UpdatedAt,
-		FavoritesCount: reply.Article.FavoritesCount,
-		AuthorId:       reply.Article.AuthorId,
+		TagList:        nil,
+		CreatedAt:      format.ConvertTime(reply.Article.CreatedAt),
+		UpdatedAt:      format.ConvertTime(reply.Article.UpdatedAt),
+		Favorited:      false,
+		FavoritesCount: 0,
+		Author: &interfacePb.Profile{
+			Username:  authorInfo.Profile.UserName,
+			Bio:       authorInfo.Profile.Bio,
+			Image:     authorInfo.Profile.Image,
+			Following: false,
+		},
 	}, nil
 }

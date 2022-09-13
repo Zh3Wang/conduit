@@ -69,7 +69,7 @@ func (m *ArticleData) validate(all bool) error {
 
 	// no validation rules for UpdatedAt
 
-	// no validation rules for FavoritesCount
+	// no validation rules for DeleteAt
 
 	// no validation rules for AuthorId
 
