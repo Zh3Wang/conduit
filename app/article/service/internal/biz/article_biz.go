@@ -20,6 +20,8 @@ type ArticleRepo interface {
 	BatchGetArticles(ctx context.Context, opts ...mysql.QueryOption) ([]*articlesModel.Articles, error)
 	CreateArticleTags(ctx context.Context, articleId int64, tags []string) error
 	GetTagsFromArticleId(ctx context.Context, articleId int64) ([]tagsModel.Tags, error)
+	FeedArticles(ctx context.Context, limit, offset, userId int64) ([]*articlesModel.Articles, error)
+	GetTags(ctx context.Context) ([]tagsModel.Tags, error)
 }
 
 type ArticleUsecase struct {
@@ -151,4 +153,56 @@ func (uc *ArticleUsecase) ListArticles(ctx context.Context, req *articlePb.ListA
 	}
 
 	return nr, nil
+}
+
+func (uc *ArticleUsecase) FeedArticles(ctx context.Context, req *articlePb.FeedArticlesRequest) ([]*articlePb.ArticleData, error) {
+	if req.GetLimit() == 0 {
+		req.Limit = 20
+	}
+	if req.GetOffset() == 0 {
+		req.Offset = 0
+	}
+	res, err := uc.repo.FeedArticles(ctx, req.Limit, req.Offset, req.UserId)
+	if err != nil {
+		return nil, err
+	}
+
+	var nr = make([]*articlePb.ArticleData, 0, req.GetLimit())
+	for _, v := range res {
+		// 获取tag
+		tags, err := uc.repo.GetTagsFromArticleId(ctx, v.ID)
+		if err != nil {
+			uc.log.WithContext(ctx).Errorf("GetTagsFromArticleId err: %s", err.Error())
+		}
+		var tagList []string
+		if len(tags) > 0 {
+			for _, vv := range tags {
+				tagList = append(tagList, vv.Name)
+			}
+		}
+		nr = append(nr, &articlePb.ArticleData{
+			Slug:        v.Slug,
+			Title:       v.Title,
+			Description: v.Description,
+			Body:        v.Body,
+			TagList:     tagList,
+			CreatedAt:   v.CreatedAt,
+			UpdatedAt:   v.UpdatedAt,
+			AuthorId:    v.AuthorID,
+		})
+	}
+
+	return nr, nil
+}
+
+func (uc *ArticleUsecase) GetTags(ctx context.Context) ([]string, error) {
+	res, err := uc.repo.GetTags(ctx)
+	if err != nil {
+		return nil, err
+	}
+	var tags = make([]string, 0)
+	for _, v := range res {
+		tags = append(tags, v.Name)
+	}
+	return tags, nil
 }

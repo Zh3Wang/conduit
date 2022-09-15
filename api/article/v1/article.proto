@@ -14,10 +14,13 @@ service Article {
   rpc GetArticleBySlug (GetArticleBySlugRequest) returns (GetArticleReply)  {}
   rpc BatchGetArticles (BatchGetArticlesRequest) returns (BatchGetArticlesReply) {}
 
+  rpc FeedArticles(FeedArticlesRequest) returns (GetMultipleArticleReply) {}
   rpc ListArticles(ListArticlesRequest) returns (GetMultipleArticleReply) {}
   rpc CreateArticle(CreateArticleRequest) returns (GetArticleReply) {}
   rpc UpdateArticle(UpdateArticleRequest) returns (GetArticleReply) {}
   rpc DeleteArticle(DeleteArticleRequest) returns (google.protobuf.Empty) {}
+
+  rpc GetTags(google.protobuf.Empty) returns (GetTagsReply) {}
 }
 
 // The request message containing the user's name.
@@ -70,4 +73,14 @@ message ListArticlesRequest {
   string favorited = 3;
   int64 limit = 4;
   int64 offset = 5;
+}
+
+message FeedArticlesRequest {
+  int64 limit = 1;
+  int64 offset = 2;
+  int64 user_id = 3;
+}
+
+message GetTagsReply {
+  repeated string tags = 1;
 }

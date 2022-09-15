@@ -56,3 +56,21 @@ func (s *ArticleService) ListArticles(ctx context.Context, req *articlePb.ListAr
 	}
 	return &articlePb.GetMultipleArticleReply{Article: reply}, nil
 }
+
+func (s *ArticleService) FeedArticles(ctx context.Context, req *articlePb.FeedArticlesRequest) (*articlePb.GetMultipleArticleReply, error) {
+	reply, err := s.uc.FeedArticles(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	return &articlePb.GetMultipleArticleReply{Article: reply}, nil
+}
+
+func (s *ArticleService) GetTags(ctx context.Context, _ *empty.Empty) (*articlePb.GetTagsReply, error) {
+	reply, err := s.uc.GetTags(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return &articlePb.GetTagsReply{
+		Tags: reply,
+	}, nil
+}

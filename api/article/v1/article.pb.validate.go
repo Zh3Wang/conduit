@@ -1155,3 +1155,210 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = ListArticlesRequestValidationError{}
+
+// Validate checks the field values on FeedArticlesRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *FeedArticlesRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on FeedArticlesRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// FeedArticlesRequestMultiError, or nil if none found.
+func (m *FeedArticlesRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *FeedArticlesRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Limit
+
+	// no validation rules for Offset
+
+	// no validation rules for UserId
+
+	if len(errors) > 0 {
+		return FeedArticlesRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// FeedArticlesRequestMultiError is an error wrapping multiple validation
+// errors returned by FeedArticlesRequest.ValidateAll() if the designated
+// constraints aren't met.
+type FeedArticlesRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m FeedArticlesRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m FeedArticlesRequestMultiError) AllErrors() []error { return m }
+
+// FeedArticlesRequestValidationError is the validation error returned by
+// FeedArticlesRequest.Validate if the designated constraints aren't met.
+type FeedArticlesRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e FeedArticlesRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e FeedArticlesRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e FeedArticlesRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e FeedArticlesRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e FeedArticlesRequestValidationError) ErrorName() string {
+	return "FeedArticlesRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e FeedArticlesRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sFeedArticlesRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = FeedArticlesRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = FeedArticlesRequestValidationError{}
+
+// Validate checks the field values on GetTagsReply with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *GetTagsReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetTagsReply with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in GetTagsReplyMultiError, or
+// nil if none found.
+func (m *GetTagsReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetTagsReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return GetTagsReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetTagsReplyMultiError is an error wrapping multiple validation errors
+// returned by GetTagsReply.ValidateAll() if the designated constraints aren't met.
+type GetTagsReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetTagsReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetTagsReplyMultiError) AllErrors() []error { return m }
+
+// GetTagsReplyValidationError is the validation error returned by
+// GetTagsReply.Validate if the designated constraints aren't met.
+type GetTagsReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetTagsReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetTagsReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetTagsReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetTagsReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetTagsReplyValidationError) ErrorName() string { return "GetTagsReplyValidationError" }
+
+// Error satisfies the builtin error interface
+func (e GetTagsReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetTagsReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetTagsReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetTagsReplyValidationError{}

@@ -26,10 +26,12 @@ type ArticleClient interface {
 	// Sends a greeting
 	GetArticleBySlug(ctx context.Context, in *GetArticleBySlugRequest, opts ...grpc.CallOption) (*GetArticleReply, error)
 	BatchGetArticles(ctx context.Context, in *BatchGetArticlesRequest, opts ...grpc.CallOption) (*BatchGetArticlesReply, error)
+	FeedArticles(ctx context.Context, in *FeedArticlesRequest, opts ...grpc.CallOption) (*GetMultipleArticleReply, error)
 	ListArticles(ctx context.Context, in *ListArticlesRequest, opts ...grpc.CallOption) (*GetMultipleArticleReply, error)
 	CreateArticle(ctx context.Context, in *CreateArticleRequest, opts ...grpc.CallOption) (*GetArticleReply, error)
 	UpdateArticle(ctx context.Context, in *UpdateArticleRequest, opts ...grpc.CallOption) (*GetArticleReply, error)
 	DeleteArticle(ctx context.Context, in *DeleteArticleRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	GetTags(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*GetTagsReply, error)
 }
 
 type articleClient struct {
@@ -52,6 +54,15 @@ func (c *articleClient) GetArticleBySlug(ctx context.Context, in *GetArticleBySl
 func (c *articleClient) BatchGetArticles(ctx context.Context, in *BatchGetArticlesRequest, opts ...grpc.CallOption) (*BatchGetArticlesReply, error) {
 	out := new(BatchGetArticlesReply)
 	err := c.cc.Invoke(ctx, "/article.v1.Article/BatchGetArticles", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *articleClient) FeedArticles(ctx context.Context, in *FeedArticlesRequest, opts ...grpc.CallOption) (*GetMultipleArticleReply, error) {
+	out := new(GetMultipleArticleReply)
+	err := c.cc.Invoke(ctx, "/article.v1.Article/FeedArticles", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -94,6 +105,15 @@ func (c *articleClient) DeleteArticle(ctx context.Context, in *DeleteArticleRequ
 	return out, nil
 }
 
+func (c *articleClient) GetTags(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*GetTagsReply, error) {
+	out := new(GetTagsReply)
+	err := c.cc.Invoke(ctx, "/article.v1.Article/GetTags", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ArticleServer is the server API for Article service.
 // All implementations must embed UnimplementedArticleServer
 // for forward compatibility
@@ -101,10 +121,12 @@ type ArticleServer interface {
 	// Sends a greeting
 	GetArticleBySlug(context.Context, *GetArticleBySlugRequest) (*GetArticleReply, error)
 	BatchGetArticles(context.Context, *BatchGetArticlesRequest) (*BatchGetArticlesReply, error)
+	FeedArticles(context.Context, *FeedArticlesRequest) (*GetMultipleArticleReply, error)
 	ListArticles(context.Context, *ListArticlesRequest) (*GetMultipleArticleReply, error)
 	CreateArticle(context.Context, *CreateArticleRequest) (*GetArticleReply, error)
 	UpdateArticle(context.Context, *UpdateArticleRequest) (*GetArticleReply, error)
 	DeleteArticle(context.Context, *DeleteArticleRequest) (*empty.Empty, error)
+	GetTags(context.Context, *empty.Empty) (*GetTagsReply, error)
 	mustEmbedUnimplementedArticleServer()
 }
 
@@ -118,6 +140,9 @@ func (UnimplementedArticleServer) GetArticleBySlug(context.Context, *GetArticleB
 func (UnimplementedArticleServer) BatchGetArticles(context.Context, *BatchGetArticlesRequest) (*BatchGetArticlesReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BatchGetArticles not implemented")
 }
+func (UnimplementedArticleServer) FeedArticles(context.Context, *FeedArticlesRequest) (*GetMultipleArticleReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FeedArticles not implemented")
+}
 func (UnimplementedArticleServer) ListArticles(context.Context, *ListArticlesRequest) (*GetMultipleArticleReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListArticles not implemented")
 }
@@ -129,6 +154,9 @@ func (UnimplementedArticleServer) UpdateArticle(context.Context, *UpdateArticleR
 }
 func (UnimplementedArticleServer) DeleteArticle(context.Context, *DeleteArticleRequest) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteArticle not implemented")
+}
+func (UnimplementedArticleServer) GetTags(context.Context, *empty.Empty) (*GetTagsReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTags not implemented")
 }
 func (UnimplementedArticleServer) mustEmbedUnimplementedArticleServer() {}
 
@@ -175,6 +203,24 @@ func _Article_BatchGetArticles_Handler(srv interface{}, ctx context.Context, dec
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ArticleServer).BatchGetArticles(ctx, req.(*BatchGetArticlesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Article_FeedArticles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FeedArticlesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ArticleServer).FeedArticles(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/article.v1.Article/FeedArticles",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ArticleServer).FeedArticles(ctx, req.(*FeedArticlesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -251,6 +297,24 @@ func _Article_DeleteArticle_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Article_GetTags_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ArticleServer).GetTags(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/article.v1.Article/GetTags",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ArticleServer).GetTags(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Article_ServiceDesc is the grpc.ServiceDesc for Article service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -267,6 +331,10 @@ var Article_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Article_BatchGetArticles_Handler,
 		},
 		{
+			MethodName: "FeedArticles",
+			Handler:    _Article_FeedArticles_Handler,
+		},
+		{
 			MethodName: "ListArticles",
 			Handler:    _Article_ListArticles_Handler,
 		},
@@ -281,6 +349,10 @@ var Article_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteArticle",
 			Handler:    _Article_DeleteArticle_Handler,
+		},
+		{
+			MethodName: "GetTags",
+			Handler:    _Article_GetTags_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

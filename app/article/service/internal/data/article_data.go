@@ -173,3 +173,21 @@ func (r *articleRepo) CreateArticleTags(ctx context.Context, articleId int64, ta
 
 	return err
 }
+
+func (r *articleRepo) FeedArticles(ctx context.Context, limit, offset, userId int64) ([]*articlesModel.Articles, error) {
+	var res []*articlesModel.Articles
+	err := r.data.db.WithContext(ctx).Joins("join followings on articles.author_id = followings.following_id").Where("followings.user_id = ?", userId).Limit(int(limit)).Offset(int(offset)).Order("created_at desc").Find(&res).Error
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
+}
+
+func (r *articleRepo) GetTags(ctx context.Context) ([]tagsModel.Tags, error) {
+	var tagList = make([]tagsModel.Tags, 0)
+	err := r.data.db.WithContext(ctx).Find(&tagList).Error
+	if err != nil && err != gorm.ErrRecordNotFound {
+		return nil, err
+	}
+	return tagList, nil
+}
