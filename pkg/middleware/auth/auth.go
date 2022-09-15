@@ -3,10 +3,12 @@ package auth
 import (
 	errorPb "conduit/api/interface/v1"
 	"context"
+	"github.com/go-kratos/kratos/v2/metadata"
 	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/transport"
 	"github.com/golang-jwt/jwt"
 	errorsv2 "github.com/pkg/errors"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -44,12 +46,6 @@ func ParseJwtToken(secret, tokenString string) (Claims, error) {
 	return Claims{}, errorsv2.New("token invalid")
 }
 
-type GlobalUserInfo struct {
-	UserId   int64
-	UserName string
-	Email    string
-}
-
 // JWTAuthorization 中间件 - jwt鉴权
 func JWTAuthorization(secret string) middleware.Middleware {
 	return func(handler middleware.Handler) middleware.Handler {
@@ -71,22 +67,25 @@ func JWTAuthorization(secret string) middleware.Middleware {
 					return nil, errorPb.ErrorTokenInvalid("%s", err.Error())
 				}
 				// 元数据放入到ctx中
-				ctx = WithContext(ctx, &GlobalUserInfo{
-					UserId:   claims.Id,
-					UserName: claims.UserName,
-				})
+				ctx = WithContext(ctx, claims.Id)
 			}
 			return handler(ctx, req)
 		}
 	}
 }
 
-var GlobalUserInfoKey struct{}
+const Uid = "x-md-global-uid"
 
-func FromContext(ctx context.Context) *GlobalUserInfo {
-	return ctx.Value(GlobalUserInfoKey).(*GlobalUserInfo)
+func GetUserIdFromContext(ctx context.Context) int64 {
+	if md, ok := metadata.FromServerContext(ctx); ok {
+		extra := md.Get(Uid)
+		uid, _ := strconv.Atoi(extra)
+		return int64(uid)
+	}
+
+	return 0
 }
 
-func WithContext(ctx context.Context, user *GlobalUserInfo) context.Context {
-	return context.WithValue(ctx, GlobalUserInfoKey, user)
+func WithContext(ctx context.Context, user int64) context.Context {
+	return metadata.AppendToClientContext(ctx, Uid, strconv.Itoa(int(user)))
 }

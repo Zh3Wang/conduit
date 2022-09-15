@@ -46,5 +46,13 @@ func (s *ArticleService) DeleteArticle(ctx context.Context, req *articlePb.Delet
 	if err != nil {
 		return nil, err
 	}
-	return nil, nil
+	return &empty.Empty{}, nil
+}
+
+func (s *ArticleService) ListArticles(ctx context.Context, req *articlePb.ListArticlesRequest) (*articlePb.GetMultipleArticleReply, error) {
+	reply, err := s.uc.ListArticles(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	return &articlePb.GetMultipleArticleReply{Article: reply}, nil
 }

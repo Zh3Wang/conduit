@@ -101,8 +101,8 @@ func (c *ConduitInterface) FollowUser(ctx context.Context, req *interfacePb.Foll
 	}, nil
 }
 
-// UnFollowUser 取关
-func (c *ConduitInterface) UnFollowUser(ctx context.Context, req *interfacePb.UnfollowUserRequest) (*interfacePb.ProfileReply, error) {
+// UnfollowUser 取关
+func (c *ConduitInterface) UnfollowUser(ctx context.Context, req *interfacePb.UnfollowUserRequest) (*interfacePb.ProfileReply, error) {
 	res, err := c.uc.UnFollowUser(ctx, req.GetUsername())
 	if err != nil {
 		return nil, err

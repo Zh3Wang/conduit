@@ -97,7 +97,7 @@ func (r *userRepo) CreateFollowing(ctx context.Context, userId, followId int64) 
 }
 
 func (r *userRepo) DeleteFollowing(ctx context.Context, userId, followId int64) error {
-	err := r.data.db.WithContext(ctx).Where("user_id = ? and follow_id = ?", userId, followId).Delete(&followingsModel.Followings{}).Error
+	err := r.data.db.WithContext(ctx).Where("user_id = ? and following_id = ?", userId, followId).Delete(&followingsModel.Followings{}).Error
 	if err != nil {
 		return err
 	}

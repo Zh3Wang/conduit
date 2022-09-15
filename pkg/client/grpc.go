@@ -6,6 +6,7 @@ import (
 	"conduit/pkg/middleware/errors"
 	"conduit/pkg/service"
 	"context"
+	"github.com/go-kratos/kratos/v2/middleware/metadata"
 
 	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
@@ -41,6 +42,7 @@ func NewClientOption(dis registry.Discovery, serviceName string) []grpc.ClientOp
 		grpc.WithDiscovery(dis),
 		grpc.WithMiddleware(
 			errors.ClientConvertError(),
+			metadata.Client(),
 		),
 	}
 }

@@ -131,12 +131,9 @@ func (uc *UserUsecase) FollowUser(ctx context.Context, followName string) (*user
 		return nil, err
 	}
 	// 当前用户的ID
-	userInfo := auth.FromContext(ctx)
-	if userInfo == nil {
-		return nil, userPb.ErrorUserNotFound("can't find user from context")
-	}
+	userId := auth.GetUserIdFromContext(ctx)
 	// 建立follow关系
-	err = uc.repo.CreateFollowing(ctx, userInfo.UserId, followUserInfo.ID)
+	err = uc.repo.CreateFollowing(ctx, userId, followUserInfo.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -155,12 +152,10 @@ func (uc *UserUsecase) UnFollowUser(ctx context.Context, followName string) (*us
 		return nil, err
 	}
 	// 当前用户的ID
-	userInfo := auth.FromContext(ctx)
-	if userInfo == nil {
-		return nil, userPb.ErrorUserNotFound("can't find user from context")
-	}
+	userId := auth.GetUserIdFromContext(ctx)
+
 	// 删除follow关系
-	err = uc.repo.DeleteFollowing(ctx, userInfo.UserId, followUserInfo.ID)
+	err = uc.repo.DeleteFollowing(ctx, userId, followUserInfo.ID)
 	if err != nil {
 		return nil, err
 	}

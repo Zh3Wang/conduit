@@ -79,11 +79,8 @@ func (u *UserUsecase) Login(ctx context.Context, email, password string) (*inter
 
 // GetCurrentUser 获取当前token的用户
 func (u *UserUsecase) GetCurrentUser(ctx context.Context) (*interfacePb.User, error) {
-	uInfo := auth.FromContext(ctx)
-	if uInfo == nil {
-		return nil, interfacePb.ErrorUserNotFound("GetCurrentUser FromContext failed")
-	}
-	res, err := u.repo.GetUserById(ctx, uInfo.UserId)
+	userId := auth.GetUserIdFromContext(ctx)
+	res, err := u.repo.GetUserById(ctx, userId)
 	if err != nil {
 		return nil, err
 	}
@@ -97,11 +94,8 @@ func (u *UserUsecase) GetCurrentUser(ctx context.Context) (*interfacePb.User, er
 
 // UpdateUser 更新用户数据
 func (u *UserUsecase) UpdateUser(ctx context.Context, updateInfo *UpdateUser) (*interfacePb.User, error) {
-	uInfo := auth.FromContext(ctx)
-	if uInfo == nil {
-		return nil, interfacePb.ErrorUserNotFound("UpdateUser FromContext failed")
-	}
-	res, err := u.repo.UpdateUserInfo(ctx, uInfo.UserId, updateInfo)
+	userId := auth.GetUserIdFromContext(ctx)
+	res, err := u.repo.UpdateUserInfo(ctx, userId, updateInfo)
 	if err != nil {
 		return nil, err
 	}

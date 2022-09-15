@@ -149,8 +149,8 @@ func (u *UserService) FollowUser(ctx context.Context, req *userPb.FollowUserRequ
 	}, nil
 }
 
-// UnFollowUser 取关
-func (u *UserService) UnFollowUser(ctx context.Context, req *userPb.UnfollowUserRequest) (*userPb.GetProfileReply, error) {
+// UnfollowUser 取关
+func (u *UserService) UnfollowUser(ctx context.Context, req *userPb.UnfollowUserRequest) (*userPb.GetProfileReply, error) {
 	res, err := u.uc.UnFollowUser(ctx, req.GetUsername())
 	if err != nil {
 		return nil, err
