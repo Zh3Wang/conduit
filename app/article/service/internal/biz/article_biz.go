@@ -4,6 +4,7 @@ import (
 	articlePb "conduit/api/article/v1"
 	"conduit/model/articles_model"
 	tagsModel "conduit/model/tags_model"
+	"conduit/pkg/middleware/auth"
 	"conduit/pkg/mysql"
 	"context"
 	"github.com/go-kratos/kratos/v2/log"
@@ -19,18 +20,23 @@ type ArticleRepo interface {
 	DeleteArticle(ctx context.Context, slug string) error
 	BatchGetArticles(ctx context.Context, opts ...mysql.QueryOption) ([]*articlesModel.Articles, error)
 	CreateArticleTags(ctx context.Context, articleId int64, tags []string) error
-	GetTagsFromArticleId(ctx context.Context, articleId int64) ([]tagsModel.Tags, error)
+	GetTagsFromArticleId(ctx context.Context, articleId int64) ([]string, error)
 	FeedArticles(ctx context.Context, limit, offset, userId int64) ([]*articlesModel.Articles, error)
 	GetTags(ctx context.Context) ([]tagsModel.Tags, error)
 }
 
 type ArticleUsecase struct {
-	repo ArticleRepo
-	log  *log.Helper
+	repo       ArticleRepo
+	socialRepo SocialRepo
+	log        *log.Helper
 }
 
-func NewArticleUsecase(repo ArticleRepo, logger log.Logger) *ArticleUsecase {
-	return &ArticleUsecase{repo: repo, log: log.NewHelper(logger)}
+func NewArticleUsecase(repo ArticleRepo, socialRepo SocialRepo, logger log.Logger) *ArticleUsecase {
+	return &ArticleUsecase{
+		repo:       repo,
+		socialRepo: socialRepo,
+		log:        log.NewHelper(logger),
+	}
 }
 
 func slugify(title string) string {
@@ -43,14 +49,39 @@ func (uc *ArticleUsecase) GetArticle(ctx context.Context, slug string) (*article
 	if err != nil {
 		return nil, err
 	}
+	// 获取tag
+	tags, err := uc.repo.GetTagsFromArticleId(ctx, articles.ID)
+	if err != nil {
+		uc.log.WithContext(ctx).Errorf("GetTagsFromArticleId err: %s", err.Error())
+	}
+	// 作者信息
+	author, err := uc.socialRepo.GetProfile(ctx, articles.AuthorID)
+	if err != nil {
+		uc.log.WithContext(ctx).Errorf("GetProfile err: %s", err.Error())
+	}
+
+	favoritesCount, err := uc.socialRepo.GetFavoritesCount(ctx, articles.ID)
+	if err != nil {
+		uc.log.WithContext(ctx).Errorf("GetFavoritesCount err: %s", err.Error())
+	}
+
+	userId := auth.GetUserIdFromContext(ctx)
+	favorited, err := uc.socialRepo.GetFavorited(ctx, userId, articles.ID)
+	if err != nil {
+		uc.log.WithContext(ctx).Errorf("GetFavorited err: %s", err.Error())
+	}
+
 	return &articlePb.ArticleData{
-		Slug:        articles.Slug,
-		Title:       articles.Title,
-		Description: articles.Description,
-		Body:        articles.Body,
-		CreatedAt:   articles.CreatedAt,
-		UpdatedAt:   articles.UpdatedAt,
-		AuthorId:    articles.AuthorID,
+		Slug:           articles.Slug,
+		Title:          articles.Title,
+		Description:    articles.Description,
+		Body:           articles.Body,
+		CreatedAt:      articles.CreatedAt,
+		UpdatedAt:      articles.UpdatedAt,
+		Author:         author,
+		TagList:        tags,
+		FavoritesCount: favoritesCount,
+		Favorited:      favorited,
 	}, nil
 }
 
@@ -134,21 +165,32 @@ func (uc *ArticleUsecase) ListArticles(ctx context.Context, req *articlePb.ListA
 		if err != nil {
 			uc.log.WithContext(ctx).Errorf("GetTagsFromArticleId err: %s", err.Error())
 		}
-		var tagList []string
-		if len(tags) > 0 {
-			for _, vv := range tags {
-				tagList = append(tagList, vv.Name)
-			}
+		// 作者信息
+		author, err := uc.socialRepo.GetProfile(ctx, v.AuthorID)
+		if err != nil {
+			uc.log.WithContext(ctx).Errorf("GetProfile err: %s", err.Error())
+		}
+		favoritesCount, err := uc.socialRepo.GetFavoritesCount(ctx, v.ID)
+		if err != nil {
+			uc.log.WithContext(ctx).Errorf("GetFavoritesCount err: %s", err.Error())
+		}
+
+		userId := auth.GetUserIdFromContext(ctx)
+		favorited, err := uc.socialRepo.GetFavorited(ctx, userId, v.ID)
+		if err != nil {
+			uc.log.WithContext(ctx).Errorf("GetFavorited err: %s", err.Error())
 		}
 		nr = append(nr, &articlePb.ArticleData{
-			Slug:        v.Slug,
-			Title:       v.Title,
-			Description: v.Description,
-			Body:        v.Body,
-			TagList:     tagList,
-			CreatedAt:   v.CreatedAt,
-			UpdatedAt:   v.UpdatedAt,
-			AuthorId:    v.AuthorID,
+			Slug:           v.Slug,
+			Title:          v.Title,
+			Description:    v.Description,
+			Body:           v.Body,
+			TagList:        tags,
+			CreatedAt:      v.CreatedAt,
+			UpdatedAt:      v.UpdatedAt,
+			Author:         author,
+			FavoritesCount: favoritesCount,
+			Favorited:      favorited,
 		})
 	}
 
@@ -174,21 +216,31 @@ func (uc *ArticleUsecase) FeedArticles(ctx context.Context, req *articlePb.FeedA
 		if err != nil {
 			uc.log.WithContext(ctx).Errorf("GetTagsFromArticleId err: %s", err.Error())
 		}
-		var tagList []string
-		if len(tags) > 0 {
-			for _, vv := range tags {
-				tagList = append(tagList, vv.Name)
-			}
+		// 作者信息
+		author, err := uc.socialRepo.GetProfile(ctx, v.AuthorID)
+		if err != nil {
+			uc.log.WithContext(ctx).Errorf("GetProfile err: %s", err.Error())
+		}
+		favoritesCount, err := uc.socialRepo.GetFavoritesCount(ctx, v.ID)
+		if err != nil {
+			uc.log.WithContext(ctx).Errorf("GetFavoritesCount err: %s", err.Error())
+		}
+
+		favorited, err := uc.socialRepo.GetFavorited(ctx, req.UserId, v.ID)
+		if err != nil {
+			uc.log.WithContext(ctx).Errorf("GetFavorited err: %s", err.Error())
 		}
 		nr = append(nr, &articlePb.ArticleData{
-			Slug:        v.Slug,
-			Title:       v.Title,
-			Description: v.Description,
-			Body:        v.Body,
-			TagList:     tagList,
-			CreatedAt:   v.CreatedAt,
-			UpdatedAt:   v.UpdatedAt,
-			AuthorId:    v.AuthorID,
+			Slug:           v.Slug,
+			Title:          v.Title,
+			Description:    v.Description,
+			Body:           v.Body,
+			TagList:        tags,
+			CreatedAt:      v.CreatedAt,
+			UpdatedAt:      v.UpdatedAt,
+			Author:         author,
+			FavoritesCount: favoritesCount,
+			Favorited:      favorited,
 		})
 	}
 

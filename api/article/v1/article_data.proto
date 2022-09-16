@@ -11,5 +11,22 @@ message articleData {
   int64 createdAt = 6;
   int64 updatedAt = 7;
   int64 deleteAt = 10;
-  int64 author_id = 9;
+  profile author = 9;
+  int64 favorites_count = 11;
+  bool favorited = 12;
+}
+
+message comment {
+  int64  id = 1;
+  string body = 2;
+  int64 createdAt = 6;
+  int64 updatedAt = 7;
+  profile author = 8;
+}
+
+message profile {
+  string user_name = 1[json_name = "username"];
+  string bio = 2;
+  string image = 3;
+  bool following = 4;
 }

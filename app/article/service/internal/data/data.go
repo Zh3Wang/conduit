@@ -21,6 +21,7 @@ var ProviderSet = wire.NewSet(
 	NewData,
 	NewDB,
 	NewArticleRepo,
+	NewSocialRepo,
 	NewDiscovery,
 	NewRegistrar,
 	client.NewUserServiceClient,

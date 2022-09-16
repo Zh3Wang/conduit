@@ -7,7 +7,6 @@ import (
 	"context"
 	"time"
 
-	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
 )
 
@@ -26,10 +25,6 @@ func NewUserService(uc *biz.UserUsecase, logger log.Logger) *UserService {
 
 // GetProfileById 获取作者信息 by id
 func (u *UserService) GetProfileById(ctx context.Context, req *userPb.GetProfileByIdRequest) (*userPb.GetProfileReply, error) {
-	u.log.WithContext(ctx).Infof("GetProfileById Received ---- {%+v}", req)
-	if req.GetId() <= 0 {
-		return nil, errors.New(422, "PARAM_ILLEGAL", "非法参数")
-	}
 	r, err := u.uc.GetProfileById(ctx, req.GetId())
 	if err != nil {
 		return nil, err
@@ -41,18 +36,12 @@ func (u *UserService) GetProfileById(ctx context.Context, req *userPb.GetProfile
 
 // GetProfileByUserName 获取作者信息 by username
 func (u *UserService) GetProfileByUserName(ctx context.Context, req *userPb.GetProfileByUserNameRequest) (*userPb.GetProfileReply, error) {
-	res, err := u.uc.GetUser(ctx, req.GetUsername(), "username")
+	r, err := u.uc.GetProfileByUserName(ctx, req.GetUsername())
 	if err != nil {
 		return nil, err
 	}
 	return &userPb.GetProfileReply{
-		Profile: &userPb.Profile{
-			UserName:    res.Username,
-			Bio:         res.Bio,
-			Image:       res.Image,
-			CreatedTime: time.Unix(res.CreatedAt, 0).Format("2006/01/02 15:04:05"),
-			UpdatedTime: time.Unix(res.UpdatedAt, 0).Format("2006/01/02 15:04:05"),
-		},
+		Profile: r,
 	}, nil
 }
 
@@ -143,6 +132,7 @@ func (u *UserService) FollowUser(ctx context.Context, req *userPb.FollowUserRequ
 			UserName:    res.Username,
 			Bio:         res.Bio,
 			Image:       res.Image,
+			Following:   true,
 			CreatedTime: time.Unix(res.CreatedAt, 0).Format("2006/01/02 15:04:05"),
 			UpdatedTime: time.Unix(res.UpdatedAt, 0).Format("2006/01/02 15:04:05"),
 		},
@@ -160,6 +150,7 @@ func (u *UserService) UnfollowUser(ctx context.Context, req *userPb.UnfollowUser
 			UserName:    res.Username,
 			Bio:         res.Bio,
 			Image:       res.Image,
+			Following:   false,
 			CreatedTime: time.Unix(res.CreatedAt, 0).Format("2006/01/02 15:04:05"),
 			UpdatedTime: time.Unix(res.UpdatedAt, 0).Format("2006/01/02 15:04:05"),
 		},

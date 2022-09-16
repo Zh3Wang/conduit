@@ -10,6 +10,7 @@ import (
 	context "context"
 	http "github.com/go-kratos/kratos/v2/transport/http"
 	binding "github.com/go-kratos/kratos/v2/transport/http/binding"
+	empty "github.com/golang/protobuf/ptypes/empty"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -19,25 +20,45 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
+const OperationConduitInterfaceAddComment = "/interface.v1.ConduitInterface/AddComment"
+const OperationConduitInterfaceCreateArticle = "/interface.v1.ConduitInterface/CreateArticle"
+const OperationConduitInterfaceDeleteArticle = "/interface.v1.ConduitInterface/DeleteArticle"
+const OperationConduitInterfaceDeleteComment = "/interface.v1.ConduitInterface/DeleteComment"
+const OperationConduitInterfaceFavoriteArticle = "/interface.v1.ConduitInterface/FavoriteArticle"
+const OperationConduitInterfaceFeedArticles = "/interface.v1.ConduitInterface/FeedArticles"
 const OperationConduitInterfaceFollowUser = "/interface.v1.ConduitInterface/FollowUser"
 const OperationConduitInterfaceGetArticle = "/interface.v1.ConduitInterface/GetArticle"
+const OperationConduitInterfaceGetComments = "/interface.v1.ConduitInterface/GetComments"
 const OperationConduitInterfaceGetCurrentUser = "/interface.v1.ConduitInterface/GetCurrentUser"
 const OperationConduitInterfaceGetProfile = "/interface.v1.ConduitInterface/GetProfile"
+const OperationConduitInterfaceGetTags = "/interface.v1.ConduitInterface/GetTags"
 const OperationConduitInterfaceListArticles = "/interface.v1.ConduitInterface/ListArticles"
 const OperationConduitInterfaceLogin = "/interface.v1.ConduitInterface/Login"
 const OperationConduitInterfaceRegister = "/interface.v1.ConduitInterface/Register"
+const OperationConduitInterfaceUnfavoriteArticle = "/interface.v1.ConduitInterface/UnfavoriteArticle"
 const OperationConduitInterfaceUnfollowUser = "/interface.v1.ConduitInterface/UnfollowUser"
+const OperationConduitInterfaceUpdateArticle = "/interface.v1.ConduitInterface/UpdateArticle"
 const OperationConduitInterfaceUpdateUser = "/interface.v1.ConduitInterface/UpdateUser"
 
 type ConduitInterfaceHTTPServer interface {
+	AddComment(context.Context, *AddCommentRequest) (*SingleCommentReply, error)
+	CreateArticle(context.Context, *CreateArticleRequest) (*GetArticleReply, error)
+	DeleteArticle(context.Context, *DeleteArticleRequest) (*empty.Empty, error)
+	DeleteComment(context.Context, *DeleteCommentRequest) (*SingleCommentReply, error)
+	FavoriteArticle(context.Context, *FavoriteArticleRequest) (*GetArticleReply, error)
+	FeedArticles(context.Context, *FeedArticlesRequest) (*MultipleArticles, error)
 	FollowUser(context.Context, *FollowUserRequest) (*ProfileReply, error)
 	GetArticle(context.Context, *GetArticleRequest) (*GetArticleReply, error)
+	GetComments(context.Context, *AddCommentRequest) (*MultipleCommentsReply, error)
 	GetCurrentUser(context.Context, *GetCurrentUserRequest) (*UserReply, error)
 	GetProfile(context.Context, *GetProfileRequest) (*ProfileReply, error)
+	GetTags(context.Context, *empty.Empty) (*GetTagsReply, error)
 	ListArticles(context.Context, *ListArticlesRequest) (*MultipleArticles, error)
 	Login(context.Context, *LoginRequest) (*UserReply, error)
 	Register(context.Context, *RegisterRequest) (*UserReply, error)
+	UnfavoriteArticle(context.Context, *UnfavoriteArticleRequest) (*GetArticleReply, error)
 	UnfollowUser(context.Context, *UnfollowUserRequest) (*ProfileReply, error)
+	UpdateArticle(context.Context, *UpdateArticleRequest) (*GetArticleReply, error)
 	UpdateUser(context.Context, *UpdateUserRequest) (*UserReply, error)
 }
 
@@ -52,6 +73,16 @@ func RegisterConduitInterfaceHTTPServer(s *http.Server, srv ConduitInterfaceHTTP
 	r.DELETE("api/profiles/{username}/follow", _ConduitInterface_UnfollowUser0_HTTP_Handler(srv))
 	r.GET("api/articles", _ConduitInterface_ListArticles0_HTTP_Handler(srv))
 	r.GET("api/articles/{slug}", _ConduitInterface_GetArticle0_HTTP_Handler(srv))
+	r.GET("api/articles/feed", _ConduitInterface_FeedArticles0_HTTP_Handler(srv))
+	r.POST("api/articles", _ConduitInterface_CreateArticle0_HTTP_Handler(srv))
+	r.PUT("api/articles/{slug}", _ConduitInterface_UpdateArticle0_HTTP_Handler(srv))
+	r.DELETE("api/articles/{slug}", _ConduitInterface_DeleteArticle0_HTTP_Handler(srv))
+	r.POST("api/articles/{slug}/comments", _ConduitInterface_AddComment0_HTTP_Handler(srv))
+	r.GET("api/articles/{slug}/comments", _ConduitInterface_GetComments0_HTTP_Handler(srv))
+	r.DELETE("api/articles/{slug}/comments/{id}", _ConduitInterface_DeleteComment0_HTTP_Handler(srv))
+	r.POST("api/articles/{slug}/favorite", _ConduitInterface_FavoriteArticle0_HTTP_Handler(srv))
+	r.DELETE("api/articles/{slug}/favorite", _ConduitInterface_UnfavoriteArticle0_HTTP_Handler(srv))
+	r.GET("api/tags", _ConduitInterface_GetTags0_HTTP_Handler(srv))
 }
 
 func _ConduitInterface_Register0_HTTP_Handler(srv ConduitInterfaceHTTPServer) func(ctx http.Context) error {
@@ -237,15 +268,236 @@ func _ConduitInterface_GetArticle0_HTTP_Handler(srv ConduitInterfaceHTTPServer) 
 	}
 }
 
+func _ConduitInterface_FeedArticles0_HTTP_Handler(srv ConduitInterfaceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in FeedArticlesRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationConduitInterfaceFeedArticles)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.FeedArticles(ctx, req.(*FeedArticlesRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*MultipleArticles)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _ConduitInterface_CreateArticle0_HTTP_Handler(srv ConduitInterfaceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in CreateArticleRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationConduitInterfaceCreateArticle)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.CreateArticle(ctx, req.(*CreateArticleRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*GetArticleReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _ConduitInterface_UpdateArticle0_HTTP_Handler(srv ConduitInterfaceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in UpdateArticleRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationConduitInterfaceUpdateArticle)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.UpdateArticle(ctx, req.(*UpdateArticleRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*GetArticleReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _ConduitInterface_DeleteArticle0_HTTP_Handler(srv ConduitInterfaceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in DeleteArticleRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationConduitInterfaceDeleteArticle)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.DeleteArticle(ctx, req.(*DeleteArticleRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*empty.Empty)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _ConduitInterface_AddComment0_HTTP_Handler(srv ConduitInterfaceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in AddCommentRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationConduitInterfaceAddComment)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.AddComment(ctx, req.(*AddCommentRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*SingleCommentReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _ConduitInterface_GetComments0_HTTP_Handler(srv ConduitInterfaceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in AddCommentRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationConduitInterfaceGetComments)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetComments(ctx, req.(*AddCommentRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*MultipleCommentsReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _ConduitInterface_DeleteComment0_HTTP_Handler(srv ConduitInterfaceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in DeleteCommentRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationConduitInterfaceDeleteComment)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.DeleteComment(ctx, req.(*DeleteCommentRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*SingleCommentReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _ConduitInterface_FavoriteArticle0_HTTP_Handler(srv ConduitInterfaceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in FavoriteArticleRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationConduitInterfaceFavoriteArticle)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.FavoriteArticle(ctx, req.(*FavoriteArticleRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*GetArticleReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _ConduitInterface_UnfavoriteArticle0_HTTP_Handler(srv ConduitInterfaceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in UnfavoriteArticleRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationConduitInterfaceUnfavoriteArticle)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.UnfavoriteArticle(ctx, req.(*UnfavoriteArticleRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*GetArticleReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _ConduitInterface_GetTags0_HTTP_Handler(srv ConduitInterfaceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in empty.Empty
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationConduitInterfaceGetTags)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetTags(ctx, req.(*empty.Empty))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*GetTagsReply)
+		return ctx.Result(200, reply)
+	}
+}
+
 type ConduitInterfaceHTTPClient interface {
+	AddComment(ctx context.Context, req *AddCommentRequest, opts ...http.CallOption) (rsp *SingleCommentReply, err error)
+	CreateArticle(ctx context.Context, req *CreateArticleRequest, opts ...http.CallOption) (rsp *GetArticleReply, err error)
+	DeleteArticle(ctx context.Context, req *DeleteArticleRequest, opts ...http.CallOption) (rsp *empty.Empty, err error)
+	DeleteComment(ctx context.Context, req *DeleteCommentRequest, opts ...http.CallOption) (rsp *SingleCommentReply, err error)
+	FavoriteArticle(ctx context.Context, req *FavoriteArticleRequest, opts ...http.CallOption) (rsp *GetArticleReply, err error)
+	FeedArticles(ctx context.Context, req *FeedArticlesRequest, opts ...http.CallOption) (rsp *MultipleArticles, err error)
 	FollowUser(ctx context.Context, req *FollowUserRequest, opts ...http.CallOption) (rsp *ProfileReply, err error)
 	GetArticle(ctx context.Context, req *GetArticleRequest, opts ...http.CallOption) (rsp *GetArticleReply, err error)
+	GetComments(ctx context.Context, req *AddCommentRequest, opts ...http.CallOption) (rsp *MultipleCommentsReply, err error)
 	GetCurrentUser(ctx context.Context, req *GetCurrentUserRequest, opts ...http.CallOption) (rsp *UserReply, err error)
 	GetProfile(ctx context.Context, req *GetProfileRequest, opts ...http.CallOption) (rsp *ProfileReply, err error)
+	GetTags(ctx context.Context, req *empty.Empty, opts ...http.CallOption) (rsp *GetTagsReply, err error)
 	ListArticles(ctx context.Context, req *ListArticlesRequest, opts ...http.CallOption) (rsp *MultipleArticles, err error)
 	Login(ctx context.Context, req *LoginRequest, opts ...http.CallOption) (rsp *UserReply, err error)
 	Register(ctx context.Context, req *RegisterRequest, opts ...http.CallOption) (rsp *UserReply, err error)
+	UnfavoriteArticle(ctx context.Context, req *UnfavoriteArticleRequest, opts ...http.CallOption) (rsp *GetArticleReply, err error)
 	UnfollowUser(ctx context.Context, req *UnfollowUserRequest, opts ...http.CallOption) (rsp *ProfileReply, err error)
+	UpdateArticle(ctx context.Context, req *UpdateArticleRequest, opts ...http.CallOption) (rsp *GetArticleReply, err error)
 	UpdateUser(ctx context.Context, req *UpdateUserRequest, opts ...http.CallOption) (rsp *UserReply, err error)
 }
 
@@ -255,6 +507,84 @@ type ConduitInterfaceHTTPClientImpl struct {
 
 func NewConduitInterfaceHTTPClient(client *http.Client) ConduitInterfaceHTTPClient {
 	return &ConduitInterfaceHTTPClientImpl{client}
+}
+
+func (c *ConduitInterfaceHTTPClientImpl) AddComment(ctx context.Context, in *AddCommentRequest, opts ...http.CallOption) (*SingleCommentReply, error) {
+	var out SingleCommentReply
+	pattern := "api/articles/{slug}/comments"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationConduitInterfaceAddComment))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *ConduitInterfaceHTTPClientImpl) CreateArticle(ctx context.Context, in *CreateArticleRequest, opts ...http.CallOption) (*GetArticleReply, error) {
+	var out GetArticleReply
+	pattern := "api/articles"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationConduitInterfaceCreateArticle))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *ConduitInterfaceHTTPClientImpl) DeleteArticle(ctx context.Context, in *DeleteArticleRequest, opts ...http.CallOption) (*empty.Empty, error) {
+	var out empty.Empty
+	pattern := "api/articles/{slug}"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationConduitInterfaceDeleteArticle))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "DELETE", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *ConduitInterfaceHTTPClientImpl) DeleteComment(ctx context.Context, in *DeleteCommentRequest, opts ...http.CallOption) (*SingleCommentReply, error) {
+	var out SingleCommentReply
+	pattern := "api/articles/{slug}/comments/{id}"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationConduitInterfaceDeleteComment))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "DELETE", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *ConduitInterfaceHTTPClientImpl) FavoriteArticle(ctx context.Context, in *FavoriteArticleRequest, opts ...http.CallOption) (*GetArticleReply, error) {
+	var out GetArticleReply
+	pattern := "api/articles/{slug}/favorite"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationConduitInterfaceFavoriteArticle))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *ConduitInterfaceHTTPClientImpl) FeedArticles(ctx context.Context, in *FeedArticlesRequest, opts ...http.CallOption) (*MultipleArticles, error) {
+	var out MultipleArticles
+	pattern := "api/articles/feed"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationConduitInterfaceFeedArticles))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
 }
 
 func (c *ConduitInterfaceHTTPClientImpl) FollowUser(ctx context.Context, in *FollowUserRequest, opts ...http.CallOption) (*ProfileReply, error) {
@@ -283,6 +613,19 @@ func (c *ConduitInterfaceHTTPClientImpl) GetArticle(ctx context.Context, in *Get
 	return &out, err
 }
 
+func (c *ConduitInterfaceHTTPClientImpl) GetComments(ctx context.Context, in *AddCommentRequest, opts ...http.CallOption) (*MultipleCommentsReply, error) {
+	var out MultipleCommentsReply
+	pattern := "api/articles/{slug}/comments"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationConduitInterfaceGetComments))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
 func (c *ConduitInterfaceHTTPClientImpl) GetCurrentUser(ctx context.Context, in *GetCurrentUserRequest, opts ...http.CallOption) (*UserReply, error) {
 	var out UserReply
 	pattern := "api/user"
@@ -301,6 +644,19 @@ func (c *ConduitInterfaceHTTPClientImpl) GetProfile(ctx context.Context, in *Get
 	pattern := "api/profiles/{username}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationConduitInterfaceGetProfile))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *ConduitInterfaceHTTPClientImpl) GetTags(ctx context.Context, in *empty.Empty, opts ...http.CallOption) (*GetTagsReply, error) {
+	var out GetTagsReply
+	pattern := "api/tags"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationConduitInterfaceGetTags))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
@@ -348,6 +704,19 @@ func (c *ConduitInterfaceHTTPClientImpl) Register(ctx context.Context, in *Regis
 	return &out, err
 }
 
+func (c *ConduitInterfaceHTTPClientImpl) UnfavoriteArticle(ctx context.Context, in *UnfavoriteArticleRequest, opts ...http.CallOption) (*GetArticleReply, error) {
+	var out GetArticleReply
+	pattern := "api/articles/{slug}/favorite"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationConduitInterfaceUnfavoriteArticle))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "DELETE", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
 func (c *ConduitInterfaceHTTPClientImpl) UnfollowUser(ctx context.Context, in *UnfollowUserRequest, opts ...http.CallOption) (*ProfileReply, error) {
 	var out ProfileReply
 	pattern := "api/profiles/{username}/follow"
@@ -355,6 +724,19 @@ func (c *ConduitInterfaceHTTPClientImpl) UnfollowUser(ctx context.Context, in *U
 	opts = append(opts, http.Operation(OperationConduitInterfaceUnfollowUser))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "DELETE", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *ConduitInterfaceHTTPClientImpl) UpdateArticle(ctx context.Context, in *UpdateArticleRequest, opts ...http.CallOption) (*GetArticleReply, error) {
+	var out GetArticleReply
+	pattern := "api/articles/{slug}"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationConduitInterfaceUpdateArticle))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

@@ -82,7 +82,6 @@ func GetUserIdFromContext(ctx context.Context) int64 {
 		uid, _ := strconv.Atoi(extra)
 		return int64(uid)
 	}
-
 	return 0
 }
 

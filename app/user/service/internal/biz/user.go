@@ -2,6 +2,7 @@ package biz
 
 import (
 	"conduit/pkg/encrypt"
+	"conduit/pkg/format"
 	"conduit/pkg/middleware/auth"
 	"context"
 	"github.com/pkg/errors"
@@ -26,6 +27,7 @@ type UserRepo interface {
 	GetUserByEmail(ctx context.Context, email string) (*usersModel.Users, error)
 	CreateFollowing(ctx context.Context, userId, followId int64) error
 	DeleteFollowing(ctx context.Context, userId, followId int64) error
+	IsFollowing(ctx context.Context, userId, authorId int64) (bool, error)
 }
 
 type UserUsecase struct {
@@ -42,13 +44,40 @@ func (uc *UserUsecase) GetProfileById(ctx context.Context, id int32) (*userPb.Pr
 	if err != nil {
 		return nil, err
 	}
+	// following?
+	userId := auth.GetUserIdFromContext(ctx)
+	following, err := uc.repo.IsFollowing(ctx, userId, int64(id))
+	if err != nil {
+		uc.log.WithContext(ctx).Errorf("IsFollowing err: %s", err.Error())
+	}
 	return &userPb.Profile{
 		UserName:    r.Username,
 		Bio:         r.Bio,
 		Image:       r.Image,
-		Following:   false,
+		Following:   following,
 		CreatedTime: time.Unix(r.CreatedAt, 0).Format("2006/01/02 15:04:05"),
 		UpdatedTime: time.Unix(r.UpdatedAt, 0).Format("2006/01/02 15:04:05"),
+	}, nil
+}
+
+func (uc *UserUsecase) GetProfileByUserName(ctx context.Context, username string) (*userPb.Profile, error) {
+	r, err := uc.repo.GetUser(ctx, username, "username")
+	if err != nil {
+		return nil, err
+	}
+	// following?
+	userId := auth.GetUserIdFromContext(ctx)
+	following, err := uc.repo.IsFollowing(ctx, userId, r.ID)
+	if err != nil {
+		uc.log.WithContext(ctx).Errorf("IsFollowing err: %s", err.Error())
+	}
+	return &userPb.Profile{
+		UserName:    r.Username,
+		Bio:         r.Bio,
+		Image:       r.Image,
+		Following:   following,
+		CreatedTime: format.ConvertTime(r.CreatedAt),
+		UpdatedTime: format.ConvertTime(r.UpdatedAt),
 	}, nil
 }
 

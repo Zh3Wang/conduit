@@ -42,11 +42,198 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/MultipleArticles'
+        post:
+            tags:
+                - ConduitInterface
+            operationId: ConduitInterface_CreateArticle
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CreateArticleRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetArticleReply'
+    api/articles/feed:
+        get:
+            tags:
+                - ConduitInterface
+            operationId: ConduitInterface_FeedArticles
+            parameters:
+                - name: limit
+                  in: query
+                  schema:
+                    type: integer
+                    format: int64
+                - name: offset
+                  in: query
+                  schema:
+                    type: integer
+                    format: int64
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/MultipleArticles'
     api/articles/{slug}:
         get:
             tags:
                 - ConduitInterface
             operationId: ConduitInterface_GetArticle
+            parameters:
+                - name: slug
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetArticleReply'
+        put:
+            tags:
+                - ConduitInterface
+            operationId: ConduitInterface_UpdateArticle
+            parameters:
+                - name: slug
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/UpdateArticleRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetArticleReply'
+        delete:
+            tags:
+                - ConduitInterface
+            operationId: ConduitInterface_DeleteArticle
+            parameters:
+                - name: slug
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    api/articles/{slug}/comments:
+        get:
+            tags:
+                - ConduitInterface
+            operationId: ConduitInterface_GetComments
+            parameters:
+                - name: slug
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                - name: comment.body
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/MultipleCommentsReply'
+        post:
+            tags:
+                - ConduitInterface
+            operationId: ConduitInterface_AddComment
+            parameters:
+                - name: slug
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/AddCommentRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SingleCommentReply'
+    api/articles/{slug}/comments/{id}:
+        delete:
+            tags:
+                - ConduitInterface
+            operationId: ConduitInterface_DeleteComment
+            parameters:
+                - name: slug
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: int64
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SingleCommentReply'
+    api/articles/{slug}/favorite:
+        post:
+            tags:
+                - ConduitInterface
+            operationId: ConduitInterface_FavoriteArticle
+            parameters:
+                - name: slug
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/FavoriteArticleRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetArticleReply'
+        delete:
+            tags:
+                - ConduitInterface
+            operationId: ConduitInterface_UnfavoriteArticle
             parameters:
                 - name: slug
                   in: path
@@ -119,6 +306,18 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/ProfileReply'
+    api/tags:
+        get:
+            tags:
+                - ConduitInterface
+            operationId: ConduitInterface_GetTags
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetTagsReply'
     api/user:
         get:
             tags:
@@ -186,6 +385,55 @@ paths:
                                 $ref: '#/components/schemas/UserReply'
 components:
     schemas:
+        AddCommentRequest:
+            type: object
+            properties:
+                comment:
+                    $ref: '#/components/schemas/AddCommentRequest_Comment'
+                slug:
+                    type: string
+        AddCommentRequest_Comment:
+            type: object
+            properties:
+                body:
+                    type: string
+        Comment:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                createdAt:
+                    type: string
+                updatedAt:
+                    type: string
+                body:
+                    type: string
+                author:
+                    $ref: '#/components/schemas/Profile'
+        CreateArticleRequest:
+            type: object
+            properties:
+                article:
+                    $ref: '#/components/schemas/CreateArticleRequest_data'
+        CreateArticleRequest_data:
+            type: object
+            properties:
+                title:
+                    type: string
+                description:
+                    type: string
+                body:
+                    type: string
+                tagList:
+                    type: array
+                    items:
+                        type: string
+        FavoriteArticleRequest:
+            type: object
+            properties:
+                slug:
+                    type: string
         FollowUserRequest:
             type: object
             properties:
@@ -197,6 +445,13 @@ components:
                 article:
                     $ref: '#/components/schemas/SingleArticle'
             description: The response message containing the greetings
+        GetTagsReply:
+            type: object
+            properties:
+                tags:
+                    type: array
+                    items:
+                        type: string
         LoginRequest:
             type: object
             properties:
@@ -216,6 +471,13 @@ components:
                     type: array
                     items:
                         $ref: '#/components/schemas/SingleArticle'
+        MultipleCommentsReply:
+            type: object
+            properties:
+                comments:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/Comment'
         Profile:
             type: object
             properties:
@@ -272,6 +534,23 @@ components:
                     format: int32
                 author:
                     $ref: '#/components/schemas/Profile'
+        SingleCommentReply:
+            type: object
+            properties:
+                comment:
+                    $ref: '#/components/schemas/Comment'
+        UpdateArticleRequest:
+            type: object
+            properties:
+                article:
+                    $ref: '#/components/schemas/UpdateArticleRequest_data'
+                slug:
+                    type: string
+        UpdateArticleRequest_data:
+            type: object
+            properties:
+                title:
+                    type: string
         UpdateUserRequest:
             type: object
             properties:

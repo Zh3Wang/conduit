@@ -106,13 +106,19 @@ func createQuery(ctx context.Context, db *gorm.DB, query mysql.QueryOptions) *go
 	return db
 }
 
-func (r *articleRepo) GetTagsFromArticleId(ctx context.Context, articleId int64) ([]tagsModel.Tags, error) {
+func (r *articleRepo) GetTagsFromArticleId(ctx context.Context, articleId int64) ([]string, error) {
 	var res []tagsModel.Tags
 	err := r.data.db.WithContext(ctx).Joins("join article_tags on article_tags.tag_id = tags.id").Where("article_tags.article_id = ?", articleId).Find(&res).Error
 	if err != nil {
 		return nil, err
 	}
-	return res, nil
+	var tagList []string
+	if len(res) > 0 {
+		for _, vv := range res {
+			tagList = append(tagList, vv.Name)
+		}
+	}
+	return tagList, nil
 }
 
 func (r *articleRepo) CreateArticleTags(ctx context.Context, articleId int64, tags []string) error {

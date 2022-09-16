@@ -13,4 +13,5 @@ enum ErrorReason {
 
   PARAM_ILLEGAL = 0 [(errors.code) = 404];
   CONTENT_MISSING = 1 [(errors.code) = 400];
+  USER_NOT_FOUND = 2 [(errors.code) = 400];
 }

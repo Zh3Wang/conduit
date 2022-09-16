@@ -3,6 +3,7 @@ syntax = "proto3";
 package interface.v1;
 
 import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
 import "validate/validate.proto";
 import "api/interface/v1/interface_data.proto";
 
@@ -63,6 +64,70 @@ service ConduitInterface {
   rpc GetArticle (GetArticleRequest) returns (GetArticleReply)  {
     option (google.api.http) = {
       get: "api/articles/{slug}",
+    };
+  }
+
+  rpc FeedArticles(FeedArticlesRequest) returns (MultipleArticles) {
+    option (google.api.http) = {
+      get: "api/articles/feed"
+    };
+  }
+
+  rpc CreateArticle(CreateArticleRequest) returns (GetArticleReply) {
+    option (google.api.http) = {
+      post:"api/articles",
+      body: "*",
+    };
+  }
+
+  rpc UpdateArticle(UpdateArticleRequest) returns (GetArticleReply) {
+    option (google.api.http) = {
+      put:"api/articles/{slug}",
+      body: "*",
+    };
+  }
+
+  rpc DeleteArticle(DeleteArticleRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "api/articles/{slug}"
+    };
+  }
+
+  rpc AddComment(AddCommentRequest) returns (SingleCommentReply) {
+    option (google.api.http) = {
+      post : "api/articles/{slug}/comments",
+      body : "*",
+    };
+  }
+
+  rpc GetComments(AddCommentRequest) returns (MultipleCommentsReply) {
+    option (google.api.http) = {
+      get : "api/articles/{slug}/comments",
+    };
+  }
+
+  rpc DeleteComment(DeleteCommentRequest) returns (SingleCommentReply) {
+    option (google.api.http) = {
+      delete : "api/articles/{slug}/comments/{id}",
+    };
+  }
+
+  rpc FavoriteArticle(FavoriteArticleRequest) returns (GetArticleReply) {
+    option (google.api.http) = {
+      post : "api/articles/{slug}/favorite",
+      body : "*"
+    };
+  }
+
+  rpc UnfavoriteArticle(UnfavoriteArticleRequest) returns (GetArticleReply) {
+    option (google.api.http) = {
+      delete : "api/articles/{slug}/favorite",
+    };
+  }
+
+  rpc GetTags(google.protobuf.Empty) returns (GetTagsReply) {
+    option (google.api.http) = {
+      get: "api/tags",
     };
   }
 }
@@ -135,3 +200,54 @@ message ListArticlesRequest {
   int64 limit = 4;
   int64 offset = 5;
 }
+
+message FeedArticlesRequest {
+  int64 limit = 1;
+  int64 offset = 2;
+}
+
+message CreateArticleRequest {
+  message data {
+    string title = 1[(validate.rules).string = {min_len: 1}];
+    string description = 2[(validate.rules).string = {min_len: 1}];
+    string body = 3[(validate.rules).string = {min_len: 1}];
+    repeated string tagList = 4;
+  }
+  data article = 1;
+}
+
+message UpdateArticleRequest {
+  message data {
+    string title = 1[(validate.rules).string = {min_len: 1}];
+  }
+  data article = 1;
+  string slug = 2;
+}
+
+message DeleteArticleRequest {
+  string slug = 1[(validate.rules).string = {min_len: 1}];
+}
+
+message GetTagsReply {
+  repeated string tags = 1;
+}
+
+message DeleteCommentRequest {
+  string slug = 1;
+  int64 id = 2;
+}
+
+message AddCommentRequest {
+  message Comment {string body = 1;}
+
+  Comment comment = 1;
+  string slug = 2;
+}
+
+message FavoriteArticleRequest {string slug = 1;}
+
+message UnfavoriteArticleRequest {string slug = 1;}
+
+message SingleCommentReply {Comment comment = 1;}
+
+message MultipleCommentsReply {repeated Comment comments = 1;}

@@ -34,3 +34,11 @@ message Profile {
   string image = 3;
   bool following = 4;
 }
+
+message Comment {
+  uint32 id = 1;
+  string createdAt = 2;
+  string updatedAt = 3;
+  string body = 4;
+  Profile author = 5;
+}

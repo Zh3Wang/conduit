@@ -21,6 +21,13 @@ service Article {
   rpc DeleteArticle(DeleteArticleRequest) returns (google.protobuf.Empty) {}
 
   rpc GetTags(google.protobuf.Empty) returns (GetTagsReply) {}
+
+  rpc AddComment(AddCommentRequest) returns (GetCommentReply) {}
+  rpc GetComments(GetCommentsRequest) returns (GetCommentsRequest) {}
+  rpc DeleteComment(DeleteCommentRequest) returns (google.protobuf.Empty) {}
+
+  rpc FavoriteArticle(FavoriteArticleRequest) returns (GetArticleReply) {}
+  rpc UnFavoriteArticle(UnFavoriteArticleRequest) returns (GetArticleReply) {}
 }
 
 // The request message containing the user's name.
@@ -83,4 +90,34 @@ message FeedArticlesRequest {
 
 message GetTagsReply {
   repeated string tags = 1;
+}
+
+message AddCommentRequest {
+  string slug = 1[(validate.rules).string.min_len = 1];
+  string body = 2[(validate.rules).string.min_len = 1];
+}
+
+message GetCommentsRequest {
+  string slug = 1[(validate.rules).string.min_len = 1];
+}
+
+message DeleteCommentRequest {
+  string slug = 1[(validate.rules).string.min_len = 1];
+  int64 comment_id = 2[(validate.rules).int64 = {gt: 0}];
+}
+
+message FavoriteArticleRequest {
+  string slug = 1;
+}
+
+message UnFavoriteArticleRequest {
+  string slug = 1;
+}
+
+message GetCommentReply {
+  comment comment = 1;
+}
+
+message MultiGetCommentsReply {
+  repeated comment comments = 1;
 }

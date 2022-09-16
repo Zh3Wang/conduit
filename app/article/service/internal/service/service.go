@@ -16,10 +16,11 @@ type ArticleService struct {
 	articlePb.UnimplementedArticleServer
 
 	uc  *biz.ArticleUsecase
+	sc  *biz.SocialUsecase
 	log *log.Helper
 }
 
 // NewArticleService new an Article service.
-func NewArticleService(uc *biz.ArticleUsecase, logger log.Logger) *ArticleService {
-	return &ArticleService{uc: uc, log: log.NewHelper(logger)}
+func NewArticleService(uc *biz.ArticleUsecase, sc *biz.SocialUsecase, logger log.Logger) *ArticleService {
+	return &ArticleService{uc: uc, sc: sc, log: log.NewHelper(logger)}
 }

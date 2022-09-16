@@ -25,15 +25,17 @@ type ArticleData struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Slug        string   `protobuf:"bytes,1,opt,name=slug,proto3" json:"slug,omitempty"`
-	Title       string   `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
-	Description string   `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
-	Body        string   `protobuf:"bytes,4,opt,name=body,proto3" json:"body,omitempty"`
-	TagList     []string `protobuf:"bytes,5,rep,name=tagList,proto3" json:"tagList,omitempty"`
-	CreatedAt   int64    `protobuf:"varint,6,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
-	UpdatedAt   int64    `protobuf:"varint,7,opt,name=updatedAt,proto3" json:"updatedAt,omitempty"`
-	DeleteAt    int64    `protobuf:"varint,10,opt,name=deleteAt,proto3" json:"deleteAt,omitempty"`
-	AuthorId    int64    `protobuf:"varint,9,opt,name=author_id,json=authorId,proto3" json:"author_id,omitempty"`
+	Slug           string   `protobuf:"bytes,1,opt,name=slug,proto3" json:"slug,omitempty"`
+	Title          string   `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
+	Description    string   `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	Body           string   `protobuf:"bytes,4,opt,name=body,proto3" json:"body,omitempty"`
+	TagList        []string `protobuf:"bytes,5,rep,name=tagList,proto3" json:"tagList,omitempty"`
+	CreatedAt      int64    `protobuf:"varint,6,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
+	UpdatedAt      int64    `protobuf:"varint,7,opt,name=updatedAt,proto3" json:"updatedAt,omitempty"`
+	DeleteAt       int64    `protobuf:"varint,10,opt,name=deleteAt,proto3" json:"deleteAt,omitempty"`
+	Author         *Profile `protobuf:"bytes,9,opt,name=author,proto3" json:"author,omitempty"`
+	FavoritesCount int64    `protobuf:"varint,11,opt,name=favorites_count,json=favoritesCount,proto3" json:"favorites_count,omitempty"`
+	Favorited      bool     `protobuf:"varint,12,opt,name=favorited,proto3" json:"favorited,omitempty"`
 }
 
 func (x *ArticleData) Reset() {
@@ -124,11 +126,175 @@ func (x *ArticleData) GetDeleteAt() int64 {
 	return 0
 }
 
-func (x *ArticleData) GetAuthorId() int64 {
+func (x *ArticleData) GetAuthor() *Profile {
 	if x != nil {
-		return x.AuthorId
+		return x.Author
+	}
+	return nil
+}
+
+func (x *ArticleData) GetFavoritesCount() int64 {
+	if x != nil {
+		return x.FavoritesCount
 	}
 	return 0
+}
+
+func (x *ArticleData) GetFavorited() bool {
+	if x != nil {
+		return x.Favorited
+	}
+	return false
+}
+
+type Comment struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id        int64    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Body      string   `protobuf:"bytes,2,opt,name=body,proto3" json:"body,omitempty"`
+	CreatedAt int64    `protobuf:"varint,6,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
+	UpdatedAt int64    `protobuf:"varint,7,opt,name=updatedAt,proto3" json:"updatedAt,omitempty"`
+	Author    *Profile `protobuf:"bytes,8,opt,name=author,proto3" json:"author,omitempty"`
+}
+
+func (x *Comment) Reset() {
+	*x = Comment{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_api_article_v1_article_data_proto_msgTypes[1]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Comment) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Comment) ProtoMessage() {}
+
+func (x *Comment) ProtoReflect() protoreflect.Message {
+	mi := &file_api_article_v1_article_data_proto_msgTypes[1]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Comment.ProtoReflect.Descriptor instead.
+func (*Comment) Descriptor() ([]byte, []int) {
+	return file_api_article_v1_article_data_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *Comment) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *Comment) GetBody() string {
+	if x != nil {
+		return x.Body
+	}
+	return ""
+}
+
+func (x *Comment) GetCreatedAt() int64 {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return 0
+}
+
+func (x *Comment) GetUpdatedAt() int64 {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return 0
+}
+
+func (x *Comment) GetAuthor() *Profile {
+	if x != nil {
+		return x.Author
+	}
+	return nil
+}
+
+type Profile struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	UserName  string `protobuf:"bytes,1,opt,name=user_name,json=username,proto3" json:"user_name,omitempty"`
+	Bio       string `protobuf:"bytes,2,opt,name=bio,proto3" json:"bio,omitempty"`
+	Image     string `protobuf:"bytes,3,opt,name=image,proto3" json:"image,omitempty"`
+	Following bool   `protobuf:"varint,4,opt,name=following,proto3" json:"following,omitempty"`
+}
+
+func (x *Profile) Reset() {
+	*x = Profile{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_api_article_v1_article_data_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Profile) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Profile) ProtoMessage() {}
+
+func (x *Profile) ProtoReflect() protoreflect.Message {
+	mi := &file_api_article_v1_article_data_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Profile.ProtoReflect.Descriptor instead.
+func (*Profile) Descriptor() ([]byte, []int) {
+	return file_api_article_v1_article_data_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *Profile) GetUserName() string {
+	if x != nil {
+		return x.UserName
+	}
+	return ""
+}
+
+func (x *Profile) GetBio() string {
+	if x != nil {
+		return x.Bio
+	}
+	return ""
+}
+
+func (x *Profile) GetImage() string {
+	if x != nil {
+		return x.Image
+	}
+	return ""
+}
+
+func (x *Profile) GetFollowing() bool {
+	if x != nil {
+		return x.Following
+	}
+	return false
 }
 
 var File_api_article_v1_article_data_proto protoreflect.FileDescriptor
@@ -136,7 +302,7 @@ var File_api_article_v1_article_data_proto protoreflect.FileDescriptor
 var file_api_article_v1_article_data_proto_rawDesc = []byte{
 	0x0a, 0x21, 0x61, 0x70, 0x69, 0x2f, 0x61, 0x72, 0x74, 0x69, 0x63, 0x6c, 0x65, 0x2f, 0x76, 0x31,
 	0x2f, 0x61, 0x72, 0x74, 0x69, 0x63, 0x6c, 0x65, 0x5f, 0x64, 0x61, 0x74, 0x61, 0x2e, 0x70, 0x72,
-	0x6f, 0x74, 0x6f, 0x22, 0xfc, 0x01, 0x0a, 0x0b, 0x61, 0x72, 0x74, 0x69, 0x63, 0x6c, 0x65, 0x44,
+	0x6f, 0x74, 0x6f, 0x22, 0xc8, 0x02, 0x0a, 0x0b, 0x61, 0x72, 0x74, 0x69, 0x63, 0x6c, 0x65, 0x44,
 	0x61, 0x74, 0x61, 0x12, 0x12, 0x0a, 0x04, 0x73, 0x6c, 0x75, 0x67, 0x18, 0x01, 0x20, 0x01, 0x28,
 	0x09, 0x52, 0x04, 0x73, 0x6c, 0x75, 0x67, 0x12, 0x14, 0x0a, 0x05, 0x74, 0x69, 0x74, 0x6c, 0x65,
 	0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x74, 0x69, 0x74, 0x6c, 0x65, 0x12, 0x20, 0x0a,
@@ -150,10 +316,31 @@ var file_api_article_v1_article_data_proto_rawDesc = []byte{
 	0x70, 0x64, 0x61, 0x74, 0x65, 0x64, 0x41, 0x74, 0x18, 0x07, 0x20, 0x01, 0x28, 0x03, 0x52, 0x09,
 	0x75, 0x70, 0x64, 0x61, 0x74, 0x65, 0x64, 0x41, 0x74, 0x12, 0x1a, 0x0a, 0x08, 0x64, 0x65, 0x6c,
 	0x65, 0x74, 0x65, 0x41, 0x74, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x03, 0x52, 0x08, 0x64, 0x65, 0x6c,
-	0x65, 0x74, 0x65, 0x41, 0x74, 0x12, 0x1b, 0x0a, 0x09, 0x61, 0x75, 0x74, 0x68, 0x6f, 0x72, 0x5f,
-	0x69, 0x64, 0x18, 0x09, 0x20, 0x01, 0x28, 0x03, 0x52, 0x08, 0x61, 0x75, 0x74, 0x68, 0x6f, 0x72,
-	0x49, 0x64, 0x42, 0x0d, 0x5a, 0x0b, 0x2e, 0x2f, 0x61, 0x72, 0x74, 0x69, 0x63, 0x6c, 0x65, 0x50,
-	0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x65, 0x74, 0x65, 0x41, 0x74, 0x12, 0x20, 0x0a, 0x06, 0x61, 0x75, 0x74, 0x68, 0x6f, 0x72, 0x18,
+	0x09, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x08, 0x2e, 0x70, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x52,
+	0x06, 0x61, 0x75, 0x74, 0x68, 0x6f, 0x72, 0x12, 0x27, 0x0a, 0x0f, 0x66, 0x61, 0x76, 0x6f, 0x72,
+	0x69, 0x74, 0x65, 0x73, 0x5f, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x18, 0x0b, 0x20, 0x01, 0x28, 0x03,
+	0x52, 0x0e, 0x66, 0x61, 0x76, 0x6f, 0x72, 0x69, 0x74, 0x65, 0x73, 0x43, 0x6f, 0x75, 0x6e, 0x74,
+	0x12, 0x1c, 0x0a, 0x09, 0x66, 0x61, 0x76, 0x6f, 0x72, 0x69, 0x74, 0x65, 0x64, 0x18, 0x0c, 0x20,
+	0x01, 0x28, 0x08, 0x52, 0x09, 0x66, 0x61, 0x76, 0x6f, 0x72, 0x69, 0x74, 0x65, 0x64, 0x22, 0x8b,
+	0x01, 0x0a, 0x07, 0x63, 0x6f, 0x6d, 0x6d, 0x65, 0x6e, 0x74, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x02, 0x69, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x62, 0x6f,
+	0x64, 0x79, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x62, 0x6f, 0x64, 0x79, 0x12, 0x1c,
+	0x0a, 0x09, 0x63, 0x72, 0x65, 0x61, 0x74, 0x65, 0x64, 0x41, 0x74, 0x18, 0x06, 0x20, 0x01, 0x28,
+	0x03, 0x52, 0x09, 0x63, 0x72, 0x65, 0x61, 0x74, 0x65, 0x64, 0x41, 0x74, 0x12, 0x1c, 0x0a, 0x09,
+	0x75, 0x70, 0x64, 0x61, 0x74, 0x65, 0x64, 0x41, 0x74, 0x18, 0x07, 0x20, 0x01, 0x28, 0x03, 0x52,
+	0x09, 0x75, 0x70, 0x64, 0x61, 0x74, 0x65, 0x64, 0x41, 0x74, 0x12, 0x20, 0x0a, 0x06, 0x61, 0x75,
+	0x74, 0x68, 0x6f, 0x72, 0x18, 0x08, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x08, 0x2e, 0x70, 0x72, 0x6f,
+	0x66, 0x69, 0x6c, 0x65, 0x52, 0x06, 0x61, 0x75, 0x74, 0x68, 0x6f, 0x72, 0x22, 0x6c, 0x0a, 0x07,
+	0x70, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x12, 0x1b, 0x0a, 0x09, 0x75, 0x73, 0x65, 0x72, 0x5f,
+	0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x75, 0x73, 0x65, 0x72,
+	0x6e, 0x61, 0x6d, 0x65, 0x12, 0x10, 0x0a, 0x03, 0x62, 0x69, 0x6f, 0x18, 0x02, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x03, 0x62, 0x69, 0x6f, 0x12, 0x14, 0x0a, 0x05, 0x69, 0x6d, 0x61, 0x67, 0x65, 0x18,
+	0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x69, 0x6d, 0x61, 0x67, 0x65, 0x12, 0x1c, 0x0a, 0x09,
+	0x66, 0x6f, 0x6c, 0x6c, 0x6f, 0x77, 0x69, 0x6e, 0x67, 0x18, 0x04, 0x20, 0x01, 0x28, 0x08, 0x52,
+	0x09, 0x66, 0x6f, 0x6c, 0x6c, 0x6f, 0x77, 0x69, 0x6e, 0x67, 0x42, 0x0d, 0x5a, 0x0b, 0x2e, 0x2f,
+	0x61, 0x72, 0x74, 0x69, 0x63, 0x6c, 0x65, 0x50, 0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x33,
 }
 
 var (
@@ -168,16 +355,20 @@ func file_api_article_v1_article_data_proto_rawDescGZIP() []byte {
 	return file_api_article_v1_article_data_proto_rawDescData
 }
 
-var file_api_article_v1_article_data_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
+var file_api_article_v1_article_data_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_api_article_v1_article_data_proto_goTypes = []interface{}{
 	(*ArticleData)(nil), // 0: articleData
+	(*Comment)(nil),     // 1: comment
+	(*Profile)(nil),     // 2: profile
 }
 var file_api_article_v1_article_data_proto_depIdxs = []int32{
-	0, // [0:0] is the sub-list for method output_type
-	0, // [0:0] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	2, // 0: articleData.author:type_name -> profile
+	2, // 1: comment.author:type_name -> profile
+	2, // [2:2] is the sub-list for method output_type
+	2, // [2:2] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_api_article_v1_article_data_proto_init() }
@@ -198,6 +389,30 @@ func file_api_article_v1_article_data_proto_init() {
 				return nil
 			}
 		}
+		file_api_article_v1_article_data_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Comment); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_api_article_v1_article_data_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Profile); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -205,7 +420,7 @@ func file_api_article_v1_article_data_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_api_article_v1_article_data_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   1,
+			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

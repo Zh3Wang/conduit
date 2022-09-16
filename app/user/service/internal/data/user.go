@@ -103,3 +103,13 @@ func (r *userRepo) DeleteFollowing(ctx context.Context, userId, followId int64) 
 	}
 	return nil
 }
+
+func (r *userRepo) IsFollowing(ctx context.Context, userId, authorId int64) (bool, error) {
+	var f followingsModel.Followings
+	err := r.data.db.WithContext(ctx).Where("user_id = ? and following_id = ?", userId, authorId).First(&f).Error
+	if err != nil {
+		return false, err
+	}
+	return true, nil
+
+}

@@ -1362,3 +1362,837 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = GetTagsReplyValidationError{}
+
+// Validate checks the field values on AddCommentRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *AddCommentRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on AddCommentRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// AddCommentRequestMultiError, or nil if none found.
+func (m *AddCommentRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AddCommentRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if utf8.RuneCountInString(m.GetSlug()) < 1 {
+		err := AddCommentRequestValidationError{
+			field:  "Slug",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetBody()) < 1 {
+		err := AddCommentRequestValidationError{
+			field:  "Body",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return AddCommentRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// AddCommentRequestMultiError is an error wrapping multiple validation errors
+// returned by AddCommentRequest.ValidateAll() if the designated constraints
+// aren't met.
+type AddCommentRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AddCommentRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AddCommentRequestMultiError) AllErrors() []error { return m }
+
+// AddCommentRequestValidationError is the validation error returned by
+// AddCommentRequest.Validate if the designated constraints aren't met.
+type AddCommentRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AddCommentRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e AddCommentRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e AddCommentRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e AddCommentRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AddCommentRequestValidationError) ErrorName() string {
+	return "AddCommentRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e AddCommentRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAddCommentRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AddCommentRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AddCommentRequestValidationError{}
+
+// Validate checks the field values on GetCommentsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetCommentsRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetCommentsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetCommentsRequestMultiError, or nil if none found.
+func (m *GetCommentsRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetCommentsRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if utf8.RuneCountInString(m.GetSlug()) < 1 {
+		err := GetCommentsRequestValidationError{
+			field:  "Slug",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return GetCommentsRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetCommentsRequestMultiError is an error wrapping multiple validation errors
+// returned by GetCommentsRequest.ValidateAll() if the designated constraints
+// aren't met.
+type GetCommentsRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetCommentsRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetCommentsRequestMultiError) AllErrors() []error { return m }
+
+// GetCommentsRequestValidationError is the validation error returned by
+// GetCommentsRequest.Validate if the designated constraints aren't met.
+type GetCommentsRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetCommentsRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetCommentsRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetCommentsRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetCommentsRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetCommentsRequestValidationError) ErrorName() string {
+	return "GetCommentsRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetCommentsRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetCommentsRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetCommentsRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetCommentsRequestValidationError{}
+
+// Validate checks the field values on DeleteCommentRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DeleteCommentRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DeleteCommentRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DeleteCommentRequestMultiError, or nil if none found.
+func (m *DeleteCommentRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DeleteCommentRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if utf8.RuneCountInString(m.GetSlug()) < 1 {
+		err := DeleteCommentRequestValidationError{
+			field:  "Slug",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetCommentId() <= 0 {
+		err := DeleteCommentRequestValidationError{
+			field:  "CommentId",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return DeleteCommentRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// DeleteCommentRequestMultiError is an error wrapping multiple validation
+// errors returned by DeleteCommentRequest.ValidateAll() if the designated
+// constraints aren't met.
+type DeleteCommentRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DeleteCommentRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DeleteCommentRequestMultiError) AllErrors() []error { return m }
+
+// DeleteCommentRequestValidationError is the validation error returned by
+// DeleteCommentRequest.Validate if the designated constraints aren't met.
+type DeleteCommentRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DeleteCommentRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DeleteCommentRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DeleteCommentRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DeleteCommentRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DeleteCommentRequestValidationError) ErrorName() string {
+	return "DeleteCommentRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DeleteCommentRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDeleteCommentRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DeleteCommentRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DeleteCommentRequestValidationError{}
+
+// Validate checks the field values on FavoriteArticleRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *FavoriteArticleRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on FavoriteArticleRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// FavoriteArticleRequestMultiError, or nil if none found.
+func (m *FavoriteArticleRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *FavoriteArticleRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Slug
+
+	if len(errors) > 0 {
+		return FavoriteArticleRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// FavoriteArticleRequestMultiError is an error wrapping multiple validation
+// errors returned by FavoriteArticleRequest.ValidateAll() if the designated
+// constraints aren't met.
+type FavoriteArticleRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m FavoriteArticleRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m FavoriteArticleRequestMultiError) AllErrors() []error { return m }
+
+// FavoriteArticleRequestValidationError is the validation error returned by
+// FavoriteArticleRequest.Validate if the designated constraints aren't met.
+type FavoriteArticleRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e FavoriteArticleRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e FavoriteArticleRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e FavoriteArticleRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e FavoriteArticleRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e FavoriteArticleRequestValidationError) ErrorName() string {
+	return "FavoriteArticleRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e FavoriteArticleRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sFavoriteArticleRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = FavoriteArticleRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = FavoriteArticleRequestValidationError{}
+
+// Validate checks the field values on UnFavoriteArticleRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *UnFavoriteArticleRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UnFavoriteArticleRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UnFavoriteArticleRequestMultiError, or nil if none found.
+func (m *UnFavoriteArticleRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UnFavoriteArticleRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Slug
+
+	if len(errors) > 0 {
+		return UnFavoriteArticleRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// UnFavoriteArticleRequestMultiError is an error wrapping multiple validation
+// errors returned by UnFavoriteArticleRequest.ValidateAll() if the designated
+// constraints aren't met.
+type UnFavoriteArticleRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UnFavoriteArticleRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UnFavoriteArticleRequestMultiError) AllErrors() []error { return m }
+
+// UnFavoriteArticleRequestValidationError is the validation error returned by
+// UnFavoriteArticleRequest.Validate if the designated constraints aren't met.
+type UnFavoriteArticleRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UnFavoriteArticleRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UnFavoriteArticleRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UnFavoriteArticleRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UnFavoriteArticleRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UnFavoriteArticleRequestValidationError) ErrorName() string {
+	return "UnFavoriteArticleRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UnFavoriteArticleRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUnFavoriteArticleRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UnFavoriteArticleRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UnFavoriteArticleRequestValidationError{}
+
+// Validate checks the field values on GetCommentReply with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *GetCommentReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetCommentReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetCommentReplyMultiError, or nil if none found.
+func (m *GetCommentReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetCommentReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetComment()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, GetCommentReplyValidationError{
+					field:  "Comment",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, GetCommentReplyValidationError{
+					field:  "Comment",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetComment()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return GetCommentReplyValidationError{
+				field:  "Comment",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return GetCommentReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetCommentReplyMultiError is an error wrapping multiple validation errors
+// returned by GetCommentReply.ValidateAll() if the designated constraints
+// aren't met.
+type GetCommentReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetCommentReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetCommentReplyMultiError) AllErrors() []error { return m }
+
+// GetCommentReplyValidationError is the validation error returned by
+// GetCommentReply.Validate if the designated constraints aren't met.
+type GetCommentReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetCommentReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetCommentReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetCommentReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetCommentReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetCommentReplyValidationError) ErrorName() string { return "GetCommentReplyValidationError" }
+
+// Error satisfies the builtin error interface
+func (e GetCommentReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetCommentReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetCommentReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetCommentReplyValidationError{}
+
+// Validate checks the field values on MultiGetCommentsReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *MultiGetCommentsReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on MultiGetCommentsReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// MultiGetCommentsReplyMultiError, or nil if none found.
+func (m *MultiGetCommentsReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *MultiGetCommentsReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetComments() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, MultiGetCommentsReplyValidationError{
+						field:  fmt.Sprintf("Comments[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, MultiGetCommentsReplyValidationError{
+						field:  fmt.Sprintf("Comments[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return MultiGetCommentsReplyValidationError{
+					field:  fmt.Sprintf("Comments[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return MultiGetCommentsReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// MultiGetCommentsReplyMultiError is an error wrapping multiple validation
+// errors returned by MultiGetCommentsReply.ValidateAll() if the designated
+// constraints aren't met.
+type MultiGetCommentsReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m MultiGetCommentsReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m MultiGetCommentsReplyMultiError) AllErrors() []error { return m }
+
+// MultiGetCommentsReplyValidationError is the validation error returned by
+// MultiGetCommentsReply.Validate if the designated constraints aren't met.
+type MultiGetCommentsReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e MultiGetCommentsReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e MultiGetCommentsReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e MultiGetCommentsReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e MultiGetCommentsReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e MultiGetCommentsReplyValidationError) ErrorName() string {
+	return "MultiGetCommentsReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e MultiGetCommentsReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sMultiGetCommentsReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = MultiGetCommentsReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = MultiGetCommentsReplyValidationError{}
