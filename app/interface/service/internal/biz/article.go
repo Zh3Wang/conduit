@@ -14,6 +14,14 @@ type ArticleRepo interface {
 	CreateArticle(ctx context.Context, req *interfacePb.CreateArticleRequest) (*interfacePb.SingleArticle, error)
 	UpdateArticle(ctx context.Context, req *interfacePb.UpdateArticleRequest) (*interfacePb.SingleArticle, error)
 	DeleteArticle(ctx context.Context, req *interfacePb.DeleteArticleRequest) error
+
+	AddComment(ctx context.Context, slug, body string) (*interfacePb.Comment, error)
+	GetComments(ctx context.Context, slug string) ([]*interfacePb.Comment, error)
+	DeleteComment(ctx context.Context, slug string, commentId int64) error
+
+	FavoriteArticle(ctx context.Context, slug string) (*interfacePb.SingleArticle, error)
+	UnFavoriteArticle(ctx context.Context, slug string) (*interfacePb.SingleArticle, error)
+
 	GetTags(ctx context.Context) ([]string, error)
 }
 
@@ -57,4 +65,24 @@ func (a *ArticleUsecase) DeleteArticle(ctx context.Context, req *interfacePb.Del
 
 func (a *ArticleUsecase) GetTags(ctx context.Context) ([]string, error) {
 	return a.ArticleRepo.GetTags(ctx)
+}
+
+func (a *ArticleUsecase) AddComment(ctx context.Context, slug, body string) (*interfacePb.Comment, error) {
+	return a.ArticleRepo.AddComment(ctx, slug, body)
+}
+
+func (a *ArticleUsecase) GetComments(ctx context.Context, slug string) ([]*interfacePb.Comment, error) {
+	return a.ArticleRepo.GetComments(ctx, slug)
+}
+
+func (a *ArticleUsecase) DeleteComment(ctx context.Context, slug string, commentId int64) error {
+	return a.ArticleRepo.DeleteComment(ctx, slug, commentId)
+}
+
+func (a *ArticleUsecase) FavoriteArticle(ctx context.Context, slug string) (*interfacePb.SingleArticle, error) {
+	return a.ArticleRepo.FavoriteArticle(ctx, slug)
+}
+
+func (a *ArticleUsecase) UnFavoriteArticle(ctx context.Context, slug string) (*interfacePb.SingleArticle, error) {
+	return a.ArticleRepo.UnFavoriteArticle(ctx, slug)
 }

@@ -2481,6 +2481,110 @@ var _ interface {
 	ErrorName() string
 } = AddCommentRequestValidationError{}
 
+// Validate checks the field values on GetCommentsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetCommentsRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetCommentsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetCommentsRequestMultiError, or nil if none found.
+func (m *GetCommentsRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetCommentsRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Slug
+
+	if len(errors) > 0 {
+		return GetCommentsRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetCommentsRequestMultiError is an error wrapping multiple validation errors
+// returned by GetCommentsRequest.ValidateAll() if the designated constraints
+// aren't met.
+type GetCommentsRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetCommentsRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetCommentsRequestMultiError) AllErrors() []error { return m }
+
+// GetCommentsRequestValidationError is the validation error returned by
+// GetCommentsRequest.Validate if the designated constraints aren't met.
+type GetCommentsRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetCommentsRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetCommentsRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetCommentsRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetCommentsRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetCommentsRequestValidationError) ErrorName() string {
+	return "GetCommentsRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetCommentsRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetCommentsRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetCommentsRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetCommentsRequestValidationError{}
+
 // Validate checks the field values on FavoriteArticleRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.

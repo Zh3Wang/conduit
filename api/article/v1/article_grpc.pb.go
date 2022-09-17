@@ -33,7 +33,7 @@ type ArticleClient interface {
 	DeleteArticle(ctx context.Context, in *DeleteArticleRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	GetTags(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*GetTagsReply, error)
 	AddComment(ctx context.Context, in *AddCommentRequest, opts ...grpc.CallOption) (*GetCommentReply, error)
-	GetComments(ctx context.Context, in *GetCommentsRequest, opts ...grpc.CallOption) (*GetCommentsRequest, error)
+	GetComments(ctx context.Context, in *GetCommentsRequest, opts ...grpc.CallOption) (*MultiGetCommentsReply, error)
 	DeleteComment(ctx context.Context, in *DeleteCommentRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	FavoriteArticle(ctx context.Context, in *FavoriteArticleRequest, opts ...grpc.CallOption) (*GetArticleReply, error)
 	UnFavoriteArticle(ctx context.Context, in *UnFavoriteArticleRequest, opts ...grpc.CallOption) (*GetArticleReply, error)
@@ -128,8 +128,8 @@ func (c *articleClient) AddComment(ctx context.Context, in *AddCommentRequest, o
 	return out, nil
 }
 
-func (c *articleClient) GetComments(ctx context.Context, in *GetCommentsRequest, opts ...grpc.CallOption) (*GetCommentsRequest, error) {
-	out := new(GetCommentsRequest)
+func (c *articleClient) GetComments(ctx context.Context, in *GetCommentsRequest, opts ...grpc.CallOption) (*MultiGetCommentsReply, error) {
+	out := new(MultiGetCommentsReply)
 	err := c.cc.Invoke(ctx, "/article.v1.Article/GetComments", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -178,7 +178,7 @@ type ArticleServer interface {
 	DeleteArticle(context.Context, *DeleteArticleRequest) (*empty.Empty, error)
 	GetTags(context.Context, *empty.Empty) (*GetTagsReply, error)
 	AddComment(context.Context, *AddCommentRequest) (*GetCommentReply, error)
-	GetComments(context.Context, *GetCommentsRequest) (*GetCommentsRequest, error)
+	GetComments(context.Context, *GetCommentsRequest) (*MultiGetCommentsReply, error)
 	DeleteComment(context.Context, *DeleteCommentRequest) (*empty.Empty, error)
 	FavoriteArticle(context.Context, *FavoriteArticleRequest) (*GetArticleReply, error)
 	UnFavoriteArticle(context.Context, *UnFavoriteArticleRequest) (*GetArticleReply, error)
@@ -216,7 +216,7 @@ func (UnimplementedArticleServer) GetTags(context.Context, *empty.Empty) (*GetTa
 func (UnimplementedArticleServer) AddComment(context.Context, *AddCommentRequest) (*GetCommentReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddComment not implemented")
 }
-func (UnimplementedArticleServer) GetComments(context.Context, *GetCommentsRequest) (*GetCommentsRequest, error) {
+func (UnimplementedArticleServer) GetComments(context.Context, *GetCommentsRequest) (*MultiGetCommentsReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetComments not implemented")
 }
 func (UnimplementedArticleServer) DeleteComment(context.Context, *DeleteCommentRequest) (*empty.Empty, error) {

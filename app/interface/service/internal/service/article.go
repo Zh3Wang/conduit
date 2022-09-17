@@ -62,3 +62,43 @@ func (c *ConduitInterface) GetTags(ctx context.Context, _ *empty.Empty) (*interf
 	}
 	return &interfacePb.GetTagsReply{Tags: result}, nil
 }
+
+func (c *ConduitInterface) AddComment(ctx context.Context, req *interfacePb.AddCommentRequest) (*interfacePb.SingleCommentReply, error) {
+	result, err := c.ac.AddComment(ctx, req.GetSlug(), req.Comment.GetBody())
+	if err != nil {
+		return nil, err
+	}
+	return &interfacePb.SingleCommentReply{Comment: result}, nil
+}
+
+func (c *ConduitInterface) GetComments(ctx context.Context, req *interfacePb.GetCommentsRequest) (*interfacePb.MultipleCommentsReply, error) {
+	result, err := c.ac.GetComments(ctx, req.GetSlug())
+	if err != nil {
+		return nil, err
+	}
+	return &interfacePb.MultipleCommentsReply{Comments: result}, nil
+}
+
+func (c *ConduitInterface) DeleteComment(ctx context.Context, req *interfacePb.DeleteCommentRequest) (*empty.Empty, error) {
+	err := c.ac.DeleteComment(ctx, req.GetSlug(), req.GetId())
+	if err != nil {
+		return nil, err
+	}
+	return &empty.Empty{}, nil
+}
+
+func (c *ConduitInterface) FavoriteArticle(ctx context.Context, req *interfacePb.FavoriteArticleRequest) (*interfacePb.GetArticleReply, error) {
+	result, err := c.ac.FavoriteArticle(ctx, req.GetSlug())
+	if err != nil {
+		return nil, err
+	}
+	return &interfacePb.GetArticleReply{Article: result}, nil
+}
+
+func (c *ConduitInterface) UnfavoriteArticle(ctx context.Context, req *interfacePb.UnfavoriteArticleRequest) (*interfacePb.GetArticleReply, error) {
+	result, err := c.ac.UnFavoriteArticle(ctx, req.GetSlug())
+	if err != nil {
+		return nil, err
+	}
+	return &interfacePb.GetArticleReply{Article: result}, nil
+}

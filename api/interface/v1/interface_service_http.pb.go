@@ -44,12 +44,12 @@ type ConduitInterfaceHTTPServer interface {
 	AddComment(context.Context, *AddCommentRequest) (*SingleCommentReply, error)
 	CreateArticle(context.Context, *CreateArticleRequest) (*GetArticleReply, error)
 	DeleteArticle(context.Context, *DeleteArticleRequest) (*empty.Empty, error)
-	DeleteComment(context.Context, *DeleteCommentRequest) (*SingleCommentReply, error)
+	DeleteComment(context.Context, *DeleteCommentRequest) (*empty.Empty, error)
 	FavoriteArticle(context.Context, *FavoriteArticleRequest) (*GetArticleReply, error)
 	FeedArticles(context.Context, *FeedArticlesRequest) (*MultipleArticles, error)
 	FollowUser(context.Context, *FollowUserRequest) (*ProfileReply, error)
 	GetArticle(context.Context, *GetArticleRequest) (*GetArticleReply, error)
-	GetComments(context.Context, *AddCommentRequest) (*MultipleCommentsReply, error)
+	GetComments(context.Context, *GetCommentsRequest) (*MultipleCommentsReply, error)
 	GetCurrentUser(context.Context, *GetCurrentUserRequest) (*UserReply, error)
 	GetProfile(context.Context, *GetProfileRequest) (*ProfileReply, error)
 	GetTags(context.Context, *empty.Empty) (*GetTagsReply, error)
@@ -374,7 +374,7 @@ func _ConduitInterface_AddComment0_HTTP_Handler(srv ConduitInterfaceHTTPServer) 
 
 func _ConduitInterface_GetComments0_HTTP_Handler(srv ConduitInterfaceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in AddCommentRequest
+		var in GetCommentsRequest
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
@@ -383,7 +383,7 @@ func _ConduitInterface_GetComments0_HTTP_Handler(srv ConduitInterfaceHTTPServer)
 		}
 		http.SetOperation(ctx, OperationConduitInterfaceGetComments)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.GetComments(ctx, req.(*AddCommentRequest))
+			return srv.GetComments(ctx, req.(*GetCommentsRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
@@ -411,7 +411,7 @@ func _ConduitInterface_DeleteComment0_HTTP_Handler(srv ConduitInterfaceHTTPServe
 		if err != nil {
 			return err
 		}
-		reply := out.(*SingleCommentReply)
+		reply := out.(*empty.Empty)
 		return ctx.Result(200, reply)
 	}
 }
@@ -483,12 +483,12 @@ type ConduitInterfaceHTTPClient interface {
 	AddComment(ctx context.Context, req *AddCommentRequest, opts ...http.CallOption) (rsp *SingleCommentReply, err error)
 	CreateArticle(ctx context.Context, req *CreateArticleRequest, opts ...http.CallOption) (rsp *GetArticleReply, err error)
 	DeleteArticle(ctx context.Context, req *DeleteArticleRequest, opts ...http.CallOption) (rsp *empty.Empty, err error)
-	DeleteComment(ctx context.Context, req *DeleteCommentRequest, opts ...http.CallOption) (rsp *SingleCommentReply, err error)
+	DeleteComment(ctx context.Context, req *DeleteCommentRequest, opts ...http.CallOption) (rsp *empty.Empty, err error)
 	FavoriteArticle(ctx context.Context, req *FavoriteArticleRequest, opts ...http.CallOption) (rsp *GetArticleReply, err error)
 	FeedArticles(ctx context.Context, req *FeedArticlesRequest, opts ...http.CallOption) (rsp *MultipleArticles, err error)
 	FollowUser(ctx context.Context, req *FollowUserRequest, opts ...http.CallOption) (rsp *ProfileReply, err error)
 	GetArticle(ctx context.Context, req *GetArticleRequest, opts ...http.CallOption) (rsp *GetArticleReply, err error)
-	GetComments(ctx context.Context, req *AddCommentRequest, opts ...http.CallOption) (rsp *MultipleCommentsReply, err error)
+	GetComments(ctx context.Context, req *GetCommentsRequest, opts ...http.CallOption) (rsp *MultipleCommentsReply, err error)
 	GetCurrentUser(ctx context.Context, req *GetCurrentUserRequest, opts ...http.CallOption) (rsp *UserReply, err error)
 	GetProfile(ctx context.Context, req *GetProfileRequest, opts ...http.CallOption) (rsp *ProfileReply, err error)
 	GetTags(ctx context.Context, req *empty.Empty, opts ...http.CallOption) (rsp *GetTagsReply, err error)
@@ -548,8 +548,8 @@ func (c *ConduitInterfaceHTTPClientImpl) DeleteArticle(ctx context.Context, in *
 	return &out, err
 }
 
-func (c *ConduitInterfaceHTTPClientImpl) DeleteComment(ctx context.Context, in *DeleteCommentRequest, opts ...http.CallOption) (*SingleCommentReply, error) {
-	var out SingleCommentReply
+func (c *ConduitInterfaceHTTPClientImpl) DeleteComment(ctx context.Context, in *DeleteCommentRequest, opts ...http.CallOption) (*empty.Empty, error) {
+	var out empty.Empty
 	pattern := "api/articles/{slug}/comments/{id}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationConduitInterfaceDeleteComment))
@@ -613,7 +613,7 @@ func (c *ConduitInterfaceHTTPClientImpl) GetArticle(ctx context.Context, in *Get
 	return &out, err
 }
 
-func (c *ConduitInterfaceHTTPClientImpl) GetComments(ctx context.Context, in *AddCommentRequest, opts ...http.CallOption) (*MultipleCommentsReply, error) {
+func (c *ConduitInterfaceHTTPClientImpl) GetComments(ctx context.Context, in *GetCommentsRequest, opts ...http.CallOption) (*MultipleCommentsReply, error) {
 	var out MultipleCommentsReply
 	pattern := "api/articles/{slug}/comments"
 	path := binding.EncodeURL(pattern, in, true)

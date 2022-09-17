@@ -100,13 +100,13 @@ service ConduitInterface {
     };
   }
 
-  rpc GetComments(AddCommentRequest) returns (MultipleCommentsReply) {
+  rpc GetComments(GetCommentsRequest) returns (MultipleCommentsReply) {
     option (google.api.http) = {
       get : "api/articles/{slug}/comments",
     };
   }
 
-  rpc DeleteComment(DeleteCommentRequest) returns (SingleCommentReply) {
+  rpc DeleteComment(DeleteCommentRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
       delete : "api/articles/{slug}/comments/{id}",
     };
@@ -242,6 +242,10 @@ message AddCommentRequest {
 
   Comment comment = 1;
   string slug = 2;
+}
+
+message GetCommentsRequest {
+  string slug = 1;
 }
 
 message FavoriteArticleRequest {string slug = 1;}

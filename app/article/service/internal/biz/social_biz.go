@@ -3,7 +3,6 @@ package biz
 import (
 	articlePb "conduit/api/article/v1"
 	commentsModel "conduit/model/comments_model"
-	"conduit/pkg/middleware/auth"
 	"context"
 	"github.com/go-kratos/kratos/v2/log"
 )
@@ -35,7 +34,7 @@ func NewSocialUsecase(repo SocialRepo, articleRepo ArticleRepo, logger log.Logge
 }
 
 func (s *SocialUsecase) AddComment(ctx context.Context, req *articlePb.AddCommentRequest) (*articlePb.Comment, error) {
-	userId := auth.GetUserIdFromContext(ctx)
+	userId := req.GetUserId()
 	res, err := s.repo.AddComment(ctx, req.Body, req.Slug, userId)
 	if err != nil {
 		return nil, err
@@ -55,7 +54,6 @@ func (s *SocialUsecase) AddComment(ctx context.Context, req *articlePb.AddCommen
 }
 
 func (s *SocialUsecase) GetComments(ctx context.Context, req *articlePb.GetCommentsRequest) ([]*articlePb.Comment, error) {
-	userId := auth.GetUserIdFromContext(ctx)
 	// 获取文章评论
 	res, err := s.repo.GetComments(ctx, req.GetSlug())
 	if err != nil {
@@ -63,8 +61,8 @@ func (s *SocialUsecase) GetComments(ctx context.Context, req *articlePb.GetComme
 	}
 	var rr = make([]*articlePb.Comment, 0)
 	for _, v := range res {
-		// 作者信息
-		author, err := s.repo.GetProfile(ctx, userId)
+		// 评论者的信息
+		author, err := s.repo.GetProfile(ctx, v.AuthorID)
 		if err != nil {
 			s.log.WithContext(ctx).Errorf("AddComment GetProfile err: %s", err.Error())
 		}
@@ -85,7 +83,7 @@ func (s *SocialUsecase) DeleteComment(ctx context.Context, req *articlePb.Delete
 }
 
 func (s *SocialUsecase) FavoriteArticle(ctx context.Context, req *articlePb.FavoriteArticleRequest) (*articlePb.ArticleData, error) {
-	userId := auth.GetUserIdFromContext(ctx)
+	userId := req.GetUserId()
 	// get article id by slug
 	articles, err := s.articleRepo.GetArticle(ctx, req.GetSlug())
 	if err != nil {
@@ -118,6 +116,49 @@ func (s *SocialUsecase) FavoriteArticle(ctx context.Context, req *articlePb.Favo
 		s.log.WithContext(ctx).Errorf("GetFavorited err: %s", err.Error())
 	}
 
+	return &articlePb.ArticleData{
+		Slug:           articles.Slug,
+		Title:          articles.Title,
+		Description:    articles.Description,
+		Body:           articles.Body,
+		TagList:        tags,
+		CreatedAt:      articles.CreatedAt,
+		UpdatedAt:      articles.UpdatedAt,
+		Author:         author,
+		FavoritesCount: favoritesCount,
+		Favorited:      favorited,
+	}, nil
+}
+
+func (s *SocialUsecase) UnFavoriteArticle(ctx context.Context, req *articlePb.UnFavoriteArticleRequest) (*articlePb.ArticleData, error) {
+	articles, err := s.articleRepo.GetArticle(ctx, req.GetSlug())
+	if err != nil {
+		return nil, err
+	}
+	err = s.repo.UnFavoriteArticle(ctx, req.GetUserId(), articles.ID)
+	if err != nil {
+		return nil, err
+	}
+	// 作者信息
+	author, err := s.repo.GetProfile(ctx, req.GetUserId())
+	if err != nil {
+		s.log.WithContext(ctx).Errorf("AddComment GetProfile err: %s", err.Error())
+	}
+	// 获取tag
+	tags, err := s.articleRepo.GetTagsFromArticleId(ctx, articles.ID)
+	if err != nil {
+		s.log.WithContext(ctx).Errorf("GetTagsFromArticleId err: %s", err.Error())
+	}
+
+	favoritesCount, err := s.repo.GetFavoritesCount(ctx, articles.ID)
+	if err != nil {
+		s.log.WithContext(ctx).Errorf("GetFavoritesCount err: %s", err.Error())
+	}
+
+	favorited, err := s.repo.GetFavorited(ctx, req.GetUserId(), articles.ID)
+	if err != nil {
+		s.log.WithContext(ctx).Errorf("GetFavorited err: %s", err.Error())
+	}
 	return &articlePb.ArticleData{
 		Slug:           articles.Slug,
 		Title:          articles.Title,

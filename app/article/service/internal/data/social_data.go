@@ -87,12 +87,12 @@ func (r *socialRepo) GetProfile(ctx context.Context, userId int64) (*articlePb.P
 }
 
 func (r *socialRepo) GetFavoritesCount(ctx context.Context, aritcleID int64) (int64, error) {
-	var count *int64
-	err := r.data.db.WithContext(ctx).Where("article_id = ?", aritcleID).Count(count).Error
+	var count int64
+	err := r.data.db.WithContext(ctx).Where("article_id = ?", aritcleID).Count(&count).Error
 	if err != nil {
 		return 0, nil
 	}
-	return *count, nil
+	return count, nil
 }
 
 func (r *socialRepo) GetFavorited(ctx context.Context, userId, articleId int64) (bool, error) {

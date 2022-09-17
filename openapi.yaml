@@ -148,10 +148,6 @@ paths:
                   required: true
                   schema:
                     type: string
-                - name: comment.body
-                  in: query
-                  schema:
-                    type: string
             responses:
                 "200":
                     description: OK
@@ -202,10 +198,7 @@ paths:
             responses:
                 "200":
                     description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/SingleCommentReply'
+                    content: {}
     api/articles/{slug}/favorite:
         post:
             tags:
@@ -402,7 +395,7 @@ components:
             properties:
                 id:
                     type: integer
-                    format: uint32
+                    format: int64
                 createdAt:
                     type: string
                 updatedAt:

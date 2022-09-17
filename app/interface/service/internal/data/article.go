@@ -146,6 +146,91 @@ func (a *ArticleRepo) GetTags(ctx context.Context) ([]string, error) {
 	return reply.Tags, nil
 }
 
+func (a *ArticleRepo) AddComment(ctx context.Context, slug, body string) (*interfacePb.Comment, error) {
+	userId := auth.GetUserIdFromContext(ctx)
+	comment, err := a.data.ac.AddComment(ctx, &articlePb.AddCommentRequest{
+		Slug:   slug,
+		Body:   body,
+		UserId: userId,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &interfacePb.Comment{
+		Id:        comment.Comment.Id,
+		CreatedAt: format.ConvertTime(comment.Comment.CreatedAt),
+		UpdatedAt: format.ConvertTime(comment.Comment.UpdatedAt),
+		Body:      comment.Comment.Body,
+		Author: &interfacePb.Profile{
+			Username:  comment.Comment.Author.UserName,
+			Bio:       comment.Comment.Author.Bio,
+			Image:     comment.Comment.Author.Image,
+			Following: comment.Comment.Author.Following,
+		},
+	}, nil
+}
+
+func (a *ArticleRepo) GetComments(ctx context.Context, slug string) ([]*interfacePb.Comment, error) {
+	res, err := a.data.ac.GetComments(ctx, &articlePb.GetCommentsRequest{Slug: slug})
+	if err != nil {
+		return nil, err
+	}
+
+	var comments = make([]*interfacePb.Comment, 0, len(res.Comments))
+	for _, v := range res.GetComments() {
+		comments = append(comments, &interfacePb.Comment{
+			Id:        v.Id,
+			CreatedAt: format.ConvertTime(v.CreatedAt),
+			UpdatedAt: format.ConvertTime(v.UpdatedAt),
+			Body:      v.Body,
+			Author: &interfacePb.Profile{
+				Username:  v.Author.UserName,
+				Bio:       v.Author.Bio,
+				Image:     v.Author.Image,
+				Following: v.Author.Following,
+			},
+		})
+	}
+
+	return comments, nil
+}
+
+func (a *ArticleRepo) DeleteComment(ctx context.Context, slug string, commentId int64) error {
+	_, err := a.data.ac.DeleteComment(ctx, &articlePb.DeleteCommentRequest{
+		Slug:      slug,
+		CommentId: commentId,
+	})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (a *ArticleRepo) FavoriteArticle(ctx context.Context, slug string) (*interfacePb.SingleArticle, error) {
+	userId := auth.GetUserIdFromContext(ctx)
+	res, err := a.data.ac.FavoriteArticle(ctx, &articlePb.FavoriteArticleRequest{
+		Slug:   slug,
+		UserId: userId,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return convertSingleArticle(res), nil
+}
+
+func (a *ArticleRepo) UnFavoriteArticle(ctx context.Context, slug string) (*interfacePb.SingleArticle, error) {
+	userId := auth.GetUserIdFromContext(ctx)
+	res, err := a.data.ac.UnFavoriteArticle(ctx, &articlePb.UnFavoriteArticleRequest{
+		Slug:   slug,
+		UserId: userId,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return convertSingleArticle(res), nil
+}
+
 func convertSingleArticle(reply *articlePb.GetArticleReply) *interfacePb.SingleArticle {
 	return &interfacePb.SingleArticle{
 		Slug:           reply.Article.Slug,

@@ -55,8 +55,8 @@ func (uc *UserUsecase) GetProfileById(ctx context.Context, id int32) (*userPb.Pr
 		Bio:         r.Bio,
 		Image:       r.Image,
 		Following:   following,
-		CreatedTime: time.Unix(r.CreatedAt, 0).Format("2006/01/02 15:04:05"),
-		UpdatedTime: time.Unix(r.UpdatedAt, 0).Format("2006/01/02 15:04:05"),
+		CreatedTime: format.ConvertTime(r.CreatedAt),
+		UpdatedTime: format.ConvertTime(r.UpdatedAt),
 	}, nil
 }
 

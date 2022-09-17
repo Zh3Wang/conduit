@@ -23,7 +23,7 @@ service Article {
   rpc GetTags(google.protobuf.Empty) returns (GetTagsReply) {}
 
   rpc AddComment(AddCommentRequest) returns (GetCommentReply) {}
-  rpc GetComments(GetCommentsRequest) returns (GetCommentsRequest) {}
+  rpc GetComments(GetCommentsRequest) returns (MultiGetCommentsReply) {}
   rpc DeleteComment(DeleteCommentRequest) returns (google.protobuf.Empty) {}
 
   rpc FavoriteArticle(FavoriteArticleRequest) returns (GetArticleReply) {}
@@ -95,6 +95,7 @@ message GetTagsReply {
 message AddCommentRequest {
   string slug = 1[(validate.rules).string.min_len = 1];
   string body = 2[(validate.rules).string.min_len = 1];
+  int64 user_id = 3[(validate.rules).int64 = {gt: 0}];
 }
 
 message GetCommentsRequest {
@@ -107,11 +108,13 @@ message DeleteCommentRequest {
 }
 
 message FavoriteArticleRequest {
-  string slug = 1;
+  string slug = 1[(validate.rules).string.min_len = 1];
+  int64 user_id = 2[(validate.rules).int64 = {gt: 0}];
 }
 
 message UnFavoriteArticleRequest {
-  string slug = 1;
+  string slug = 1[(validate.rules).string.min_len = 1];
+  int64 user_id = 2[(validate.rules).int64 = {gt: 0}];
 }
 
 message GetCommentReply {

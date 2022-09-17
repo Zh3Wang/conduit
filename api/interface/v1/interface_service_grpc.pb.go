@@ -37,8 +37,8 @@ type ConduitInterfaceClient interface {
 	UpdateArticle(ctx context.Context, in *UpdateArticleRequest, opts ...grpc.CallOption) (*GetArticleReply, error)
 	DeleteArticle(ctx context.Context, in *DeleteArticleRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	AddComment(ctx context.Context, in *AddCommentRequest, opts ...grpc.CallOption) (*SingleCommentReply, error)
-	GetComments(ctx context.Context, in *AddCommentRequest, opts ...grpc.CallOption) (*MultipleCommentsReply, error)
-	DeleteComment(ctx context.Context, in *DeleteCommentRequest, opts ...grpc.CallOption) (*SingleCommentReply, error)
+	GetComments(ctx context.Context, in *GetCommentsRequest, opts ...grpc.CallOption) (*MultipleCommentsReply, error)
+	DeleteComment(ctx context.Context, in *DeleteCommentRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	FavoriteArticle(ctx context.Context, in *FavoriteArticleRequest, opts ...grpc.CallOption) (*GetArticleReply, error)
 	UnfavoriteArticle(ctx context.Context, in *UnfavoriteArticleRequest, opts ...grpc.CallOption) (*GetArticleReply, error)
 	GetTags(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*GetTagsReply, error)
@@ -178,7 +178,7 @@ func (c *conduitInterfaceClient) AddComment(ctx context.Context, in *AddCommentR
 	return out, nil
 }
 
-func (c *conduitInterfaceClient) GetComments(ctx context.Context, in *AddCommentRequest, opts ...grpc.CallOption) (*MultipleCommentsReply, error) {
+func (c *conduitInterfaceClient) GetComments(ctx context.Context, in *GetCommentsRequest, opts ...grpc.CallOption) (*MultipleCommentsReply, error) {
 	out := new(MultipleCommentsReply)
 	err := c.cc.Invoke(ctx, "/interface.v1.ConduitInterface/GetComments", in, out, opts...)
 	if err != nil {
@@ -187,8 +187,8 @@ func (c *conduitInterfaceClient) GetComments(ctx context.Context, in *AddComment
 	return out, nil
 }
 
-func (c *conduitInterfaceClient) DeleteComment(ctx context.Context, in *DeleteCommentRequest, opts ...grpc.CallOption) (*SingleCommentReply, error) {
-	out := new(SingleCommentReply)
+func (c *conduitInterfaceClient) DeleteComment(ctx context.Context, in *DeleteCommentRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
 	err := c.cc.Invoke(ctx, "/interface.v1.ConduitInterface/DeleteComment", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -241,8 +241,8 @@ type ConduitInterfaceServer interface {
 	UpdateArticle(context.Context, *UpdateArticleRequest) (*GetArticleReply, error)
 	DeleteArticle(context.Context, *DeleteArticleRequest) (*empty.Empty, error)
 	AddComment(context.Context, *AddCommentRequest) (*SingleCommentReply, error)
-	GetComments(context.Context, *AddCommentRequest) (*MultipleCommentsReply, error)
-	DeleteComment(context.Context, *DeleteCommentRequest) (*SingleCommentReply, error)
+	GetComments(context.Context, *GetCommentsRequest) (*MultipleCommentsReply, error)
+	DeleteComment(context.Context, *DeleteCommentRequest) (*empty.Empty, error)
 	FavoriteArticle(context.Context, *FavoriteArticleRequest) (*GetArticleReply, error)
 	UnfavoriteArticle(context.Context, *UnfavoriteArticleRequest) (*GetArticleReply, error)
 	GetTags(context.Context, *empty.Empty) (*GetTagsReply, error)
@@ -295,10 +295,10 @@ func (UnimplementedConduitInterfaceServer) DeleteArticle(context.Context, *Delet
 func (UnimplementedConduitInterfaceServer) AddComment(context.Context, *AddCommentRequest) (*SingleCommentReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddComment not implemented")
 }
-func (UnimplementedConduitInterfaceServer) GetComments(context.Context, *AddCommentRequest) (*MultipleCommentsReply, error) {
+func (UnimplementedConduitInterfaceServer) GetComments(context.Context, *GetCommentsRequest) (*MultipleCommentsReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetComments not implemented")
 }
-func (UnimplementedConduitInterfaceServer) DeleteComment(context.Context, *DeleteCommentRequest) (*SingleCommentReply, error) {
+func (UnimplementedConduitInterfaceServer) DeleteComment(context.Context, *DeleteCommentRequest) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteComment not implemented")
 }
 func (UnimplementedConduitInterfaceServer) FavoriteArticle(context.Context, *FavoriteArticleRequest) (*GetArticleReply, error) {
@@ -576,7 +576,7 @@ func _ConduitInterface_AddComment_Handler(srv interface{}, ctx context.Context, 
 }
 
 func _ConduitInterface_GetComments_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AddCommentRequest)
+	in := new(GetCommentsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -588,7 +588,7 @@ func _ConduitInterface_GetComments_Handler(srv interface{}, ctx context.Context,
 		FullMethod: "/interface.v1.ConduitInterface/GetComments",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ConduitInterfaceServer).GetComments(ctx, req.(*AddCommentRequest))
+		return srv.(ConduitInterfaceServer).GetComments(ctx, req.(*GetCommentsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

@@ -1407,6 +1407,17 @@ func (m *AddCommentRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	if m.GetUserId() <= 0 {
+		err := AddCommentRequestValidationError{
+			field:  "UserId",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if len(errors) > 0 {
 		return AddCommentRequestMultiError(errors)
 	}
@@ -1746,7 +1757,27 @@ func (m *FavoriteArticleRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Slug
+	if utf8.RuneCountInString(m.GetSlug()) < 1 {
+		err := FavoriteArticleRequestValidationError{
+			field:  "Slug",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetUserId() <= 0 {
+		err := FavoriteArticleRequestValidationError{
+			field:  "UserId",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return FavoriteArticleRequestMultiError(errors)
@@ -1850,7 +1881,27 @@ func (m *UnFavoriteArticleRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Slug
+	if utf8.RuneCountInString(m.GetSlug()) < 1 {
+		err := UnFavoriteArticleRequestValidationError{
+			field:  "Slug",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetUserId() <= 0 {
+		err := UnFavoriteArticleRequestValidationError{
+			field:  "UserId",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return UnFavoriteArticleRequestMultiError(errors)
