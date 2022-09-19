@@ -1,11 +1,12 @@
 package data
 
 import (
+	"conduit/api/article/v1"
+	"conduit/api/user/v1"
 	"conduit/app/article/service/internal/biz"
 	articleTagsModel "conduit/model/article_tags_model"
 	"conduit/model/articles_model"
 	tagsModel "conduit/model/tags_model"
-	"conduit/pkg/middleware/auth"
 	"conduit/pkg/mysql"
 	"context"
 	"github.com/go-kratos/kratos/v2/errors"
@@ -32,7 +33,7 @@ func (r *articleRepo) GetArticle(ctx context.Context, slug string) (*articlesMod
 	var d = articlesModel.Articles{}
 	result := r.data.db.WithContext(ctx).Where("slug = ?", slug).First(&d)
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-		return nil, result.Error
+		return nil, articlePb.ErrorContentMissing("article is not exist")
 	}
 	if result.Error != nil {
 		return nil, result.Error
@@ -78,11 +79,18 @@ func (r *articleRepo) BatchGetArticles(ctx context.Context, opts ...mysql.QueryO
 	for _, o := range opts {
 		o(&query)
 	}
-	err := createQuery(ctx, db, query).Debug().Find(&res).Error
+	qu, err := r.createQuery(ctx, db, query)
+	if err != nil {
+		return nil, err
+	}
+	err = qu.Find(&res).Error
+	if err != nil {
+		return nil, err
+	}
 	return res, err
 }
 
-func createQuery(ctx context.Context, db *gorm.DB, query mysql.QueryOptions) *gorm.DB {
+func (r *articleRepo) createQuery(ctx context.Context, db *gorm.DB, query mysql.QueryOptions) (*gorm.DB, error) {
 	if len(query.AuthorName) > 0 {
 		db = db.Joins("join users on users.id = articles.author_id and users.username = ?", query.AuthorName)
 	}
@@ -92,18 +100,24 @@ func createQuery(ctx context.Context, db *gorm.DB, query mysql.QueryOptions) *go
 	}
 
 	if len(query.Favorited) > 0 {
-		userId := auth.GetUserIdFromContext(ctx)
-		db = db.Joins("join article_favorites on article_favorites.article_id = articles.id and article_favorites.user_id = ?", userId)
+		profile, err := r.data.userService.GetUser(ctx, &userPb.GetUserRequest{
+			Type:    "username",
+			Keyword: query.Favorited,
+		})
+		if err != nil {
+			return nil, err
+		}
+		db = db.Joins("join article_favorites on article_favorites.article_id = articles.id and article_favorites.user_id = ?", profile.GetUser().UserId)
 	}
 
 	if query.Offset > 0 {
 		db = db.Offset(int(query.Offset))
 	}
 
-	if query.Offset > 0 {
+	if query.Limit > 0 {
 		db = db.Limit(int(query.Limit))
 	}
-	return db
+	return db, nil
 }
 
 func (r *articleRepo) GetTagsFromArticleId(ctx context.Context, articleId int64) ([]string, error) {

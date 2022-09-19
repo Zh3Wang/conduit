@@ -1,14 +1,13 @@
 package data
 
 import (
+	"conduit/api/article/v1"
+	"conduit/api/interface/v1"
+	"conduit/app/interface/service/internal/biz"
 	"conduit/pkg/format"
 	"conduit/pkg/middleware/auth"
 	"context"
 	"github.com/golang/protobuf/ptypes/empty"
-
-	"conduit/api/article/v1"
-	"conduit/api/interface/v1"
-	"conduit/app/interface/service/internal/biz"
 
 	"github.com/go-kratos/kratos/v2/log"
 )
@@ -157,7 +156,7 @@ func (a *ArticleRepo) AddComment(ctx context.Context, slug, body string) (*inter
 		return nil, err
 	}
 	return &interfacePb.Comment{
-		Id:        comment.Comment.Id,
+		Id:        int32(comment.Comment.Id),
 		CreatedAt: format.ConvertTime(comment.Comment.CreatedAt),
 		UpdatedAt: format.ConvertTime(comment.Comment.UpdatedAt),
 		Body:      comment.Comment.Body,
@@ -179,7 +178,7 @@ func (a *ArticleRepo) GetComments(ctx context.Context, slug string) ([]*interfac
 	var comments = make([]*interfacePb.Comment, 0, len(res.Comments))
 	for _, v := range res.GetComments() {
 		comments = append(comments, &interfacePb.Comment{
-			Id:        v.Id,
+			Id:        int32(v.Id),
 			CreatedAt: format.ConvertTime(v.CreatedAt),
 			UpdatedAt: format.ConvertTime(v.UpdatedAt),
 			Body:      v.Body,

@@ -63,13 +63,13 @@ service ConduitInterface {
 
   rpc GetArticle (GetArticleRequest) returns (GetArticleReply)  {
     option (google.api.http) = {
-      get: "api/articles/{slug}",
+      get : "/api/articles/{slug}",
     };
   }
 
   rpc FeedArticles(FeedArticlesRequest) returns (MultipleArticles) {
     option (google.api.http) = {
-      get: "api/articles/feed"
+      get : "/api/articles/feed",
     };
   }
 
@@ -115,7 +115,6 @@ service ConduitInterface {
   rpc FavoriteArticle(FavoriteArticleRequest) returns (GetArticleReply) {
     option (google.api.http) = {
       post : "api/articles/{slug}/favorite",
-      body : "*"
     };
   }
 

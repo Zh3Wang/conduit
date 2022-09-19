@@ -236,6 +236,8 @@ func (m *MultipleArticles) validate(all bool) error {
 
 	}
 
+	// no validation rules for ArticlesCount
+
 	if len(errors) > 0 {
 		return MultipleArticlesMultiError(errors)
 	}

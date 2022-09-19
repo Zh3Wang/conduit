@@ -15,15 +15,18 @@ func (c *ConduitInterface) GetArticle(ctx context.Context, req *interfacePb.GetA
 	return &interfacePb.GetArticleReply{Article: result}, nil
 }
 
-func (c *ConduitInterface) ListArticle(ctx context.Context, req *interfacePb.ListArticlesRequest) (*interfacePb.MultipleArticles, error) {
+func (c *ConduitInterface) ListArticles(ctx context.Context, req *interfacePb.ListArticlesRequest) (*interfacePb.MultipleArticles, error) {
 	result, err := c.ac.ListArticles(ctx, req)
 	if err != nil {
 		return nil, err
 	}
-	return &interfacePb.MultipleArticles{Articles: result}, nil
+	return &interfacePb.MultipleArticles{
+		Articles:      result,
+		ArticlesCount: int32(len(result)),
+	}, nil
 }
 
-func (c *ConduitInterface) FeedArticle(ctx context.Context, req *interfacePb.FeedArticlesRequest) (*interfacePb.MultipleArticles, error) {
+func (c *ConduitInterface) FeedArticles(ctx context.Context, req *interfacePb.FeedArticlesRequest) (*interfacePb.MultipleArticles, error) {
 	result, err := c.ac.FeedArticles(ctx, req)
 	if err != nil {
 		return nil, err

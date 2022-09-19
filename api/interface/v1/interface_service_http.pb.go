@@ -72,8 +72,8 @@ func RegisterConduitInterfaceHTTPServer(s *http.Server, srv ConduitInterfaceHTTP
 	r.POST("api/profiles/{username}/follow", _ConduitInterface_FollowUser0_HTTP_Handler(srv))
 	r.DELETE("api/profiles/{username}/follow", _ConduitInterface_UnfollowUser0_HTTP_Handler(srv))
 	r.GET("api/articles", _ConduitInterface_ListArticles0_HTTP_Handler(srv))
-	r.GET("api/articles/{slug}", _ConduitInterface_GetArticle0_HTTP_Handler(srv))
-	r.GET("api/articles/feed", _ConduitInterface_FeedArticles0_HTTP_Handler(srv))
+	r.GET("/api/articles/{slug}", _ConduitInterface_GetArticle0_HTTP_Handler(srv))
+	r.GET("/api/articles/feed", _ConduitInterface_FeedArticles0_HTTP_Handler(srv))
 	r.POST("api/articles", _ConduitInterface_CreateArticle0_HTTP_Handler(srv))
 	r.PUT("api/articles/{slug}", _ConduitInterface_UpdateArticle0_HTTP_Handler(srv))
 	r.DELETE("api/articles/{slug}", _ConduitInterface_DeleteArticle0_HTTP_Handler(srv))
@@ -419,7 +419,7 @@ func _ConduitInterface_DeleteComment0_HTTP_Handler(srv ConduitInterfaceHTTPServe
 func _ConduitInterface_FavoriteArticle0_HTTP_Handler(srv ConduitInterfaceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in FavoriteArticleRequest
-		if err := ctx.Bind(&in); err != nil {
+		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
 		if err := ctx.BindVars(&in); err != nil {
@@ -564,10 +564,10 @@ func (c *ConduitInterfaceHTTPClientImpl) DeleteComment(ctx context.Context, in *
 func (c *ConduitInterfaceHTTPClientImpl) FavoriteArticle(ctx context.Context, in *FavoriteArticleRequest, opts ...http.CallOption) (*GetArticleReply, error) {
 	var out GetArticleReply
 	pattern := "api/articles/{slug}/favorite"
-	path := binding.EncodeURL(pattern, in, false)
+	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationConduitInterfaceFavoriteArticle))
 	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	err := c.cc.Invoke(ctx, "POST", path, nil, &out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -576,7 +576,7 @@ func (c *ConduitInterfaceHTTPClientImpl) FavoriteArticle(ctx context.Context, in
 
 func (c *ConduitInterfaceHTTPClientImpl) FeedArticles(ctx context.Context, in *FeedArticlesRequest, opts ...http.CallOption) (*MultipleArticles, error) {
 	var out MultipleArticles
-	pattern := "api/articles/feed"
+	pattern := "/api/articles/feed"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationConduitInterfaceFeedArticles))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -602,7 +602,7 @@ func (c *ConduitInterfaceHTTPClientImpl) FollowUser(ctx context.Context, in *Fol
 
 func (c *ConduitInterfaceHTTPClientImpl) GetArticle(ctx context.Context, in *GetArticleRequest, opts ...http.CallOption) (*GetArticleReply, error) {
 	var out GetArticleReply
-	pattern := "api/articles/{slug}"
+	pattern := "/api/articles/{slug}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationConduitInterfaceGetArticle))
 	opts = append(opts, http.PathTemplate(pattern))

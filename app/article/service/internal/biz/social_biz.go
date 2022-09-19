@@ -96,7 +96,7 @@ func (s *SocialUsecase) FavoriteArticle(ctx context.Context, req *articlePb.Favo
 
 	// get article
 	// 作者信息
-	author, err := s.repo.GetProfile(ctx, userId)
+	author, err := s.repo.GetProfile(ctx, articles.AuthorID)
 	if err != nil {
 		s.log.WithContext(ctx).Errorf("AddComment GetProfile err: %s", err.Error())
 	}
@@ -111,10 +111,10 @@ func (s *SocialUsecase) FavoriteArticle(ctx context.Context, req *articlePb.Favo
 		s.log.WithContext(ctx).Errorf("GetFavoritesCount err: %s", err.Error())
 	}
 
-	favorited, err := s.repo.GetFavorited(ctx, userId, articles.ID)
-	if err != nil {
-		s.log.WithContext(ctx).Errorf("GetFavorited err: %s", err.Error())
-	}
+	//favorited, err := s.repo.GetFavorited(ctx, userId, articles.ID)
+	//if err != nil {
+	//	s.log.WithContext(ctx).Errorf("GetFavorited err: %s", err.Error())
+	//}
 
 	return &articlePb.ArticleData{
 		Slug:           articles.Slug,
@@ -126,7 +126,7 @@ func (s *SocialUsecase) FavoriteArticle(ctx context.Context, req *articlePb.Favo
 		UpdatedAt:      articles.UpdatedAt,
 		Author:         author,
 		FavoritesCount: favoritesCount,
-		Favorited:      favorited,
+		Favorited:      true,
 	}, nil
 }
 
@@ -140,7 +140,7 @@ func (s *SocialUsecase) UnFavoriteArticle(ctx context.Context, req *articlePb.Un
 		return nil, err
 	}
 	// 作者信息
-	author, err := s.repo.GetProfile(ctx, req.GetUserId())
+	author, err := s.repo.GetProfile(ctx, articles.AuthorID)
 	if err != nil {
 		s.log.WithContext(ctx).Errorf("AddComment GetProfile err: %s", err.Error())
 	}
@@ -155,10 +155,10 @@ func (s *SocialUsecase) UnFavoriteArticle(ctx context.Context, req *articlePb.Un
 		s.log.WithContext(ctx).Errorf("GetFavoritesCount err: %s", err.Error())
 	}
 
-	favorited, err := s.repo.GetFavorited(ctx, req.GetUserId(), articles.ID)
-	if err != nil {
-		s.log.WithContext(ctx).Errorf("GetFavorited err: %s", err.Error())
-	}
+	//favorited, err := s.repo.GetFavorited(ctx, req.GetUserId(), articles.ID)
+	//if err != nil {
+	//	s.log.WithContext(ctx).Errorf("GetFavorited err: %s", err.Error())
+	//}
 	return &articlePb.ArticleData{
 		Slug:           articles.Slug,
 		Title:          articles.Title,
@@ -169,6 +169,6 @@ func (s *SocialUsecase) UnFavoriteArticle(ctx context.Context, req *articlePb.Un
 		UpdatedAt:      articles.UpdatedAt,
 		Author:         author,
 		FavoritesCount: favoritesCount,
-		Favorited:      favorited,
+		Favorited:      false,
 	}, nil
 }

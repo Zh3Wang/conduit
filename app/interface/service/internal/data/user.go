@@ -77,8 +77,8 @@ func (u *userRepo) CreateUser(ctx context.Context, info *interfacePb.RegisterUse
 		User: &userPb.RegisterModel{
 			UserName: info.Username,
 			Email:    info.Email,
-			Bio:      "default",
-			Image:    "default",
+			Bio:      "",
+			Image:    "",
 			Password: info.Password,
 		},
 	})
