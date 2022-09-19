@@ -72,8 +72,8 @@ func RegisterConduitInterfaceHTTPServer(s *http.Server, srv ConduitInterfaceHTTP
 	r.POST("api/profiles/{username}/follow", _ConduitInterface_FollowUser0_HTTP_Handler(srv))
 	r.DELETE("api/profiles/{username}/follow", _ConduitInterface_UnfollowUser0_HTTP_Handler(srv))
 	r.GET("api/articles", _ConduitInterface_ListArticles0_HTTP_Handler(srv))
-	r.GET("/api/articles/{slug}", _ConduitInterface_GetArticle0_HTTP_Handler(srv))
 	r.GET("/api/articles/feed", _ConduitInterface_FeedArticles0_HTTP_Handler(srv))
+	r.GET("/api/articles/{slug}", _ConduitInterface_GetArticle0_HTTP_Handler(srv))
 	r.POST("api/articles", _ConduitInterface_CreateArticle0_HTTP_Handler(srv))
 	r.PUT("api/articles/{slug}", _ConduitInterface_UpdateArticle0_HTTP_Handler(srv))
 	r.DELETE("api/articles/{slug}", _ConduitInterface_DeleteArticle0_HTTP_Handler(srv))
@@ -246,6 +246,25 @@ func _ConduitInterface_ListArticles0_HTTP_Handler(srv ConduitInterfaceHTTPServer
 	}
 }
 
+func _ConduitInterface_FeedArticles0_HTTP_Handler(srv ConduitInterfaceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in FeedArticlesRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationConduitInterfaceFeedArticles)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.FeedArticles(ctx, req.(*FeedArticlesRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*MultipleArticles)
+		return ctx.Result(200, reply)
+	}
+}
+
 func _ConduitInterface_GetArticle0_HTTP_Handler(srv ConduitInterfaceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in GetArticleRequest
@@ -264,25 +283,6 @@ func _ConduitInterface_GetArticle0_HTTP_Handler(srv ConduitInterfaceHTTPServer) 
 			return err
 		}
 		reply := out.(*GetArticleReply)
-		return ctx.Result(200, reply)
-	}
-}
-
-func _ConduitInterface_FeedArticles0_HTTP_Handler(srv ConduitInterfaceHTTPServer) func(ctx http.Context) error {
-	return func(ctx http.Context) error {
-		var in FeedArticlesRequest
-		if err := ctx.BindQuery(&in); err != nil {
-			return err
-		}
-		http.SetOperation(ctx, OperationConduitInterfaceFeedArticles)
-		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.FeedArticles(ctx, req.(*FeedArticlesRequest))
-		})
-		out, err := h(ctx, &in)
-		if err != nil {
-			return err
-		}
-		reply := out.(*MultipleArticles)
 		return ctx.Result(200, reply)
 	}
 }

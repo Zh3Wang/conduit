@@ -54,10 +54,9 @@ func NewHttpServer(c *conf.Server, cb *conf.Biz, logger log.Logger) *http.Server
 func NewSkipRouterMatcher() selector.MatchFunc {
 	var skip = map[string]struct{}{
 		// no authentication
-		interfacePb.OperationConduitInterfaceLogin:      {},
-		interfacePb.OperationConduitInterfaceRegister:   {},
-		interfacePb.OperationConduitInterfaceGetArticle: {},
-		interfacePb.OperationConduitInterfaceGetTags:    {},
+		interfacePb.OperationConduitInterfaceLogin:    {},
+		interfacePb.OperationConduitInterfaceRegister: {},
+		interfacePb.OperationConduitInterfaceGetTags:  {},
 		// optional authentication
 		interfacePb.OperationConduitInterfaceGetComments: {},
 		//interfacePb.OperationConduitInterfaceGetProfile:   {},

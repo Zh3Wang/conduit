@@ -3605,6 +3605,10 @@ func (m *UpdateArticleRequestData) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	// no validation rules for Description
+
+	// no validation rules for Body
+
 	if len(errors) > 0 {
 		return UpdateArticleRequestDataMultiError(errors)
 	}

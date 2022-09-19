@@ -61,11 +61,6 @@ service ConduitInterface {
     };
   }
 
-  rpc GetArticle (GetArticleRequest) returns (GetArticleReply)  {
-    option (google.api.http) = {
-      get : "/api/articles/{slug}",
-    };
-  }
 
   rpc FeedArticles(FeedArticlesRequest) returns (MultipleArticles) {
     option (google.api.http) = {
@@ -73,6 +68,11 @@ service ConduitInterface {
     };
   }
 
+  rpc GetArticle (GetArticleRequest) returns (GetArticleReply)  {
+    option (google.api.http) = {
+      get : "/api/articles/{slug}",
+    };
+  }
   rpc CreateArticle(CreateArticleRequest) returns (GetArticleReply) {
     option (google.api.http) = {
       post:"api/articles",
@@ -218,6 +218,8 @@ message CreateArticleRequest {
 message UpdateArticleRequest {
   message data {
     string title = 1[(validate.rules).string = {min_len: 1}];
+    string description = 2;
+    string body = 3;
   }
   data article = 1;
   string slug = 2;

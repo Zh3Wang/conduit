@@ -82,6 +82,8 @@ func OptionalAuthenticationOperation(op string) bool {
 		// optional authentication
 		interfacePb.OperationConduitInterfaceGetProfile:   {},
 		interfacePb.OperationConduitInterfaceListArticles: {},
+
+		interfacePb.OperationConduitInterfaceGetArticle: {},
 	}
 	_, ok := skip[op]
 	return ok

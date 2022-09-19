@@ -31,8 +31,8 @@ type ConduitInterfaceClient interface {
 	FollowUser(ctx context.Context, in *FollowUserRequest, opts ...grpc.CallOption) (*ProfileReply, error)
 	UnfollowUser(ctx context.Context, in *UnfollowUserRequest, opts ...grpc.CallOption) (*ProfileReply, error)
 	ListArticles(ctx context.Context, in *ListArticlesRequest, opts ...grpc.CallOption) (*MultipleArticles, error)
-	GetArticle(ctx context.Context, in *GetArticleRequest, opts ...grpc.CallOption) (*GetArticleReply, error)
 	FeedArticles(ctx context.Context, in *FeedArticlesRequest, opts ...grpc.CallOption) (*MultipleArticles, error)
+	GetArticle(ctx context.Context, in *GetArticleRequest, opts ...grpc.CallOption) (*GetArticleReply, error)
 	CreateArticle(ctx context.Context, in *CreateArticleRequest, opts ...grpc.CallOption) (*GetArticleReply, error)
 	UpdateArticle(ctx context.Context, in *UpdateArticleRequest, opts ...grpc.CallOption) (*GetArticleReply, error)
 	DeleteArticle(ctx context.Context, in *DeleteArticleRequest, opts ...grpc.CallOption) (*empty.Empty, error)
@@ -124,18 +124,18 @@ func (c *conduitInterfaceClient) ListArticles(ctx context.Context, in *ListArtic
 	return out, nil
 }
 
-func (c *conduitInterfaceClient) GetArticle(ctx context.Context, in *GetArticleRequest, opts ...grpc.CallOption) (*GetArticleReply, error) {
-	out := new(GetArticleReply)
-	err := c.cc.Invoke(ctx, "/interface.v1.ConduitInterface/GetArticle", in, out, opts...)
+func (c *conduitInterfaceClient) FeedArticles(ctx context.Context, in *FeedArticlesRequest, opts ...grpc.CallOption) (*MultipleArticles, error) {
+	out := new(MultipleArticles)
+	err := c.cc.Invoke(ctx, "/interface.v1.ConduitInterface/FeedArticles", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *conduitInterfaceClient) FeedArticles(ctx context.Context, in *FeedArticlesRequest, opts ...grpc.CallOption) (*MultipleArticles, error) {
-	out := new(MultipleArticles)
-	err := c.cc.Invoke(ctx, "/interface.v1.ConduitInterface/FeedArticles", in, out, opts...)
+func (c *conduitInterfaceClient) GetArticle(ctx context.Context, in *GetArticleRequest, opts ...grpc.CallOption) (*GetArticleReply, error) {
+	out := new(GetArticleReply)
+	err := c.cc.Invoke(ctx, "/interface.v1.ConduitInterface/GetArticle", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -235,8 +235,8 @@ type ConduitInterfaceServer interface {
 	FollowUser(context.Context, *FollowUserRequest) (*ProfileReply, error)
 	UnfollowUser(context.Context, *UnfollowUserRequest) (*ProfileReply, error)
 	ListArticles(context.Context, *ListArticlesRequest) (*MultipleArticles, error)
-	GetArticle(context.Context, *GetArticleRequest) (*GetArticleReply, error)
 	FeedArticles(context.Context, *FeedArticlesRequest) (*MultipleArticles, error)
+	GetArticle(context.Context, *GetArticleRequest) (*GetArticleReply, error)
 	CreateArticle(context.Context, *CreateArticleRequest) (*GetArticleReply, error)
 	UpdateArticle(context.Context, *UpdateArticleRequest) (*GetArticleReply, error)
 	DeleteArticle(context.Context, *DeleteArticleRequest) (*empty.Empty, error)
@@ -277,11 +277,11 @@ func (UnimplementedConduitInterfaceServer) UnfollowUser(context.Context, *Unfoll
 func (UnimplementedConduitInterfaceServer) ListArticles(context.Context, *ListArticlesRequest) (*MultipleArticles, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListArticles not implemented")
 }
-func (UnimplementedConduitInterfaceServer) GetArticle(context.Context, *GetArticleRequest) (*GetArticleReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetArticle not implemented")
-}
 func (UnimplementedConduitInterfaceServer) FeedArticles(context.Context, *FeedArticlesRequest) (*MultipleArticles, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FeedArticles not implemented")
+}
+func (UnimplementedConduitInterfaceServer) GetArticle(context.Context, *GetArticleRequest) (*GetArticleReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetArticle not implemented")
 }
 func (UnimplementedConduitInterfaceServer) CreateArticle(context.Context, *CreateArticleRequest) (*GetArticleReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateArticle not implemented")
@@ -467,24 +467,6 @@ func _ConduitInterface_ListArticles_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ConduitInterface_GetArticle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetArticleRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ConduitInterfaceServer).GetArticle(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/interface.v1.ConduitInterface/GetArticle",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ConduitInterfaceServer).GetArticle(ctx, req.(*GetArticleRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _ConduitInterface_FeedArticles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(FeedArticlesRequest)
 	if err := dec(in); err != nil {
@@ -499,6 +481,24 @@ func _ConduitInterface_FeedArticles_Handler(srv interface{}, ctx context.Context
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ConduitInterfaceServer).FeedArticles(ctx, req.(*FeedArticlesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ConduitInterface_GetArticle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetArticleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ConduitInterfaceServer).GetArticle(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/interface.v1.ConduitInterface/GetArticle",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ConduitInterfaceServer).GetArticle(ctx, req.(*GetArticleRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -705,12 +705,12 @@ var ConduitInterface_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ConduitInterface_ListArticles_Handler,
 		},
 		{
-			MethodName: "GetArticle",
-			Handler:    _ConduitInterface_GetArticle_Handler,
-		},
-		{
 			MethodName: "FeedArticles",
 			Handler:    _ConduitInterface_FeedArticles_Handler,
+		},
+		{
+			MethodName: "GetArticle",
+			Handler:    _ConduitInterface_GetArticle_Handler,
 		},
 		{
 			MethodName: "CreateArticle",

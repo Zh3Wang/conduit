@@ -119,7 +119,10 @@ func (a *ArticleRepo) CreateArticle(ctx context.Context, req *interfacePb.Create
 
 func (a *ArticleRepo) UpdateArticle(ctx context.Context, req *interfacePb.UpdateArticleRequest) (*interfacePb.SingleArticle, error) {
 	reply, err := a.data.ac.UpdateArticle(ctx, &articlePb.UpdateArticleRequest{
-		Title: req.Article.Title,
+		Title:       req.Article.Title,
+		Description: req.Article.Description,
+		Body:        req.Article.Body,
+		Slug:        req.Slug,
 	})
 	if err != nil {
 		return nil, err

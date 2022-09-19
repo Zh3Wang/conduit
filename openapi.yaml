@@ -537,6 +537,10 @@ components:
             properties:
                 title:
                     type: string
+                description:
+                    type: string
+                body:
+                    type: string
         UpdateUserRequest:
             type: object
             properties:
