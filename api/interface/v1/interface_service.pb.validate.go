@@ -972,40 +972,111 @@ func (m *UpdateUserRequest) validate(all bool) error {
 
 	var errors []error
 
-	if all {
-		switch v := interface{}(m.GetUser()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, UpdateUserRequestValidationError{
-					field:  "User",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, UpdateUserRequestValidationError{
-					field:  "User",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetUser()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return UpdateUserRequestValidationError{
-				field:  "User",
-				reason: "embedded message failed validation",
+	if m.GetEmail() != "" {
+
+		if err := m._validateEmail(m.GetEmail()); err != nil {
+			err = UpdateUserRequestValidationError{
+				field:  "Email",
+				reason: "value must be a valid email address",
 				cause:  err,
 			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
 		}
+
 	}
+
+	if m.GetPassword() != "" {
+
+		if utf8.RuneCountInString(m.GetPassword()) < 6 {
+			err := UpdateUserRequestValidationError{
+				field:  "Password",
+				reason: "value length must be at least 6 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.GetUsername() != "" {
+
+		if utf8.RuneCountInString(m.GetUsername()) < 3 {
+			err := UpdateUserRequestValidationError{
+				field:  "Username",
+				reason: "value length must be at least 3 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	// no validation rules for Bio
+
+	// no validation rules for Image
 
 	if len(errors) > 0 {
 		return UpdateUserRequestMultiError(errors)
 	}
 
 	return nil
+}
+
+func (m *UpdateUserRequest) _validateHostname(host string) error {
+	s := strings.ToLower(strings.TrimSuffix(host, "."))
+
+	if len(host) > 253 {
+		return errors.New("hostname cannot exceed 253 characters")
+	}
+
+	for _, part := range strings.Split(s, ".") {
+		if l := len(part); l == 0 || l > 63 {
+			return errors.New("hostname part must be non-empty and cannot exceed 63 characters")
+		}
+
+		if part[0] == '-' {
+			return errors.New("hostname parts cannot begin with hyphens")
+		}
+
+		if part[len(part)-1] == '-' {
+			return errors.New("hostname parts cannot end with hyphens")
+		}
+
+		for _, r := range part {
+			if (r < 'a' || r > 'z') && (r < '0' || r > '9') && r != '-' {
+				return fmt.Errorf("hostname parts can only contain alphanumeric characters or hyphens, got %q", string(r))
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *UpdateUserRequest) _validateEmail(addr string) error {
+	a, err := mail.ParseAddress(addr)
+	if err != nil {
+		return err
+	}
+	addr = a.Address
+
+	if len(addr) > 254 {
+		return errors.New("email addresses cannot exceed 254 characters")
+	}
+
+	parts := strings.SplitN(addr, "@", 2)
+
+	if len(parts[0]) > 64 {
+		return errors.New("email address local phrase cannot exceed 64 characters")
+	}
+
+	return m._validateHostname(parts[1])
 }
 
 // UpdateUserRequestMultiError is an error wrapping multiple validation errors
@@ -3234,208 +3305,6 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = LoginRequestParamValidationError{}
-
-// Validate checks the field values on UpdateUserRequest_User with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *UpdateUserRequest_User) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on UpdateUserRequest_User with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// UpdateUserRequest_UserMultiError, or nil if none found.
-func (m *UpdateUserRequest_User) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *UpdateUserRequest_User) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	if m.GetEmail() != "" {
-
-		if err := m._validateEmail(m.GetEmail()); err != nil {
-			err = UpdateUserRequest_UserValidationError{
-				field:  "Email",
-				reason: "value must be a valid email address",
-				cause:  err,
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
-	}
-
-	if m.GetPassword() != "" {
-
-		if utf8.RuneCountInString(m.GetPassword()) < 6 {
-			err := UpdateUserRequest_UserValidationError{
-				field:  "Password",
-				reason: "value length must be at least 6 runes",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
-	}
-
-	if m.GetUsername() != "" {
-
-		if utf8.RuneCountInString(m.GetUsername()) < 3 {
-			err := UpdateUserRequest_UserValidationError{
-				field:  "Username",
-				reason: "value length must be at least 3 runes",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
-	}
-
-	// no validation rules for Bio
-
-	// no validation rules for Image
-
-	if len(errors) > 0 {
-		return UpdateUserRequest_UserMultiError(errors)
-	}
-
-	return nil
-}
-
-func (m *UpdateUserRequest_User) _validateHostname(host string) error {
-	s := strings.ToLower(strings.TrimSuffix(host, "."))
-
-	if len(host) > 253 {
-		return errors.New("hostname cannot exceed 253 characters")
-	}
-
-	for _, part := range strings.Split(s, ".") {
-		if l := len(part); l == 0 || l > 63 {
-			return errors.New("hostname part must be non-empty and cannot exceed 63 characters")
-		}
-
-		if part[0] == '-' {
-			return errors.New("hostname parts cannot begin with hyphens")
-		}
-
-		if part[len(part)-1] == '-' {
-			return errors.New("hostname parts cannot end with hyphens")
-		}
-
-		for _, r := range part {
-			if (r < 'a' || r > 'z') && (r < '0' || r > '9') && r != '-' {
-				return fmt.Errorf("hostname parts can only contain alphanumeric characters or hyphens, got %q", string(r))
-			}
-		}
-	}
-
-	return nil
-}
-
-func (m *UpdateUserRequest_User) _validateEmail(addr string) error {
-	a, err := mail.ParseAddress(addr)
-	if err != nil {
-		return err
-	}
-	addr = a.Address
-
-	if len(addr) > 254 {
-		return errors.New("email addresses cannot exceed 254 characters")
-	}
-
-	parts := strings.SplitN(addr, "@", 2)
-
-	if len(parts[0]) > 64 {
-		return errors.New("email address local phrase cannot exceed 64 characters")
-	}
-
-	return m._validateHostname(parts[1])
-}
-
-// UpdateUserRequest_UserMultiError is an error wrapping multiple validation
-// errors returned by UpdateUserRequest_User.ValidateAll() if the designated
-// constraints aren't met.
-type UpdateUserRequest_UserMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m UpdateUserRequest_UserMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m UpdateUserRequest_UserMultiError) AllErrors() []error { return m }
-
-// UpdateUserRequest_UserValidationError is the validation error returned by
-// UpdateUserRequest_User.Validate if the designated constraints aren't met.
-type UpdateUserRequest_UserValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e UpdateUserRequest_UserValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e UpdateUserRequest_UserValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e UpdateUserRequest_UserValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e UpdateUserRequest_UserValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e UpdateUserRequest_UserValidationError) ErrorName() string {
-	return "UpdateUserRequest_UserValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e UpdateUserRequest_UserValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sUpdateUserRequest_User.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = UpdateUserRequest_UserValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = UpdateUserRequest_UserValidationError{}
 
 // Validate checks the field values on CreateArticleRequestData with the rules
 // defined in the proto definition for this message. If any rules are

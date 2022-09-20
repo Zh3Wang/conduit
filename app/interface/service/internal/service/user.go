@@ -51,11 +51,11 @@ func (c *ConduitInterface) GetCurrentUser(ctx context.Context, req *interfacePb.
 // UpdateUser 更新
 func (c *ConduitInterface) UpdateUser(ctx context.Context, req *interfacePb.UpdateUserRequest) (*interfacePb.UserReply, error) {
 	res, err := c.uc.UpdateUser(ctx, &biz.UpdateUser{
-		Email:    req.User.GetEmail(),
-		Password: req.User.GetPassword(),
-		UserName: req.User.GetUsername(),
-		Bio:      req.User.GetBio(),
-		Image:    req.User.GetImage(),
+		Email:    req.GetEmail(),
+		Password: req.GetPassword(),
+		UserName: req.GetUsername(),
+		Bio:      req.GetBio(),
+		Image:    req.GetImage(),
 	})
 	if err != nil {
 		return nil, err
