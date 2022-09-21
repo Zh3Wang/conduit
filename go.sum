@@ -48,7 +48,6 @@ github.com/go-kit/log v0.1.0/go.mod h1:zbhenjAZHb184qTLMA9ZjW7ThYL0H2mk7Q6pNt4vb
 github.com/go-kratos/aegis v0.1.2/go.mod h1:jYeSQ3Gesba478zEnujOiG5QdsyF3Xk/8owFUeKcHxw=
 github.com/go-kratos/kratos/contrib/registry/etcd/v2 v2.0.0-20220727050715-86eba9464615 h1:k6nd6LR38pXuVVYskzdvLF1wohZ2FYfx5af++qpIEcE=
 github.com/go-kratos/kratos/contrib/registry/etcd/v2 v2.0.0-20220727050715-86eba9464615/go.mod h1:nvd/1C76mwiVwGABKi5Zq/QazfeTR+OiUhjdA3o4ppE=
-github.com/go-kratos/kratos/v2 v2.4.0 h1:3yZjvjCdV+zJQrb5zUWCLrzK/RrGoC78vaQQ1jMmBGI=
 github.com/go-kratos/kratos/v2 v2.4.0/go.mod h1:5acyLj4EgY428AJnZl2EwCrMV1OVlttQFBum+SghMiA=
 github.com/go-kratos/kratos/v2 v2.5.0 h1:lHpfp/AodxpRM9j8b894EsGTwsL40X8WMjNeJ6ChOqQ=
 github.com/go-kratos/kratos/v2 v2.5.0/go.mod h1:5acyLj4EgY428AJnZl2EwCrMV1OVlttQFBum+SghMiA=

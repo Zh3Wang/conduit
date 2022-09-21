@@ -365,18 +365,11 @@ type UpdateUserRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	//	message User {
-	//	  string email = 1 [(validate.rules).string = {ignore_empty: true, email: true}];
-	//	  string password = 2 [(validate.rules).string = {ignore_empty: true, min_len: 6}];
-	//	  string username = 3 [(validate.rules).string = {ignore_empty: true, min_len: 3}];
-	//	  string bio = 4;
-	//	  string image = 5;
-	//	}
 	Email    string `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
 	Password string `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
 	Username string `protobuf:"bytes,3,opt,name=username,proto3" json:"username,omitempty"`
 	Bio      string `protobuf:"bytes,4,opt,name=bio,proto3" json:"bio,omitempty"`
-	Image    string `protobuf:"bytes,5,opt,name=image,proto3" json:"image,omitempty"` //  User user = 1;
+	Image    string `protobuf:"bytes,5,opt,name=image,proto3" json:"image,omitempty"`
 }
 
 func (x *UpdateUserRequest) Reset() {

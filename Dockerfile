@@ -1,4 +1,4 @@
-FROM golang:1.17-buster AS builder
+FROM golang:1.19-buster AS builder
 
 ARG APP_RELATIVE_PATH
 

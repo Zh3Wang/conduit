@@ -6,40 +6,17 @@ API_PROTO_FILES=$(shell find api -name *.proto)
 .PHONY: init
 # init env
 init:
-	go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
-	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
-	go install github.com/go-kratos/kratos/cmd/kratos/v2@latest
-	go install github.com/go-kratos/kratos/cmd/protoc-gen-go-http/v2@latest
-	go install github.com/go-kratos/kratos/cmd/protoc-gen-go-errors/v2@latest
-	go install github.com/google/gnostic/cmd/protoc-gen-openapi@v0.6.1
-
-.PHONY: errors
-# generate errors code
-errors:
-	protoc --proto_path=. \
-               --proto_path=./third_party \
-               --go_out=paths=source_relative:. \
-               --go-errors_out=paths=source_relative:. \
-               $(API_PROTO_FILES)
+	go mod tidy
 
 .PHONY: config
 # generate internal proto
 config:
-	protoc --proto_path=. \
-	       --proto_path=./third_party \
- 	       --go_out=paths=source_relative:. \
-	       $(INTERNAL_PROTO_FILES)
+	./proto.sh conf
 
 .PHONY: api
 # generate api proto
 api:
-	protoc --proto_path=. \
-	       --proto_path=./third_party \
- 	       --go_out=paths=source_relative:. \
- 	       --go-http_out=paths=source_relative:. \
- 	       --go-grpc_out=paths=source_relative:. \
- 	       --openapi_out==paths=source_relative:. \
-	       $(API_PROTO_FILES)
+	./proto.sh api
 
 .PHONY: build
 # build
