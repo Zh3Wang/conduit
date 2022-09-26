@@ -16,7 +16,7 @@ conduit_interface:
 data:
   database:
     driver: mysql
-    source: wangzhe:qwe254511@tcp(10.0.20.13:3306)/conduit?charset=utf8mb4&parseTime=True&loc=Local
+    source: wangzhe:qwe254511@tcp(119.91.235.156:3306)/conduit?charset=utf8mb4&parseTime=True&loc=Local
     max_idle_connections: 100
     max_open_connections: 100
     max_connection_life_time: 10
@@ -25,6 +25,6 @@ data:
     read_timeout: 0.2s
     write_timeout: 0.2s
   etcd:
-    addr: ['10.0.20.13:2379']
+    addr: ['127.0.0.1:2379']
 biz:
   jwt_secret: secret

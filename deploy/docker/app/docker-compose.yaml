@@ -1,0 +1,19 @@
+version: '3'
+services:
+  interface:
+    image: ccr.ccs.tencentyun.com/conduit/conduit-interface:1.0.1
+    hostname: interface-service
+    container_name: interface-service
+    restart: always
+    ports:
+      - "8000:8000"
+  article-service:
+    image: ccr.ccs.tencentyun.com/conduit/conduit-article:1.0.2
+    hostname: article-service
+    container_name: article-service
+    restart: always
+  user-service:
+    image: ccr.ccs.tencentyun.com/conduit/conduit-user:1.0.1
+    hostname:   user-service
+    container_name: user-service
+    restart: always

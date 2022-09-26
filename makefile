@@ -18,15 +18,17 @@ config:
 api:
 	./proto.sh api
 
-.PHONY: build
+.PHONY: build-interface
 # build
 build:
-	mkdir -p bin/ && go build -ldflags "-X main.Version=$(VERSION)" -o ./bin/ ./...
+	#mkdir -p bin/ && go build -ldflags "-X main.Version=$(VERSION)" -o ./bin/ ./...
+	cd ./app/interface/service && ./build.sh
 
-.PHONY: generate
-# generate
-generate:
-	go generate ./...
+.PHONY: build-interface
+# build
+build:
+	#mkdir -p bin/ && go build -ldflags "-X main.Version=$(VERSION)" -o ./bin/ ./...
+	cd ./app/interface/service && ./build.sh
 
 .PHONY: all
 # generate all
