@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: tencent-docker-hub
+  namespace: conduit
+data:
+  .dockerconfigjson: ewoJImF1dGhzIjogewoJCSJjY3IuY2NzLnRlbmNlbnR5dW4uY29tIjogewoJCQkiYXV0aCI6ICJNVEF3TURFeU1qWXdNVGd5T25GM1pUSTFORFV4TVE9PSIKCQl9Cgl9Cn0=
+type: kubernetes.io/dockerconfigjson

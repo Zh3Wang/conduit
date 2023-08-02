@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: conduit-user-dep
+  name: conduit-user-dep
+  namespace: conduit
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: conduit-user-dep
+  template:
+    metadata:
+      labels:
+        app: conduit-user-dep
+    spec:
+      imagePullSecrets:
+        - name: tencent-docker-hub
+      containers:
+        - name: conduit-user
+          image: "ccr.ccs.tencentyun.com/conduit/conduit-user:1.0.2"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort:  9001

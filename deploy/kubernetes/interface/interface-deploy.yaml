@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: conduit-interface-dep
+  name: conduit-interface-dep
+  namespace: conduit
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: conduit-interface-dep
+  template:
+    metadata:
+      labels:
+        app: conduit-interface-dep
+    spec:
+      imagePullSecrets:
+        - name: tencent-docker-hub
+      containers:
+        - name: conduit-interface
+          image: "ccr.ccs.tencentyun.com/conduit/conduit-interface:1.0.2"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort:  8000
+
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: conduit-svc
+  namespace: conduit
+spec:
+  selector:
+    app: conduit-interface-dep
+  # type: NodePort
+  ports:
+    - name: http80
+      protocol: TCP
+      port: 8000
+      targetPort: 8000
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: conduit-ing
+  namespace: conduit
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+#    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+       rewrite ^/conduit/(.*)$ /$1 break;
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: frp.superant.cc
+      http:
+        paths:
+          - path: /conduit
+            pathType: Prefix
+            backend:
+              service:
+                name: conduit-svc
+                port:
+                  number: 8000
