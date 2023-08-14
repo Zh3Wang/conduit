@@ -15,11 +15,16 @@ spec:
       labels:
         app: conduit-article-dep
     spec:
-      imagePullSecrets:
-        - name: tencent-docker-hub
       containers:
         - name: conduit-article
-          image: "ccr.ccs.tencentyun.com/conduit/conduit-article:1.0.3"
+          image: "ccr.ccs.tencentyun.com/conduit/conduit-article:1.0.4"
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort:  9002
+          resources:
+            requests:
+              cpu: 50m
+              memory: 100Mi
+            limits:
+              cpu: 100m
+              memory: 200Mi

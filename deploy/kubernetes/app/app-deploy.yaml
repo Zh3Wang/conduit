@@ -1,0 +1,14 @@
+version: "3"
+
+services:
+  web_static:
+    image: nginx:1.19.0-alpine
+    container_name: web_static
+    restart: always
+    volumes:
+      - ./conduit-app.conf:/etc/nginx/nginx.conf
+      - ~/www:/home
+    ports:
+      - "80:80/tcp"
+    environment:
+      - NGINX_PORT=80

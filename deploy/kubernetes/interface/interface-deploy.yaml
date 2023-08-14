@@ -22,8 +22,14 @@ spec:
           image: "ccr.ccs.tencentyun.com/conduit/conduit-interface:1.0.2"
           imagePullPolicy: IfNotPresent
           ports:
-            - containerPort:  8000
-
+            - containerPort: 8000
+          resources:
+            requests:
+              cpu: 50m
+              memory: 100Mi
+            limits:
+              cpu: 100m
+              memory: 200Mi
 
 ---
 
@@ -50,12 +56,17 @@ metadata:
   name: conduit-ing
   namespace: conduit
   annotations:
+    nginx.ingress.kubernetes.io/enable-cors: "true"
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
-#    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    #    nginx.ingress.kubernetes.io/rewrite-target: /$1
     nginx.ingress.kubernetes.io/configuration-snippet: |
-       rewrite ^/conduit/(.*)$ /$1 break;
+      rewrite ^/conduit/(.*)$ /$1 break;
 spec:
   ingressClassName: nginx
+  tls:
+    - hosts:
+        - frp.superant.cc
+      secretName: superant
   rules:
     - host: frp.superant.cc
       http:

@@ -1,0 +1,15 @@
+#kci autoscale deploy -n conduit conduit-article-dep --min=2 --max=10 --cpu-percent=5 --dry-run=client -o yaml  生成yaml示例文件
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  creationTimestamp: null
+  name: conduit-article-dep
+  namespace: conduit
+spec:
+  maxReplicas: 10
+  minReplicas: 2
+  targetCPUUtilizationPercentage: 5
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: conduit-article-dep
